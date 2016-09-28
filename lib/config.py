@@ -26,4 +26,4 @@ dbname = get_config("database", "dbname")
 
 # server config
 port = get_config("server", "port")
-listen = get_config("server", "listen")
+address = get_config("server", "address")
