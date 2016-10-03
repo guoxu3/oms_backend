@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+"""
+api handlers
+"""
+
+
 import tornado.web
 import tornado.escape
-import textwrap
+from lib import judgement
 
 
 class GetHandler(tornado.web.RequestHandler):
@@ -21,10 +26,14 @@ class PostHandler(tornado.web.RequestHandler):
         pass
 
     def post(self):
-        text = self.get_argument('text')
-        width = self.get_argument('width', 40)
-        self.write(textwrap.fill(text, int(width)))
+        headers_dict = dict(self.request.headers)
+        content_type = headers_dict['Content-Type']
+        if content_type == 'application/json':
+            print "right"
 
+        body = self.request.body
+        if judgement.is_json(body):
+            print "aaaa"
 
 handlers = [
     ('/api/get', GetHandler),

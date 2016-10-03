@@ -23,7 +23,7 @@ def main():
     address = config.address
     port = config.port
 
-    # tornado.options.parse_command_line()
+    tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(port, address)
     tornado.ioloop.IOLoop.instance().start()
