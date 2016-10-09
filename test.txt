@@ -1,1 +1,56 @@
 curl -l -H "Content-type: application/json" -X POST -d '{"phone":"13521389587","password":"test"}' 127.0.0.1:9000
+
+
+curl -l -H "Content-type: application/json;charset=utf8" -X POST -d '{"id":"135213895822345111437","ip":"192.168.0.1", "action": "update", "content":"MTM1MjEzODk1ODIyMzQ1MTExNDM3QHVwZGF0ZUBfVEVNUExBVEUvZGVmYXVsdC96aHVhbnRpMjAxNjEyL2luZGV4MjAxNjEwMDYuaHRtbCxfVEVNUExBVEUvbW9iaWxlL3podWFudGkyMDE2MTIvaW5kZXgyMDE2MTAwNi5odG1sCg=="}' 127.0.0.1:9000
+
+
+UpdateHandler:
+    post data:
+    {
+        task_id:
+        ip:
+        action:
+        content:
+    }
+
+
+    receive data:
+    {
+        task_id:
+        result:
+    }
+
+
+UpdateStatusHandler:
+    post data:
+    {
+        task_id:
+        action:
+        status:
+        percent:
+    }
+
+    receive data:
+    {
+        task_id:
+        result:
+    }
+
+添加任务时生成唯一ID,执行任务时,检查数据库
+
+state 表
+    id
+    action
+    state
+    percent
+
+CREATE TABLE `update_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` varchar(40) NOT NULL,
+  `action` varchar(30) NOT NULL,
+  `status` int(6)    DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+
+grant all on oms.* to oms@'%' identified by 'lHe#42NTr5a@kbL';
