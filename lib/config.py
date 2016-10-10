@@ -13,7 +13,7 @@ import ConfigParser
 # get config file
 def get_config(section, key):
     config = ConfigParser.ConfigParser()
-    path = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0] + '/conf/oms.conf'
+    path = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0] + '/conf/oms_test.conf'
     config.read(path)
     return config.get(section, key)
 
