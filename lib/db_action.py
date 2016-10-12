@@ -4,22 +4,61 @@
 import config
 import torndb
 
-conn = torndb.Connection(
-     host=config.dbhost, database=config.dbname,
-     user=config.dbuser, password=config.dbpass )
+def connection():
+    conn = torndb.Connection(
+        host=config.dbhost, database=config.dbname,
+        user=config.dbuser, password=config.dbpass )
+    return conn
 
 
 # 查询task_id对应的信息
-def select_task_id(task_id):
-
-    return conn.get("select * from task_status where task_id=%s" % task_id)
+def select_from_task(task_id):
+    conn = connection()
+    sql = 'SELECT * FROM task WHERE task_id = %s'
+    return  conn.get(sql, task_id)
 
 
 # 插入task_id信息
-def insert_task_data(task_id, data):
-    sql = "INSERT INTO test (id,name,date) VALUES (%s,%s,%s)"
-    conn.insert(sql, 100, "aaa", '0000-01-01')
-    pass
+def insert_task(data):
+    conn = connection()
+    sql = "INSERT INTO task (task_id,ip,action,content,description) VALUES (%s,%s,%s,%s,%s)"
+    try:
+        conn.insertmany(sql, [data])
+    except:
+        return 'failed'
+    else:
+        task_id = data[0]
+        return  insert_task_status(task_id)
 
 
-# 更新task_id对应的数据
+# 更新task_status表
+def insert_task_status(task_id):
+    conn = connection()
+    sql = "INSERT INTO task_status (task_id) VALUES (%s)"
+    try:
+        conn.insert(sql, task_id)
+    except:
+        return 'failed'
+    else:
+        return 'success'
+
+
+# 查询task_id对应的状态
+def select_from_task_status(task_id):
+    conn = connection()
+    sql = 'SELECT * FROM task_status WHERE task_id = %s'
+    return  conn.get(sql, task_id)
+
+
+# 更新task_status
+def update_task_status(task_id, percent):
+    conn = connection()
+    sql = "update task_status set status = 1,percent = %d where task_id = '%s'" % (percent, task_id)
+    try:
+        conn.execute(sql)
+    except Exception, e:
+        print e
+        return False
+    else:
+        return True
+

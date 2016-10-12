@@ -19,7 +19,7 @@ def get_config(section, key):
 
 # database config
 dbhost = get_config("database", "dbhost")
-dbport = get_config("database", "dbport")
+dbport = int(get_config("database", "dbport"))
 dbuser = get_config("database", "dbuser")
 dbpass = get_config("database", "dbpass")
 dbname = get_config("database", "dbname")
