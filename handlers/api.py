@@ -160,9 +160,9 @@ class DeleteTaskHandler(tornado.web.RequestHandler):
 
 
 handlers = [
-    ('/api/get_task_info/id=(.*$)', GetTaskHandler),
+    ('/api/get_task/id=(.*$)', GetTaskHandler),
     ('/api/create_task', CreatTaskHandler),
-    ('/api/get_status/id=(.*$)', GetTaskStatusHandler),
+    ('/api/get_task_status/id=(.*$)', GetTaskStatusHandler),
     ('/api/update', UpdateHandler),
     ('/api/update_status', UpdateStatusHandle),
     ('/api/delete_task', DeleteTaskHandler),
