@@ -50,8 +50,9 @@ class GetTaskHandler(tornado.web.RequestHandler):
         pass
 
     @tornado.web.asynchronous
-    def get(self, task_id):
-
+    def get(self):
+        task_id = self.get_argument('task_id')
+        print task_id
         task_info = db.get_task(task_id)
         if task_info:
             code = 200
@@ -63,10 +64,8 @@ class GetTaskHandler(tornado.web.RequestHandler):
             message = 'no such a task'
 
         response = dict(code=code, data=data, message=message)
-        time.sleep(5)
         self.write(tornado.escape.json_encode(response))
         self.finish()
-
 
 
 # 读取mysql 获取当前的更新状态
@@ -74,7 +73,8 @@ class GetTaskStatusHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
-    def get(self, task_id):
+    def get(self):
+        task_id = self.get_argument('task_id')
         task_status_info = db.get_task_status(task_id)
         if task_status_info:
             code = 200
@@ -165,9 +165,9 @@ class DeleteTaskHandler(tornado.web.RequestHandler):
 
 
 handlers = [
-    ('/api/get_task/task_id=(.*$)', GetTaskHandler),
+    ('/api/get_task', GetTaskHandler),
     ('/api/create_task', CreatTaskHandler),
-    ('/api/get_task_status/task_id=(.*$)', GetTaskStatusHandler),
+    ('/api/get_task_status', GetTaskStatusHandler),
     ('/api/update', UpdateHandler),
     ('/api/update_status', UpdateStatusHandle),
     ('/api/delete_task', DeleteTaskHandler),
