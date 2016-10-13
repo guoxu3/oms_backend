@@ -59,7 +59,12 @@ def create_task(task_dict):
         print e
         return False
     else:
-        return True
+        task_status_dict = {'task_id': task_dict['task_id'],
+                            'status' : 0,
+                            'percent': 0,
+                            'revert': 0
+                            }
+        create_task_status(task_status_dict)
     finally:
         db.close()
 
@@ -118,5 +123,58 @@ def get_task_status(task_id):
                     percent=info.percent,
                     revert=info.revert
                     )
+    finally:
+        db.close()
+
+
+# 更新task_status
+def update_task_status(update_dict):
+    db.connect()
+    update = (task_status
+              .update(status=update_dict['status'],
+                      percent=update_dict['percent'],
+                      revert=update_dict['revert'])
+                      .where(task_status.task_id == update_dict['task_id']))
+    try:
+        update.execute()
+    except Exception, e:
+        print e
+        return False
+    else:
+        return True
+    finally:
+        db.close()
+
+
+# 删除 task
+def delete_task(task_id):
+    db.connect()
+    delete = (task
+              .delete()
+              .where(task.task_id == task_id))
+    try:
+        delete.execute()
+    except Exception, e:
+        print e
+        return False
+    else:
+        delete_task_status(task_id)
+    finally:
+        db.close()
+
+
+# 删除 task_status
+def delete_task_status(task_id):
+    db.connect()
+    delete = (task_status
+              .delete()
+              .where(task_status.task_id == task_id))
+    try:
+        delete.execute()
+    except Exception, e:
+        print e
+        return False
+    else:
+        return True
     finally:
         db.close()

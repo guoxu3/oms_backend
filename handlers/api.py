@@ -8,7 +8,7 @@ api handlers
 import tornado.web
 import tornado.escape
 from lib.judgement import *
-from lib.db_action import *
+from lib import db
 import uuid
 import json
 
@@ -19,83 +19,89 @@ class CreatTaskHandler(tornado.web.RequestHandler):
         pass
 
     def post(self):
-        headers_dict = dict(self.request.headers)
-        content_type = headers_dict['Content-Type']
+        content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if is_content_type_right(content_type) and is_json(body):
-            #task_id = uuid.uuid1().hex
-            task_id = '0358c3c78f5211e685855cf9389306a2'
-            info = [task_id]
-            body_dict = json.loads(body)
-            for key in ['ip','action','content','description']:
-                info.append(body_dict[key])
-            print info
-            result = insert_task(info)
-            data = {
-                'task_id': task_id,
-                'result':  result
-            }
-            response = {'code': 200,
-                        'data': data,
-                        'message': 'ok'
-                        }
-            print response
+            task_info = json.loads(body)
+            # data['task_id'] = uuid.uuid1().hex
+            task_info['task_id'] = '0358c3c78f5211e685855cf9389306a2'
+
+            if db.create_task(task_info):
+                code = 200
+                data = {'task_id': task_info['task_id']}
+                message = 'create task successful'
+            else:
+                code = 500
+                data = {}
+                message = 'create task failed'
         else:
-            response = {'code': 400,
-                        'data': '',
-                        'message': 'body or content-type format error'
-                        }
+            code = 400
+            data = {}
+            message = 'body or content-type format error'
+
+        response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
 
 # 获取task信息,显示在页面上
-class GetTaskInfoHandler(tornado.web.RequestHandler):
+class GetTaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
     def get(self, task_id):
-        data = select_from_task(task_id)
-        response = {'code': 200,
-                    'data': data,
-                    'message': 'ok'
-                    }
+        task_info = db.get_task(task_id)
+        if task_info:
+            code = 200
+            data = task_info
+            message = 'get task successful'
+        else:
+            code = 500
+            data = {}
+            message = 'no such a task'
+
+        response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
 
 
 # 读取mysql 获取当前的更新状态
-class GetStatusHandler(tornado.web.RequestHandler):
+class GetTaskStatusHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
     def get(self, task_id):
-        data = select_from_task_status(task_id)
-        response = {'code': 200,
-                    'data': data,
-                    'message': 'ok'
-                    }
+        task_status_info = db.get_task_status(task_id)
+        if task_status_info:
+            code = 200
+            data = task_status_info
+            message = 'get task status successful'
+        else:
+            code = 500
+            data = {}
+            message = 'no such a task status'
+
+        response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
 
-# 更新参数传入,调用更新脚本进行更新
+# 调用更新脚本
 class UpdateHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
     def post(self):
-        headers_dict = dict(self.request.headers)
-        content_type = headers_dict['Content-Type']
+        content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if is_content_type_right(content_type) and is_json(body):
-            response = {'code': 200,
-                        'data': data,
-                        'message': 'ok'
-                        }
+            code = 200
+            data = {}
+            message = ''
         else:
-            response = {'code': 400,
-                        'data': '',
-                        'message': 'body or content-type format error'
-                        }
+            code = 400
+            data = {}
+            message = 'body or content-type format error'
+
+        response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
 
@@ -105,32 +111,59 @@ class UpdateStatusHandle(tornado.web.RequestHandler):
         pass
 
     def post(self):
-        headers_dict = dict(self.request.headers)
-        content_type = headers_dict['Content-Type']
+        content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if is_content_type_right(content_type) and is_json(body):
-            body_d = json.loads(body)
-            task_id = body_d['task_id']
-            percent = body_d['percent']
-            print type(percent)
-
-            data = update_task_status(task_id, percent)
-            response = {'code': 200,
-                        'data': data,
-                        'message': 'ok'
-                        }
+            stauts = json.loads(body)
+            if db.update_task_status():
+                code = 200
+                data = {}
+                message = 'update task status successful'
+            else:
+                code = 500
+                data = {}
+                message = 'update task status failed'
         else:
-            response = {'code': 400,
-                        'data': '',
-                        'message': 'body or content-type format error'
-                        }
+            code = 400
+            data = {}
+            message = 'body or content-type format error'
+
+        response = dict(code=code, data=data, message=message)
+        self.write(tornado.escape.json_encode(response))
+
+
+# 删除task
+class DeleteTaskHandler(tornado.web.RequestHandler):
+    def data_received(self, chunk):
+        pass
+
+    def post(self):
+        content_type = dict(self.request.headers)['Content-Type']
+        body = self.request.body
+        if is_content_type_right(content_type) and is_json(body):
+            task_id = json.loads(body)['task_id']
+            if db.delete_task(task_id):
+                code = 200
+                data = {}
+                message = 'delete task successful'
+            else:
+                code = 500
+                data = {}
+                message = 'delete task  failed'
+        else:
+            code = 400
+            data = {}
+            message = 'body or content-type format error'
+
+        response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
 
 handlers = [
-    ('/api/get_task_info/id=(.*$)', GetTaskInfoHandler),
+    ('/api/get_task_info/id=(.*$)', GetTaskHandler),
     ('/api/create_task', CreatTaskHandler),
-    ('/api/get_status/id=(.*$)', GetStatusHandler),
+    ('/api/get_status/id=(.*$)', GetTaskStatusHandler),
     ('/api/update', UpdateHandler),
-    ('/api/update_status', UpdateStatusHandle)
+    ('/api/update_status', UpdateStatusHandle),
+    ('/api/delete_task', DeleteTaskHandler),
 ]
