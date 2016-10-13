@@ -7,7 +7,7 @@ db action used peewee ORM
 
 from peewee import *
 import config
-
+from logger import log
 
 db = MySQLDatabase(
     database=config.dbname,
@@ -56,7 +56,7 @@ def create_task(task_dict):
     try:
         task_data.save()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         task_status_dict = {'task_id': task_dict['task_id'],
@@ -80,7 +80,7 @@ def create_task_status(task_status_dict):
     try:
         task_status_data.save()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         return True
@@ -94,7 +94,7 @@ def get_task(task_id):
     try:
         info = task.select().where(task.task_id == task_id).get()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         return dict(id=info.id,
@@ -114,7 +114,7 @@ def get_task_status(task_id):
     try:
         info = task_status.select().where(task_status.task_id == task_id).get()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         return dict(id=info.id,
@@ -138,7 +138,7 @@ def update_task_status(update_dict):
     try:
         update.execute()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         return True
@@ -155,7 +155,7 @@ def delete_task(task_id):
     try:
         delete.execute()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         delete_task_status(task_id)
@@ -172,7 +172,7 @@ def delete_task_status(task_id):
     try:
         delete.execute()
     except Exception, e:
-        print e
+        log.exception('exception')
         return False
     else:
         return True

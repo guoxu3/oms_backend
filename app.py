@@ -7,6 +7,7 @@ import tornado.options
 import tornado.web
 
 from lib import config
+from lib.logger import log
 
 
 class Application(tornado.web.Application):
@@ -22,6 +23,8 @@ class Application(tornado.web.Application):
 def main():
     address = config.address
     port = config.port
+
+    log.info('run server on %s:%s' % (address, port))
 
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())

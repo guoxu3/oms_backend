@@ -1,3 +1,4 @@
 conf/oms_test.conf
 test.txt
 *.pyc
+log/*
