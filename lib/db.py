@@ -26,7 +26,7 @@ class BaseModel(Model):
 
 
 # 定义task表
-class task(BaseModel):
+class Task(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
     ip = CharField()
@@ -34,20 +34,40 @@ class task(BaseModel):
     content = CharField()
     description = CharField()
 
+    class Meta:
+        table = 'task'
+
 
 # 定义task_status表
-class task_status(BaseModel):
+class TaskStatus(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
     status = IntegerField()
     percent = IntegerField()
     revert = IntegerField()
 
+    class Mate:
+        table = 'task_status'
+
+
+# 定义machine_info表
+class MachineInfo(BaseModel):
+    id = IntegerField()
+    machine_name = CharField(unique=True)
+    inside_ip = CharField()
+    outside_ip = CharField()
+    usage = CharField()
+    is_initialized = IntegerField()
+    location = CharField()
+
+    class Mate:
+        table = 'machine_info'
+
 
 # 创建task
 def create_task(task_dict):
     db.connect()
-    task_data = task(task_id=task_dict['task_id'],
+    task_data = Task(task_id=task_dict['task_id'],
                      ip=task_dict['ip'],
                      action=task_dict['action'],
                      content=task_dict['content'],
@@ -72,7 +92,7 @@ def create_task(task_dict):
 # 创建task_status
 def create_task_status(task_status_dict):
     db.connect()
-    task_status_data = task_status(task_id=task_status_dict['task_id'],
+    task_status_data = TaskStatus(task_id=task_status_dict['task_id'],
                                   status=task_status_dict['status'],
                                   percent=task_status_dict['percent'],
                                   revert=task_status_dict['revert']
@@ -92,7 +112,7 @@ def create_task_status(task_status_dict):
 def get_task(task_id):
     db.connect()
     try:
-        info = task.select().where(task.task_id == task_id).get()
+        info = Task.select().where(Task.task_id == task_id).get()
     except Exception, e:
         log.exception('exception')
         return False
@@ -112,7 +132,7 @@ def get_task(task_id):
 def get_task_status(task_id):
     db.connect()
     try:
-        info = task_status.select().where(task_status.task_id == task_id).get()
+        info = TaskStatus.select().where(TaskStatus.task_id == task_id).get()
     except Exception, e:
         log.exception('exception')
         return False
@@ -130,11 +150,11 @@ def get_task_status(task_id):
 # 更新task_status
 def update_task_status(update_dict):
     db.connect()
-    update = (task_status
+    update = (TaskStatus
               .update(status=update_dict['status'],
                       percent=update_dict['percent'],
                       revert=update_dict['revert'])
-                      .where(task_status.task_id == update_dict['task_id']))
+                      .where(TaskStatus.task_id == update_dict['task_id']))
     try:
         update.execute()
     except Exception, e:
@@ -149,9 +169,9 @@ def update_task_status(update_dict):
 # 删除 task
 def delete_task(task_id):
     db.connect()
-    delete = (task
+    delete = (Task
               .delete()
-              .where(task.task_id == task_id))
+              .where(Task.task_id == task_id))
     try:
         delete.execute()
     except Exception, e:
@@ -166,9 +186,9 @@ def delete_task(task_id):
 # 删除 task_status
 def delete_task_status(task_id):
     db.connect()
-    delete = (task_status
+    delete = (TaskStatus
               .delete()
-              .where(task_status.task_id == task_id))
+              .where(TaskStatus.task_id == task_id))
     try:
         delete.execute()
     except Exception, e:

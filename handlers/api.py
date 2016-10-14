@@ -52,7 +52,6 @@ class GetTaskHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         task_id = self.get_argument('task_id')
-        print task_id
         task_info = db.get_task(task_id)
         if task_info:
             code = 200
