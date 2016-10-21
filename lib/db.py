@@ -35,7 +35,7 @@ class Task(BaseModel):
     description = CharField()
 
     class Meta:
-        table = 'task'
+        db_table = 'task'
 
 
 # 定义task_status表
@@ -46,8 +46,8 @@ class TaskStatus(BaseModel):
     percent = IntegerField()
     revert = IntegerField()
 
-    class Mate:
-        table = 'task_status'
+    class Meta:
+       db_table = 'task_status'
 
 
 # 定义machine_info表
@@ -60,21 +60,18 @@ class MachineInfo(BaseModel):
     is_initialized = IntegerField()
     location = CharField()
 
-    class Mate:
-        table = 'machine_info'
+    class Meta:
+        db_table = 'machine_info'
 
 
-# 创建task
-def create_task(task_dict):
+# 插入数据到task表
+def insert_task(task_dict):
     db.connect()
-    task_data = Task(task_id=task_dict['task_id'],
-                     ip=task_dict['ip'],
-                     action=task_dict['action'],
-                     content=task_dict['content'],
-                     description=task_dict['description']
-                     )
+    task = Task()
+    for key in task_dict:
+        setattr(task, key, task_dict[key])
     try:
-        task_data.save()
+        task.save()
     except Exception, e:
         log.exception('exception')
         return False
@@ -84,21 +81,19 @@ def create_task(task_dict):
                             'percent': 0,
                             'revert': 0
                             }
-        create_task_status(task_status_dict)
+        insert_task_status(task_status_dict)
     finally:
         db.close()
 
 
-# 创建task_status
-def create_task_status(task_status_dict):
+# 插入数据到task_status表
+def insert_task_status(task_status_dict):
     db.connect()
-    task_status_data = TaskStatus(task_id=task_status_dict['task_id'],
-                                  status=task_status_dict['status'],
-                                  percent=task_status_dict['percent'],
-                                  revert=task_status_dict['revert']
-                                 )
+    task_status = TaskStatus()
+    for key in task_status_dict:
+        setattr(task_status, key, task_status_dict[key])
     try:
-        task_status_data.save()
+        task_status.save()
     except Exception, e:
         log.exception('exception')
         return False
@@ -108,22 +103,18 @@ def create_task_status(task_status_dict):
         db.close()
 
 
+
 # 获取task信息
 def get_task(task_id):
     db.connect()
     try:
         info = Task.select().where(Task.task_id == task_id).get()
+        #print info.__dict__
     except Exception, e:
         log.exception('exception')
         return False
     else:
-        return dict(id=info.id,
-                    task_id=info.task_id,
-                    ip=info.ip,
-                    action=info.action,
-                    content=info.content,
-                    description=info.description
-                    )
+        return info.__dict__['_data']
     finally:
         db.close()
 
@@ -137,12 +128,7 @@ def get_task_status(task_id):
         log.exception('exception')
         return False
     else:
-        return dict(id=info.id,
-                    task_id=info.task_id,
-                    status=info.status,
-                    percent=info.percent,
-                    revert=info.revert
-                    )
+        return info.__dict__['_data']
     finally:
         db.close()
 
@@ -150,13 +136,12 @@ def get_task_status(task_id):
 # 更新task_status
 def update_task_status(update_dict):
     db.connect()
-    update = (TaskStatus
-              .update(status=update_dict['status'],
-                      percent=update_dict['percent'],
-                      revert=update_dict['revert'])
-                      .where(TaskStatus.task_id == update_dict['task_id']))
+    task_status = TaskStatus.get(task_id=update_dict['task_id'])
+    for key in update_dict:
+        if key != 'task_id':
+            setattr(task_status, key, update_dict[key])
     try:
-        update.execute()
+        task_status.save()
     except Exception, e:
         log.exception('exception')
         return False
@@ -198,3 +183,58 @@ def delete_task_status(task_id):
         return True
     finally:
         db.close()
+
+# 插入数据到machine_info表
+def insert_machine_info(machine_info_dict):
+    db.connect()
+    machine_info = MachineInfo()
+    for key in machine_info_dict:
+        setattr(machine_info, key, machine_info_dict[key])
+    try:
+        machine_info.save()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    else:
+        return True
+    finally:
+        db.close()
+
+
+# 获取machine_info信息
+def get_machine_info(machine_name):
+    db.connect()
+    try:
+        info = MachineInfo.select().where(MachineInfo.machine_name == machine_name).get()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    else:
+        return info.__dict__['_data']
+    finally:
+        db.close()
+
+
+# 更新machine_info数据
+def update_machine_info(machine_info_dict):
+    db.connect()
+    machine_info = TaskStatus.get(machine_name=machine_info_dict['machine_name'])
+    for key in machine_info_dict:
+        if key != 'machine_name':
+            setattr(machine_info, key, machine_info_dict[key])
+    try:
+        machine_info.save()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    else:
+        return True
+    finally:
+        db.close()
+
+
+# 删除machine_info数据
+def delete_machine_info():
+    # todo
+    pass
+

@@ -27,7 +27,7 @@ class CreatTaskHandler(tornado.web.RequestHandler):
             # data['task_id'] = uuid.uuid1().hex
             task_info['task_id'] = '0358c3c78f5211e685855cf9389306a2'
 
-            if db.create_task(task_info):
+            if db.insert_task(task_info):
                 code = 200
                 data = {'task_id': task_info['task_id']}
                 message = 'create task successful'
