@@ -184,6 +184,7 @@ def delete_task_status(task_id):
     finally:
         db.close()
 
+
 # 插入数据到machine_info表
 def insert_machine_info(machine_info_dict):
     db.connect()
@@ -234,7 +235,16 @@ def update_machine_info(machine_info_dict):
 
 
 # 删除machine_info数据
-def delete_machine_info():
-    # todo
-    pass
+def delete_machine_info(machine_name):
+    db.connect()
+    delete = (MachineInfo
+              .delete()
+              .where(MachineInfo.machine_name == machine_name))
+    try:
+        delete.execute()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    finally:
+        db.close()
 
