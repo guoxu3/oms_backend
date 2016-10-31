@@ -44,7 +44,7 @@ class AddTaskHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(response))
 
 
-# 获取task信息,显示在页面上
+# 获取task信息
 class GetTaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -94,7 +94,7 @@ class DeleteTaskHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(response))
 
 
-# 读取mysql 获取当前的更新状态
+# 获取task status
 class GetTaskStatusHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -115,7 +115,7 @@ class GetTaskStatusHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(response))
 
 
-# 供脚本中调用的接口,用来更新当前的更新进度
+# 更新task status
 class UpdateTaskStatusHandle(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
