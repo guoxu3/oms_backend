@@ -68,12 +68,22 @@ class MachineInfo(BaseModel):
 class User(BaseModel):
     id = IntegerField()
     mail = CharField(unique=True)
-    name = CharField()
+    name = CharField(unique=True)
     passwd = CharField()
     department = CharField()
+    permissions = CharField()
 
     class Meta:
         db_table = 'user'
+
+
+# 定义权限表Permissions
+class Permissions(BaseModel):
+    id = IntegerField()
+    permission = CharField(unique=True)
+
+    class Meta:
+        db_table = 'permissions'
 
 # 插入数据到task表
 def insert_task(task_dict):
@@ -260,11 +270,11 @@ def delete_machine_info(machine_name):
 
 
 # 插入数据到user表中
-def insert_user(user_info):
+def insert_user(user_dict):
     db.connect()
     user = User()
-    for key in user_info:
-        setattr(user, key, user_info[key])
+    for key in user_dict:
+        setattr(user, key, user_dict[key])
     try:
         user.save()
     except Exception, e:
@@ -277,15 +287,35 @@ def insert_user(user_info):
 
 
 # 更新用户信息
-def update_user():
-    pass
-    # todo
+def update_user(user_dict):
+    db.connect()
+    user = User.get(name=user_dict['name'])
+    for key in user_dict:
+        if key != 'name':
+            setattr(user, key, user_dict[key])
+    try:
+        user.save()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    else:
+        return True
+    finally:
+        db.close()
 
 
 # 获取用户信息
-def get_user(mail):
-    pass
-    # todo
+def get_user(name):
+    db.connect()
+    try:
+        info = User.select().where(User.name == name).get()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    else:
+        return info.__dict__['_data']
+    finally:
+        db.close()
 
 
 # 删除用户
