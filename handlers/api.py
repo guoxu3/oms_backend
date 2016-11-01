@@ -49,7 +49,6 @@ class GetTaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
-    @tornado.web.asynchronous
     def get(self):
         task_id = self.get_argument('task_id')
         task_info = db.get_task(task_id)
@@ -64,7 +63,6 @@ class GetTaskHandler(tornado.web.RequestHandler):
 
         response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
-        self.finish()
 
 
 # 删除task

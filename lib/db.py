@@ -47,7 +47,7 @@ class TaskStatus(BaseModel):
     revert = IntegerField()
 
     class Meta:
-       db_table = 'task_status'
+        db_table = 'task_status'
 
 
 # 定义machine_info表
@@ -64,6 +64,17 @@ class MachineInfo(BaseModel):
         db_table = 'machine_info'
 
 
+# 定义user表
+class User(BaseModel):
+    id = IntegerField()
+    mail = CharField(unique=True)
+    name = CharField()
+    passwd = CharField()
+    department = CharField()
+
+    class Meta:
+        db_table = 'user'
+
 # 插入数据到task表
 def insert_task(task_dict):
     db.connect()
@@ -72,7 +83,7 @@ def insert_task(task_dict):
         setattr(task, key, task_dict[key])
     try:
         task.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -94,14 +105,13 @@ def insert_task_status(task_status_dict):
         setattr(task_status, key, task_status_dict[key])
     try:
         task_status.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
         return True
     finally:
         db.close()
-
 
 
 # 获取task信息
@@ -248,3 +258,37 @@ def delete_machine_info(machine_name):
     finally:
         db.close()
 
+
+# 插入数据到user表中
+def insert_user(user_info):
+    db.connect()
+    user = User()
+    for key in user_info:
+        setattr(user, key, user_info[key])
+    try:
+        user.save()
+    except Exception, e:
+        log.exception('exception')
+        return False
+    else:
+        return True
+    finally:
+        db.close()
+
+
+# 更新用户信息
+def update_user():
+    pass
+    # todo
+
+
+# 获取用户信息
+def get_user(mail):
+    pass
+    # todo
+
+
+# 删除用户
+def delete_user():
+    pass
+    # todo
