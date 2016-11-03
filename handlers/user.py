@@ -10,71 +10,17 @@ import json
 import time
 
 
-# 新增用户
-class AddUserHnadler(tornado.web.RequestHandler):
-    def data_received(self, chunk):
-        pass
-
-    def post(self):
-        content_type = dict(self.request.headers)['Content-Type']
-        body = self.request.body
-        if is_content_type_right(content_type) and is_json(body):
-            user_info = json.loads(body)
-            if db.insert_user(user_info):
-                code = 200
-                data = {}
-                message = 'add user successful'
-            else:
-                code = 500
-                data = {}
-                message = 'add user failed'
-        else:
-            code = 400
-            data = {}
-            message = 'body or content-type format error'
-
-        response = dict(code=code, data=data, message=message)
-        self.write(tornado.escape.json_encode(response))
-
-
-# 更新用户信息
-class UpdateUserHandler(tornado.web.RequestHandler):
-    def data_received(self, chunk):
-        pass
-
-    def post(self):
-        content_type = dict(self.request.headers)['Content-Type']
-        body = self.request.body
-        if is_content_type_right(content_type) and is_json(body):
-            user_info = json.loads(body)
-            if db.update_user(user_info):
-                code = 200
-                data = {}
-                message = 'update user successful'
-            else:
-                code = 500
-                data = {}
-                message = 'update user failed'
-        else:
-            code = 400
-            data = {}
-            message = 'body or content-type format error'
-
-        response = dict(code=code, data=data, message=message)
-        self.write(tornado.escape.json_encode(response))
-
-
-# 获取用户信息
-class GetUserHandler(tornado.web.RequestHandler):
+# user handler
+class UserHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
     def get(self):
         mail = self.get_argument('mail')
-        task_info = db.get_user(mail)
-        if task_info:
+        user_info = db.get_user(mail)
+        if user_info:
             code = 200
-            data = task_info
+            data = user_info
             message = 'get user successful'
         else:
             code = 500
@@ -84,37 +30,60 @@ class GetUserHandler(tornado.web.RequestHandler):
         response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
-
-# 删除用户
-class DeleteUserHandler(tornado.web.RequestHandler):
-    def data_received(self, chunk):
-        pass
-
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
-        if is_content_type_right(content_type) and is_json(body):
-            mail = json.loads(body)['mail']
-            if db.delete_task(mail):
-                code = 200
-                data = {}
-                message = 'delete user successful'
-            else:
-                code = 500
-                data = {}
-                message = 'delete user  failed'
-        else:
+        if not is_content_type_right(content_type) or not is_json(body):
             code = 400
             data = {}
             message = 'body or content-type format error'
+        else:
+            body = json.loads(body)
+            action, data = body['action'], body['data']
+            if action == 'add':
+                user_data = data
+                if db.insert_user(user_data):
+                    code = 200
+                    data = {}
+                    message = 'add user successful'
+                else:
+                    code = 500
+                    data = {}
+                    message = 'add user failed'
+            elif action == 'update':
+                user_data = data
+                if db.update_user(user_data):
+                    code = 200
+                    data = {}
+                    message = 'add user successful'
+                else:
+                    code = 500
+                    data = {}
+                    message = 'add user failed'
+            else:
+                code = 400
+                data = {}
+                message = 'unsupported user action'
+
+        response = dict(code=code, data=data, message=message)
+        self.write(tornado.escape.json_encode(response))
+
+    def delete(self):
+        user_id = self.get_argument('user_id')
+
+        if db.delete_user:
+            code = 200
+            data = {}
+            message = 'delete user successful'
+        else:
+            code = 500
+            data = {}
+            message = 'delete user failed'
 
         response = dict(code=code, data=data, message=message)
         self.write(tornado.escape.json_encode(response))
 
 
 handlers = [
-    ('/api/add_user', AddUserHnadler),
-    ('/api/update_user', UpdateUserHandler),
-    ('/api/get_user', GetUserHandler),
-    ('/api/delete_user', DeleteUserHandler),
+    ('/api/user', UserHandler),
 ]
