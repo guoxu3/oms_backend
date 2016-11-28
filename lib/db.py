@@ -30,6 +30,7 @@ class Task(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
     ip = CharField()
+    create_time = IntegerField()
     action = CharField()
     content = CharField()
     description = CharField()
@@ -43,6 +44,8 @@ class TaskStatus(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
     status = IntegerField()
+    start_time = IntegerField()
+    revert_time = IntegerField()
     percent = IntegerField()
     revert = IntegerField()
 

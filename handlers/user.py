@@ -85,5 +85,5 @@ class UserHandler(tornado.web.RequestHandler):
 
 
 handlers = [
-    ('/api/user', UserHandler),
+    ('/admin/user', UserHandler),
 ]
