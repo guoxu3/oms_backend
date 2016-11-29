@@ -25,14 +25,12 @@ class TaskHandler(tornado.web.RequestHandler):
         task_info = db.get_task(task_id)
         if task_info:
             code = 200
-            data = task_info
-            message = 'get task successful'
+            info = task_info
         else:
             code = 500
-            data = {}
-            message = 'no such a task'
+            info = 'no such a task'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
     # post 新增或者更新操作，接收json,操作类型由action定义
@@ -41,8 +39,7 @@ class TaskHandler(tornado.web.RequestHandler):
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):
             code = 400
-            data = {}
-            message = 'body or content-type format error'
+            info = 'body or content-type format error'
         else:
             body = json.loads(body)
             action, data = body['action'], body['data']
@@ -52,18 +49,15 @@ class TaskHandler(tornado.web.RequestHandler):
                 task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
                 if db.insert_task(task_data):
                     code = 200
-                    data = {'task_id': task_data['task_id']}
-                    message = 'add task successful'
+                    info = {'task_id': task_data['task_id']}
                 else:
                     code = 500
-                    data = {}
-                    message = 'add task failed'
+                    info = 'add task failed'
             else:
                 code = 400
-                data = {}
-                message = 'unsupported task action'
+                info = 'unsupported task action'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
     # delete 删除task信息
@@ -71,14 +65,12 @@ class TaskHandler(tornado.web.RequestHandler):
         task_id = self.get_argument('task_id')
         if db.delete_task(task_id):
             code = 200
-            data = {}
-            message = 'delete task successful'
+            info = 'delete task successful'
         else:
             code = 500
-            data = {}
-            message = 'delete task  failed'
+            info = 'delete task  failed'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
 
@@ -93,14 +85,12 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         task_status_info = db.get_task_status(task_id)
         if task_status_info:
             code = 200
-            data = task_status_info
-            message = 'get task status successful'
+            info = task_status_info
         else:
             code = 500
-            data = {}
-            message = 'no such a task status'
+            info = 'no such a task status'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
     # post 新增或更新等操作，接收json,操作类型由action定义
@@ -109,8 +99,7 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):
             code = 400
-            data = {}
-            message = 'body or content-type format error'
+            info = 'body or content-type format error'
         else:
             body = json.loads(body)
             action, data = body['action'], body['data']
@@ -118,18 +107,15 @@ class TaskStatusHandler(tornado.web.RequestHandler):
                 task_status_data = data
                 if db.update_task_status(task_status_data):
                     code = 200
-                    data = {}
-                    message = 'update task status successful'
+                    info = 'update task status successful'
                 else:
                     code = 500
-                    data = {}
-                    message = 'update task status failed'
+                    info = 'update task status failed'
             else:
                 code = 400
-                data = {}
-                message = 'unsupported task status action'
+                info = 'unsupported task status action'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
 
@@ -147,8 +133,7 @@ class MachineInfoHandler(tornado.web.RequestHandler):
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):
             code = 400
-            data = {}
-            message = 'body or content-type format error'
+            info = 'body or content-type format error'
         else:
             body = json.loads(body)
             action, data = body['action'], body['data']
@@ -156,42 +141,35 @@ class MachineInfoHandler(tornado.web.RequestHandler):
                 machine_info_data = data
                 if db.insert_machine_info(machine_info_data):
                     code = 200
-                    data = {}
-                    message = 'add machine info successful'
+                    info = 'add machine info successful'
                 else:
                     code = 500
-                    data = {}
-                    message = 'add miachine info failed'
+                    info = 'add miachine info failed'
             elif action == 'update':
                 machine_info_data = data
                 if db.update_machine_info(machine_info_data):
                     code = 200
-                    data = {}
-                    message = 'update task status successful'
+                    info = 'update task status successful'
                 else:
                     code = 500
-                    data = {}
-                    message = 'update task status failed'
+                    info = 'update task status failed'
             else:
                 code = 400
-                data = {}
-                message = 'unsupported task status action'
+                info = 'unsupported task status action'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
     def delete(self):
         machine_name = self.get_argument('machine_name')
         if db.delete_task(machine_name):
             code = 200
-            data = {}
-            message = 'delete task successful'
+            info = 'delete task successful'
         else:
             code = 500
-            data = {}
-            message = 'delete task  failed'
+            info = 'delete task  failed'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
 
@@ -206,14 +184,12 @@ class UpdateHandler(tornado.web.RequestHandler):
         if is_content_type_right(content_type) and is_json(body):
             # todo
             code = 200
-            data = {}
-            message = ''
+            info = ''
         else:
             code = 400
-            data = {}
-            message = 'body or content-type format error'
+            info = 'body or content-type format error'
 
-        response = dict(code=code, data=data, message=message)
+        response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))
 
 
