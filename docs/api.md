@@ -55,7 +55,7 @@ POST /api/task
 argument:
 {  'action': 'add'
 	'data': {
-    			'ip' = '192.168.1.1'
+    			'ip' : '192.168.1.1'
        		'action': 'update',
        		'content': '/path/to/file',
        		'description': '更新xxx功能'			 }
@@ -139,9 +139,9 @@ POST /api/task_status
 argument:
 {  'action': 'update'
 	'data': {
-    			'task_id' = '0358c3c78f5211e685855cf9389306a2'
-    			'start_time' = 1480471675,
-    			'revert_time' = 1480471675,
+    			'task_id' : '0358c3c78f5211e685855cf9389306a2'
+    			'start_time' : 1480471675,
+    			'revert_time' : 1480471675,
        		'percent': 10,
        		'status': 1,
        		'revert': 1			 
@@ -166,7 +166,7 @@ return:
 ```
 
 ##服务器信息接口( /api/machine_info )
-#### 获取task信息
+### 获取task信息
 ```
 GET /api/machine_info
 
@@ -190,9 +190,9 @@ POST /api/machine_info
 argument:
 {  'action': 'add'
 	'data': {
-    			'machine_name' = 'web01'
-    			'inside_ip' = '10.2.2.2',
-    			'outside_ip' = '111.111.11.1',
+    			'machine_name' : 'web01'
+    			'inside_ip' : '10.2.2.2',
+    			'outside_ip' : '111.111.11.1',
        		'userage': 'web 服务器1',
        		'is_initialized': 0,
        		'location': '阿里云'		 
@@ -223,9 +223,9 @@ POST /api/machine_info
 argument:
 {  'action': 'update'
 	'data': {
-    			'machine_name' = 'web01'
-    			'inside_ip' = '10.2.2.2',
-    			'outside_ip' = '111.111.11.1',
+    			'machine_name' : 'web01'
+    			'inside_ip' : '10.2.2.2',
+    			'outside_ip' : '111.111.11.1',
        		'userage': 'web 服务器1',
        		'is_initialized': 0,
        		'location': '阿里云'		 
@@ -269,4 +269,133 @@ return:
 ## 执行更新接口( /api/update )
 ```
 	待开发
+```
+
+## 用户信息接口( /admin/user )
+### 获取user信息
+```
+GET /admin/user
+
+argument:
+   num = 2
+   name = xxx
+	
+argument explain:
+     
+
+TIPS:
+     
+
+return:
+{
+	'code': 200,
+	'info': {
+				'id': 11,
+				'mail': 'user@example.com'
+				'name': 'xxx',
+				'department': 'dev',
+				'permissions': '1,2,3'
+			  }
+}
+ 
+```
+
+### 新增user
+```
+POST /admin/user
+
+argument:
+{  'action': 'add'
+	'data': {
+    			'mail' : 'user@example.com'
+    			'name' : 'xxx',
+    			'passwd' : '123456',
+       		'department': 'dev',
+       		'permissions': '1,2,3'		 
+       	  }
+}
+argument explain:
+    mail (string, 必须) 用户邮箱
+    name (string, 必须) 用户名
+    passwd (string, 必须) 密码
+    department (string, 必须) 所属部门 
+    permissions (string, 必须) 权限组
+    
+TIPS:
+    
+
+return:
+{
+    'code': 200,
+    'info': 'add user ok'
+}
+```
+
+### 更新user
+```
+POST /admin/user
+
+argument:
+{  'action': 'update'
+	'data': {
+    			'mail' : 'user@example.com'
+    			'old_passwd' : '123456'
+    			'new_passwd' : '654321',
+       		'department': 'dev',
+       		'permissions': '1,2,3'		 
+       	  }
+}
+argument explain:
+    mail (string, 非必须) 用户邮箱
+    old_passwd (string, 非必须) 旧密码
+    new_passwd (string, 非必须) 新密码
+    department (string, 非必须) 所属部门 
+    permissions (string, 非必须) 权限组
+    
+TIPS:
+    
+
+return:
+{
+    'code': 200,
+    'info': 'update user ok'
+}
+```
+
+### 删除user
+```
+DELETE /admin/user
+
+argument:
+    name = 'xxxx'
+
+argument explain:
+       name (string, 必须) 需要删除的用户名
+
+return:
+{
+    'code': 200,
+    'info': 'delete user ok'
+}
+```
+
+## 登陆接口( /admin/user_login )
+### 登陆认证
+```
+POST /admin/user_login
+argument:
+ 	{
+ 		'username': 'xxxx',
+ 		'password': 'xxxx'
+ 	}
+
+argument explain:
+       username (string, 必须) 用户名
+       password (string, 必须) 密码
+
+return:
+{
+    'code': 200,
+    'info': {'access_token': 'xxxxxxx'}
+}
 ```
