@@ -11,7 +11,7 @@ from lib.judgement import *
 from lib import db
 import uuid
 import json
-import time
+import time, datetime
 
 
 # task handler 处理task相关操作
@@ -45,8 +45,9 @@ class TaskHandler(tornado.web.RequestHandler):
             action, data = body['action'], body['data']
             if action == 'add':
                 task_data = data
-                # task_data['task_id'] = uuid.uuid1().hex
-                task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
+                task_data['task_id'] = uuid.uuid1().hex
+                task_data['create_time'] = time.mktime(datetime.datetime.now().timetuple())
+                # task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
                 if db.insert_task(task_data):
                     code = 200
                     info = {'task_id': task_data['task_id']}
@@ -68,7 +69,7 @@ class TaskHandler(tornado.web.RequestHandler):
             info = 'delete task successful'
         else:
             code = 500
-            info = 'delete task  failed'
+            info = 'delete task failed'
 
         response = dict(code=code, info=info)
         self.write(tornado.escape.json_encode(response))

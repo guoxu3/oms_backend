@@ -73,6 +73,7 @@ class User(BaseModel):
     mail = CharField(unique=True)
     name = CharField(unique=True)
     passwd = CharField()
+    salt = CharField()
     department = CharField()
     permissions = CharField()
 
@@ -87,6 +88,7 @@ class Permissions(BaseModel):
 
     class Meta:
         db_table = 'permissions'
+
 
 # 插入数据到task表
 def insert_task(task_dict):
@@ -106,8 +108,6 @@ def insert_task(task_dict):
                             'revert': 0
                             }
         insert_task_status(task_status_dict)
-    finally:
-        db.close()
 
 
 # 插入数据到task_status表
@@ -187,8 +187,6 @@ def delete_task(task_id):
         return False
     else:
         delete_task_status(task_id)
-    finally:
-        db.close()
 
 
 # 删除 task_status

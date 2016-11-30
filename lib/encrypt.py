@@ -7,6 +7,8 @@
 
 from random import Random
 from hashlib import md5
+import uuid
+import base64
 
 
 def create_salt(salt_length=4):
@@ -34,4 +36,10 @@ def md5_salt(encrypt_str, salt=create_salt()):
     @return: md5加密后的字符串
     """
 
-    return md5(encrypt_str + salt).hexdigest()
+    return salt,md5(encrypt_str + salt).hexdigest()
+
+
+# 生成cookie值
+def make_cookie_secret():
+    return base64.b64encode(
+        uuid.uuid4().bytes + uuid.uuid4().bytes)

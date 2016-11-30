@@ -28,11 +28,12 @@ class ObjectDict(dict):
 
 # 判断是否为整数 15
 def is_number(value):
-    #if False == type(value) is int:
-        #return str(value).isdigtal()
-     #   return False
-    #return True
+    # if False == type(value) is int:
+    # return str(value).isdigtal()
+    # return False
+    # return True
     return str(value).isdigit()
+
 
 # 判断是否为字符串 string
 def is_string(value):
@@ -68,7 +69,7 @@ def is_boolean(value):
 def is_currency(value):
     # 数字是否为整数或浮点数
     if is_float(value) and is_number(value) and value > 0:
-    # 数字不能为负数
+        # 数字不能为负数
         # return is_number(currencyObj)
         return False
     return True
@@ -161,14 +162,16 @@ def is_json(value):
         return False
     return True
 
+
 # 判断content-type 是不是application/json;charset=utf8
 def is_content_type_right(value):
-    value = str.lower(value.replace(" ",""))
+    value = str.lower(value.replace(" ", ""))
     type = value.split(";")[0]
-    charset = value.split(";")[1].split("=")[1].replace("-","")
+    charset = value.split(";")[1].split("=")[1].replace("-", "")
     if type == "application/json" and charset == "utf8":
         return True
     return False
+
 
 def regex(pattern, data, flags=0):
     if isinstance(pattern, basestring):
@@ -228,11 +231,6 @@ def get_api_data(url, project, password, value):
         return response
     except Exception, e:
         return False
-
-
-def make_cookie_secret():
-    return base64.b64encode(
-        uuid.uuid4().bytes + uuid.uuid4().bytes)
 
 
 byte_map = ('B', 'KB', 'MB', 'GB', 'TB')

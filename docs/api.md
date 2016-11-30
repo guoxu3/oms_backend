@@ -385,7 +385,7 @@ return:
 POST /admin/user_login
 argument:
  	{
- 		'username': 'xxxx',
+ 		'name': 'xxxx',
  		'password': 'xxxx'
  	}
 
