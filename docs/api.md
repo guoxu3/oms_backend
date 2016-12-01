@@ -29,7 +29,7 @@ argument explain:
     task_id (string, 非必须) 查询单条task_id 对应的消息
 
 TIPS:
-    默认按照id排序
+    有 task_id 时不读取start和count值
 
 return:
 {
@@ -53,13 +53,15 @@ return:
 POST /api/task
 
 argument:
-{  'action': 'add'
+{  
+    'action': 'add'
 	'data': {
     			'ip' : '192.168.1.1'
        		'action': 'update',
        		'content': '/path/to/file',
        		'description': '更新xxx功能'			 }
 }
+
 argument explain:
     ip (string, 必须) 执行命令的机器IP
     action (string, 必须) 执行的指令
@@ -113,7 +115,7 @@ argument explain:
     task_id (string, 非必须) 查询单条task_id 对应的消息
 
 TIPS:
-    默认按照id排序
+    有 task_id 时不读取start和count值
 
 return:
 {
@@ -137,16 +139,18 @@ return:
 POST /api/task_status
 
 argument:
-{  'action': 'update'
+{  
+    'action': 'update'
 	'data': {
     			'task_id' : '0358c3c78f5211e685855cf9389306a2'
     			'start_time' : 1480471675,
     			'revert_time' : 1480471675,
-       		'percent': 10,
-       		'status': 1,
-       		'revert': 1			 
+       		    'percent': 10,
+       		    'status': 1,
+       		    'revert': 1			 
        	  }
 }
+
 argument explain:
     task_id (string, 必须) 需要修改的task id
     start_time (int, 非必须) 执行的任务开始时间
@@ -179,8 +183,9 @@ argument explain:
     start (int, 非必须) 开始查询的id
     count (int, 非必须) 返回的条数
     machine_name (string, 非必须) 机器名称
+    
 TIPS:
-     
+    有 machine_name 时不读取start和count值
 
 return:
  
@@ -191,16 +196,18 @@ return:
 POST /api/machine_info
 
 argument:
-{  'action': 'add'
+{  
+    'action': 'add'
 	'data': {
     			'machine_name' : 'web01'
     			'inside_ip' : '10.2.2.2',
     			'outside_ip' : '111.111.11.1',
-       		'userage': 'web 服务器1',
-       		'is_initialized': 0,
-       		'location': '阿里云'		 
-       	  }
+       		    'userage': 'web 服务器1',
+       		    'is_initialized': 0,
+       		    'location': '阿里云'		 
+       	    }
 }
+
 argument explain:
     machine_name (string, 必须) 服务器名字，标识
     inside_ip (string, 必须) 服务器内网ip
@@ -224,16 +231,18 @@ return:
 POST /api/machine_info
 
 argument:
-{  'action': 'update'
+{  
+    'action': 'update'
 	'data': {
     			'machine_name' : 'web01'
     			'inside_ip' : '10.2.2.2',
     			'outside_ip' : '111.111.11.1',
-       		'userage': 'web 服务器1',
-       		'is_initialized': 0,
-       		'location': '阿里云'		 
-       	  }
+       		    'userage': 'web 服务器1',
+       		    'is_initialized': 0,
+       		    'location': '阿里云'		 
+       	    }
 }
+
 argument explain:
     machine_name (string, 必须) 服务器名字，标识
     inside_ip (string, 必须) 服务器内网ip
@@ -260,7 +269,7 @@ argument:
     machine_name = 'web01'
 
 argument explain:
-       machine_name (string, 必须) 需要删除的机器名
+    machine_name (string, 必须) 需要删除的机器名
 
 return:
 {
@@ -290,7 +299,7 @@ argument explain:
    username (string, 非必须) 用户名
 
 TIPS:
-     
+   有 username 时不读取start和count值
 
 return:
 {
@@ -311,15 +320,17 @@ return:
 POST /admin/user
 
 argument:
-{  'action': 'add'
+{  
+    'action': 'add'
 	'data': {
     			'mail' : 'user@example.com'
     			'name' : 'xxx',
     			'passwd' : '123456',
-       		'department': 'dev',
-       		'permissions': '1,2,3'		 
+       		    'department': 'dev',
+       		    'permissions': '1,2,3'		 
        	  }
 }
+
 argument explain:
     mail (string, 必须) 用户邮箱
     name (string, 必须) 用户名
@@ -342,16 +353,20 @@ return:
 POST /admin/user
 
 argument:
-{  'action': 'update'
+{  
+    'action': 'update'
 	'data': {
+	            'username': 'xxxx';
     			'mail' : 'user@example.com'
     			'old_passwd' : '123456'
     			'new_passwd' : '654321',
-       		'department': 'dev',
-       		'permissions': '1,2,3'		 
+       		    'department': 'dev',
+       		    'permissions': '1,2,3'		 
        	  }
 }
+
 argument explain:
+    username (string, 必须) 要修改信息的用户的用户名
     mail (string, 非必须) 用户邮箱
     old_passwd (string, 非必须) 旧密码
     new_passwd (string, 非必须) 新密码
@@ -359,7 +374,7 @@ argument explain:
     permissions (string, 非必须) 权限组
     
 TIPS:
-    
+    根据username匹配用户进行信息修改
 
 return:
 {
@@ -373,10 +388,10 @@ return:
 DELETE /admin/user
 
 argument:
-    name = 'xxxx'
+   name = 'xxxx'
 
 argument explain:
-       name (string, 必须) 需要删除的用户名
+   name (string, 必须) 需要删除的用户名
 
 return:
 {
@@ -389,6 +404,7 @@ return:
 ### 登陆认证
 ```
 POST /admin/user_login
+
 argument:
  	{
  		'name': 'xxxx',

@@ -53,6 +53,15 @@ class UserHandler(tornado.web.RequestHandler):
                     info = 'add user failed'
             elif action == 'update':
                 user_data = data
+                # 改密码,确认有新旧密码数据
+                if user_data.has_key('old_passwd') and user_data.has_key('new_passwd'):
+                    # 判断旧密码是否正确
+                    saved_user_data = db.get_user(user_data['username'])
+                    saved_salt = saved_user_data['salt']
+                    saved_passwd = saved_user_data['passwd']
+                    _, encrypt_passwd = encrypt.md5_salt(user_data['old_passwd'], saved_salt)
+                    if saved_passwd == encrypt_passwd:
+                        user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
                 if db.update_user(user_data):
                     code = 200
                     info = 'add user successful'
@@ -97,7 +106,6 @@ class UserLoginHandler(tornado.web.RequestHandler):
             password = user_info['passwd']
             saved_user_data = db.get_user(username)
             saved_salt = saved_user_data['salt']
-            print saved_user_data
             saved_passwd = saved_user_data['passwd']
             _, encrypt_passwd =  encrypt.md5_salt(password, saved_salt)
             if saved_passwd == encrypt_passwd:

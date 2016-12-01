@@ -355,9 +355,9 @@ def insert_user(user_dict):
 # 更新用户信息
 def update_user(user_dict):
     db.connect()
-    user = User.get(name=user_dict['name'])
+    user = User.get(name=user_dict['username'])
     for key in user_dict:
-        if key != 'name':
+        if key != 'username':
             setattr(user, key, user_dict[key])
     try:
         user.save()
