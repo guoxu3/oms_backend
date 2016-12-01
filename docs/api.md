@@ -57,9 +57,10 @@ argument:
     'action': 'add'
 	'data': {
     			'ip' : '192.168.1.1'
-       		'action': 'update',
-       		'content': '/path/to/file',
-       		'description': '更新xxx功能'			 }
+       		    'action': 'update',
+       		    'content': '/path/to/file',
+       		    'description': '更新xxx功能'			 
+       		}
 }
 
 argument explain:
@@ -86,7 +87,7 @@ argument:
     task_id = 0358c3c78f5211e685855cf9389306a2
 
 argument explain:
-       task_id (string, 必须) 需要删除的task id
+    task_id (string, 必须) 需要删除的task id
 
 TIPS:
     删除task会同步删除task_status
@@ -289,17 +290,17 @@ return:
 GET /admin/user
 
 argument:
-   start = 0
-   count = 10
-   username = xxxx
+    start = 0
+    count = 10
+    username = xxxx
    
 argument explain:
-   start (int, 非必须) 开始查询的id
-   count (int, 非必须) 返回的条数
-   username (string, 非必须) 用户名
+    start (int, 非必须) 开始查询的id
+    count (int, 非必须) 返回的条数
+    username (string, 非必须) 用户名
 
 TIPS:
-   有 username 时不读取start和count值
+    有 username 时不读取start和count值
 
 return:
 {
@@ -388,10 +389,10 @@ return:
 DELETE /admin/user
 
 argument:
-   name = 'xxxx'
+    name = 'xxxx'
 
 argument explain:
-   name (string, 必须) 需要删除的用户名
+    name (string, 必须) 需要删除的用户名
 
 return:
 {
@@ -406,14 +407,14 @@ return:
 POST /admin/user_login
 
 argument:
- 	{
- 		'name': 'xxxx',
- 		'password': 'xxxx'
- 	}
+{
+    'name': 'xxxx',
+    'password': 'xxxx'
+}
 
 argument explain:
-       username (string, 必须) 用户名
-       password (string, 必须) 密码
+    username (string, 必须) 用户名
+    password (string, 必须) 密码
 
 return:
 {
