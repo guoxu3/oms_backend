@@ -438,10 +438,10 @@ return:
 DELETE /admin/user
 
 argument:
-    name = 'xxxx'
+    username = xxxx
 
 argument explain:
-    name (string, 必须) 需要删除的用户名
+    username (string, 必须) 需要删除的用户名
 
 return:
 {
