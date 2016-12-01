@@ -15,8 +15,14 @@ class UserHandler(tornado.web.RequestHandler):
         pass
 
     def get(self):
-        username = self.get_argument('username')
-        user_info = db.get_user(username)
+        username = self.get_argument('username', None)
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+        if username:
+            user_info = db.get_user(username)
+        else:
+            user_info = db.get_user(username, start, count)
+
         if user_info:
             code = 200
             info = user_info

@@ -71,7 +71,7 @@ class MachineInfo(BaseModel):
 class User(BaseModel):
     id = IntegerField()
     mail = CharField(unique=True)
-    name = CharField(unique=True)
+    username = CharField(unique=True)
     passwd = CharField()
     salt = CharField()
     department = CharField()
@@ -128,32 +128,57 @@ def insert_task_status(task_status_dict):
 
 
 # 获取task信息
-def get_task(task_id):
+def get_task(task_id=None, start=0, count=10):
     db.connect()
-    try:
-        info = Task.select().where(Task.task_id == task_id).get()
-        #print info.__dict__
-    except Exception, e:
-        log.exception('exception')
-        return False
+    if task_id:
+        try:
+            info = Task.select().where(Task.task_id == task_id)
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return info.__dict__['_data']
+        finally:
+            db.close()
     else:
-        return info.__dict__['_data']
-    finally:
-        db.close()
+        data_list = []
+        try:
+            for info in Task.select().offset(start).limit(count):
+                data_list.append(info.__dict__['_data'])
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return data_list
+        finally:
+            db.close()
 
 
 # 获取task_status信息
-def get_task_status(task_id):
+def get_task_status(task_id=None, start=0, count=10):
     db.connect()
-    try:
-        info = TaskStatus.select().where(TaskStatus.task_id == task_id).get()
-    except Exception, e:
-        log.exception('exception')
-        return False
+    if task_id:
+        try:
+            info = TaskStatus.select().where(TaskStatus.task_id == task_id).get()
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return info.__dict__['_data']
+        finally:
+            db.close()
     else:
-        return info.__dict__['_data']
-    finally:
-        db.close()
+        data_list = []
+        try:
+            for info in TaskStatus.select().offset(start).limit(count):
+                data_list.append(info.__dict__['_data'])
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return data_list
+        finally:
+            db.close()
 
 
 # 更新task_status
@@ -224,17 +249,30 @@ def insert_machine_info(machine_info_dict):
 
 
 # 获取machine_info信息
-def get_machine_info(machine_name):
+def get_machine_info(machine_name=None, start=0, count=10):
     db.connect()
-    try:
-        info = MachineInfo.select().where(MachineInfo.machine_name == machine_name).get()
-    except Exception, e:
-        log.exception('exception')
-        return False
+    if machine_name:
+        try:
+            info = MachineInfo.select().where(MachineInfo.machine_name == machine_name).get()
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return info.__dict__['_data']
+        finally:
+            db.close()
     else:
-        return info.__dict__['_data']
-    finally:
-        db.close()
+        data_list = []
+        try:
+            for info in MachineInfo.select().offset(start).limit(count):
+                data_list.append(info.__dict__['_data'])
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return data_list
+        finally:
+            db.close()
 
 
 # 更新machine_info数据
@@ -268,6 +306,33 @@ def delete_machine_info(machine_name):
         return False
     finally:
         db.close()
+
+
+# 获取用户信息
+def get_user(username=None, start=0, count=10):
+    db.connect()
+    if username:
+        try:
+            info = User.select().where(User.username == username).get()
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return info.__dict__['_data']
+        finally:
+            db.close()
+    else:
+        data_list = []
+        try:
+            for info in User.select().offset(start).limit(count):
+                data_list.append(info.__dict__['_data'])
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return data_list
+        finally:
+            db.close()
 
 
 # 插入数据到user表中
@@ -305,21 +370,18 @@ def update_user(user_dict):
         db.close()
 
 
-# 获取用户信息
-def get_user(name):
+# 删除用户
+def delete_user(username):
     db.connect()
+    delete = (TaskStatus
+              .delete()
+              .where(TaskStatus.username == username))
     try:
-        info = User.select().where(User.name == name).get()
+        delete.execute()
     except Exception, e:
         log.exception('exception')
         return False
     else:
-        return info.__dict__['_data']
+        return True
     finally:
         db.close()
-
-
-# 删除用户
-def delete_user():
-    pass
-    # todo

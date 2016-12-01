@@ -19,13 +19,13 @@
 GET /api/task
 
 argument:
-    num = 2
-    start = 10
+    start = 0
+    count = 10
     task_id = 0358c3c78f5211e685855cf9389306a2
 
 argument explain:
-    num (int, 非必须) 返回的最大条数
     start (int, 非必须) 开始查询的id
+    count (int, 非必须) 返回的条数
     task_id (string, 非必须) 查询单条task_id 对应的消息
 
 TIPS:
@@ -103,13 +103,13 @@ return:
 GET /api/task_status
 
 argument:
-    num = 2
-    start = 10
+    start = 0
+    count = 10
     task_id = 0358c3c78f5211e685855cf9389306a2
 
 argument explain:
-    num (int, 非必须) 返回的最大条数
     start (int, 非必须) 开始查询的id
+    count (int, 非必须) 返回的条数
     task_id (string, 非必须) 查询单条task_id 对应的消息
 
 TIPS:
@@ -166,16 +166,19 @@ return:
 ```
 
 ##服务器信息接口( /api/machine_info )
-### 获取task信息
+### 获取machine_info信息
 ```
 GET /api/machine_info
 
 argument:
-    
+    start = 0
+    count = 10
+    machine_name
 
 argument explain:
-     
-
+    start (int, 非必须) 开始查询的id
+    count (int, 非必须) 返回的条数
+    machine_name (string, 非必须) 机器名称
 TIPS:
      
 
@@ -277,11 +280,14 @@ return:
 GET /admin/user
 
 argument:
-   num = 2
-   name = xxx
-	
+   start = 0
+   count = 10
+   username = xxxx
+   
 argument explain:
-     
+   start (int, 非必须) 开始查询的id
+   count (int, 非必须) 返回的条数
+   username (string, 非必须) 用户名
 
 TIPS:
      

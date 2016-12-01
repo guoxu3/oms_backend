@@ -21,8 +21,14 @@ class TaskHandler(tornado.web.RequestHandler):
 
     # get 获取task信息
     def get(self):
-        task_id = self.get_argument('task_id')
-        task_info = db.get_task(task_id)
+        task_id = self.get_argument('task_id', None)
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+        if task_id:
+            task_info = db.get_task(task_id)
+        else:
+            task_info = db.get_task(task_id, start, count)
+
         if task_info:
             code = 200
             info = task_info
@@ -82,8 +88,14 @@ class TaskStatusHandler(tornado.web.RequestHandler):
 
     # get 获取task_status信息
     def get(self):
-        task_id = self.get_argument('task_id')
-        task_status_info = db.get_task_status(task_id)
+        task_id = self.get_argument('task_id', None)
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+        if task_id:
+            task_status_info = db.get_task_status(task_id)
+        else:
+            task_status_info = db.get_task_status(task_id, start, count)
+
         if task_status_info:
             code = 200
             info = task_status_info
@@ -126,8 +138,23 @@ class MachineInfoHandler(tornado.web.RequestHandler):
         pass
 
     def get(self):
-        pass
-        # todo
+        machine_name = self.get_argument('machine_name', None)
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+        if machine_name:
+            machine_info = db.get_machine_info(machine_name)
+        else:
+            machine_info = db.get_machine_info(machine_name, start, count)
+
+        if machine_info:
+            code = 200
+            info = machine_info
+        else:
+            code = 500
+            info = 'no such a machine info'
+
+        response = dict(code=code, info=info)
+        self.write(tornado.escape.json_encode(response))
 
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']
