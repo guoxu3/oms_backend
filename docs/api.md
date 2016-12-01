@@ -43,6 +43,15 @@ return:
             'create_time': 1480471675,
             'content': '/path/to/file',
             'description': '更新xxx功能'
+        },
+         {
+            'id': 1, 
+            'task_id': '0358c3c78f5211e685855cf9389306a2'
+            'ip': '192.168.1.1',
+            'action': 'update',
+            'create_time': 1480471675,
+            'content': '/path/to/file',
+            'description': '更新xxx功能'
         }
     ]
 }
@@ -130,6 +139,15 @@ return:
             'status': 0,
             'percent': 0,
             'revert': 0
+        },
+        {
+            'id': 1, 
+            'task_id': '0358c3c78f5211e685855cf9389306a2'
+            'start_time': 1480471675,
+            'revert_time': 1480471675,
+            'status': 0,
+            'percent': 0,
+            'revert': 0
         }
     ]
 }
@@ -189,7 +207,29 @@ TIPS:
     有 machine_name 时不读取start和count值
 
 return:
- 
+{  
+    'code': 200
+	'info': [
+	    {
+	        'id'：1，
+            'machine_name' : 'web01'
+            'inside_ip' : '10.2.2.1',
+            'outside_ip' : '111.111.11.1',
+            'userage': 'web 服务器1',
+            'is_initialized': 0,
+            'location': '阿里云'		 
+       	},
+       	{
+	        'id'：2，
+            'machine_name' : 'web02'
+            'inside_ip' : '10.2.2.2',
+            'outside_ip' : '111.111.11.2',
+            'userage': 'web 服务器2',
+            'is_initialized': 0,
+            'location': '阿里云'		 
+       	}
+    ]
+}
 ```
 
 ### 新增machine_info
@@ -323,13 +363,22 @@ POST /admin/user
 argument:
 {  
     'action': 'add'
-	'data': {
-    			'mail' : 'user@example.com'
-    			'name' : 'xxx',
-    			'passwd' : '123456',
-       		    'department': 'dev',
-       		    'permissions': '1,2,3'		 
-       	  }
+	'data': [
+	    {
+            'mail' : 'user@example.com'
+            'name' : 'xxx',
+            'passwd' : '123456',
+            'department': 'dev',
+            'permissions': '1,2,3'		 
+       	},
+       	{
+            'mail' : 'user@example.com'
+            'name' : 'xxx',
+            'passwd' : '123456',
+            'department': 'dev',
+            'permissions': '1,2,3'		 
+       	}
+    ]
 }
 
 argument explain:
