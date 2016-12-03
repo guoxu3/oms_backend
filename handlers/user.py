@@ -24,20 +24,20 @@ class UserHandler(tornado.web.RequestHandler):
             user_info = db.get_user(username, start, count)
 
         if user_info:
-            code = 200
+            ok = True
             info = user_info
         else:
-            code = 500
+            ok = False
             info = 'get user info failed'
 
-        response = dict(code=code, info=info)
+        response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):
-            code = 400
+            ok = False
             info = 'body or content-type format error'
         else:
             body = json.loads(body)
@@ -46,10 +46,10 @@ class UserHandler(tornado.web.RequestHandler):
                 user_data = data
                 user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
                 if db.insert_user(user_data):
-                    code = 200
+                    ok = True
                     info = 'add user successful'
                 else:
-                    code = 500
+                    ok = False
                     info = 'add user failed'
             elif action == 'update':
                 user_data = data
@@ -63,29 +63,29 @@ class UserHandler(tornado.web.RequestHandler):
                     if saved_passwd == encrypt_passwd:
                         user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
                 if db.update_user(user_data):
-                    code = 200
+                    ok = True
                     info = 'add user successful'
                 else:
-                    code = 500
+                    ok = False
                     info = 'add user failed'
             else:
-                code = 400
+                ok = False
                 info = 'unsupported user action'
 
-        response = dict(code=code, info=info)
+        response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
     def delete(self):
         user_id = self.get_argument('user_id')
 
         if db.delete_user:
-            code = 200
+            ok = True
             info = 'delete user successful'
         else:
-            code = 500
+            ok = False
             info = 'delete user failed'
 
-        response = dict(code=code, info=info)
+        response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
 
@@ -98,7 +98,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):
-            code = 400
+            ok = False
             info = 'body or content-type format error'
         else:
             user_info = json.loads(body)
@@ -110,13 +110,13 @@ class UserLoginHandler(tornado.web.RequestHandler):
             _, encrypt_passwd =  encrypt.md5_salt(password, saved_salt)
             if saved_passwd == encrypt_passwd:
                 access_token = encrypt.make_cookie_secret()
-                code = 200
+                ok = True
                 info = {'access_token': access_token}
             else:
-                code = 400
+                ok = False
                 info = 'username or password error'
 
-        response = dict(code=code, info=info)
+        response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
 

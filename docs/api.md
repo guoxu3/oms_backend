@@ -33,7 +33,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': [
         {
             'id': 1, 
@@ -83,7 +83,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': { 'task_id': '0358c3c78f5211e685855cf9389306a2' } 
 }
 ```
@@ -103,7 +103,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'delete task ok'
 }
 ```
@@ -129,7 +129,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': [
         {
             'id': 1, 
@@ -183,7 +183,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'update task status ok'
 }
 ```
@@ -208,7 +208,7 @@ TIPS:
 
 return:
 {  
-    'code': 200
+    'ok': True
 	'info': [
 	    {
 	        'id'：1，
@@ -262,7 +262,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'add machine info ok'
 }
 ```
@@ -297,7 +297,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'update machine info ok'
 }
 ```
@@ -314,7 +314,7 @@ argument explain:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'delete machin info ok'
 }
 ```
@@ -344,7 +344,7 @@ TIPS:
 
 return:
 {
-	'code': 200,
+	'ok': True,
 	'info': {
 				'id': 11,
 				'mail': 'user@example.com'
@@ -393,7 +393,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'add user ok'
 }
 ```
@@ -428,7 +428,7 @@ TIPS:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'update user ok'
 }
 ```
@@ -445,7 +445,7 @@ argument explain:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': 'delete user ok'
 }
 ```
@@ -467,7 +467,7 @@ argument explain:
 
 return:
 {
-    'code': 200,
+    'ok': True,
     'info': {'access_token': 'xxxxxxx'}
 }
 ```
