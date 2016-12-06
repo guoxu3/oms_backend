@@ -19,6 +19,12 @@ class TaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
+    def __init__(self, application, request, **kwargs):
+        super(TaskHandler, self).__init__(application, request, **kwargs)
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     # get 获取task信息
     def get(self):
         task_id = self.get_argument('task_id', None)
@@ -86,6 +92,12 @@ class TaskStatusHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
+    def __init__(self, application, request, **kwargs):
+        super(TaskStatusHandler, self).__init__(application, request, **kwargs)
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     # get 获取task_status信息
     def get(self):
         task_id = self.get_argument('task_id', None)
@@ -136,6 +148,12 @@ class TaskStatusHandler(tornado.web.RequestHandler):
 class MachineInfoHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
+
+    def __init__(self, application, request, **kwargs):
+        super(MachineInfoHandler, self).__init__(application, request, **kwargs)
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
     def get(self):
         machine_name = self.get_argument('machine_name', None)
@@ -205,6 +223,12 @@ class MachineInfoHandler(tornado.web.RequestHandler):
 class UpdateHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
+
+    def __init__(self, application, request, **kwargs):
+        super(UpdateHandler, self).__init__(application, request, **kwargs)
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']

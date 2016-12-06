@@ -14,6 +14,12 @@ class UserHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
+    def __init__(self, application, request, **kwargs):
+        super(UserHandler, self).__init__(application, request, **kwargs)
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     def get(self):
         username = self.get_argument('username', None)
         start = self.get_argument('start', 0)
@@ -94,7 +100,15 @@ class UserLoginHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
+    def __init__(self, application, request, **kwargs):
+        super(UserLoginHandler, self).__init__(application, request, **kwargs)
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     def post(self):
+
+
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):
@@ -119,6 +133,8 @@ class UserLoginHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
+    def options(self):
+        pass
 
 handlers = [
     ('/admin/user', UserHandler),
