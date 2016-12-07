@@ -94,6 +94,9 @@ class UserHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
+    def options(self):
+        pass
+
 
 # 登陆接口
 class UserLoginHandler(tornado.web.RequestHandler):
@@ -107,8 +110,6 @@ class UserLoginHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
     def post(self):
-
-
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if not is_content_type_right(content_type) or not is_json(body):

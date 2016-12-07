@@ -86,6 +86,9 @@ class TaskHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
+    def options(self):
+        pass
+
 
 # task status handler  处理task_status相关操作
 class TaskStatusHandler(tornado.web.RequestHandler):
@@ -142,6 +145,9 @@ class TaskStatusHandler(tornado.web.RequestHandler):
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
+
+    def options(self):
+        pass
 
 
 # machine info handler
@@ -218,6 +224,9 @@ class MachineInfoHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
+    def options(self):
+        pass
+
 
 # 调用更新脚本
 class UpdateHandler(tornado.web.RequestHandler):
@@ -243,6 +252,9 @@ class UpdateHandler(tornado.web.RequestHandler):
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
+        
+    def options(self):
+        pass
 
 
 handlers = [
