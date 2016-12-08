@@ -252,7 +252,7 @@ class UpdateHandler(tornado.web.RequestHandler):
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
-        
+
     def options(self):
         pass
 
