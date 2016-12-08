@@ -348,7 +348,7 @@ return:
 	'info': {
 				'id': 11,
 				'mail': 'user@example.com'
-				'name': 'xxx',
+				'username': 'xxx',
 				'department': 'dev',
 				'permissions': '1,2,3'
 			  }
@@ -366,14 +366,14 @@ argument:
 	'data': [
 	    {
             'mail' : 'user@example.com'
-            'name' : 'xxx',
+            'username' : 'xxx',
             'passwd' : '123456',
             'department': 'dev',
             'permissions': '1,2,3'		 
        	},
        	{
             'mail' : 'user@example.com'
-            'name' : 'xxx',
+            'username' : 'xxx',
             'passwd' : '123456',
             'department': 'dev',
             'permissions': '1,2,3'		 
@@ -383,7 +383,7 @@ argument:
 
 argument explain:
     mail (string, 必须) 用户邮箱
-    name (string, 必须) 用户名
+    username (string, 必须) 用户名
     passwd (string, 必须) 密码
     department (string, 必须) 所属部门 
     permissions (string, 必须) 权限组
