@@ -23,7 +23,7 @@ class TaskHandler(tornado.web.RequestHandler):
         super(TaskHandler, self).__init__(application, request, **kwargs)
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
 
     # get 获取task信息
     def get(self):
@@ -58,8 +58,9 @@ class TaskHandler(tornado.web.RequestHandler):
             if action == 'add':
                 task_data = data
                 task_data['task_id'] = uuid.uuid1().hex
-                task_data['create_time'] = time.mktime(datetime.datetime.now().timetuple())
+                task_data['create_time'] = int(time.mktime(datetime.datetime.now().timetuple()))
                 # task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
+                print task_data
                 if db.insert_task(task_data):
                     ok = True
                     info = {'task_id': task_data['task_id']}
@@ -99,7 +100,7 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         super(TaskStatusHandler, self).__init__(application, request, **kwargs)
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
 
     # get 获取task_status信息
     def get(self):
@@ -159,7 +160,7 @@ class MachineInfoHandler(tornado.web.RequestHandler):
         super(MachineInfoHandler, self).__init__(application, request, **kwargs)
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
 
     def get(self):
         machine_name = self.get_argument('machine_name', None)

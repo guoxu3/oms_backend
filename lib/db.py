@@ -98,16 +98,22 @@ def insert_task(task_dict):
         setattr(task, key, task_dict[key])
     try:
         task.save()
+        print "11111"
     except Exception:
         log.exception('exception')
         return False
     else:
         task_status_dict = {'task_id': task_dict['task_id'],
-                            'status' : 0,
+                            'start_time': 0,
+                            'revert_time': 0,
+                            'status': 0,
                             'percent': 0,
                             'revert': 0
                             }
-        insert_task_status(task_status_dict)
+        if insert_task_status(task_status_dict):
+            return True
+        else:
+            return False
 
 
 # 插入数据到task_status表
@@ -122,6 +128,7 @@ def insert_task_status(task_status_dict):
         log.exception('exception')
         return False
     else:
+        print "2222"
         return True
     finally:
         db.close()
@@ -211,7 +218,10 @@ def delete_task(task_id):
         log.exception('exception')
         return False
     else:
-        delete_task_status(task_id)
+        if delete_task_status(task_id):
+            return True
+        else:
+            return False
 
 
 # 删除 task_status

@@ -18,7 +18,7 @@ class UserHandler(tornado.web.RequestHandler):
         super(UserHandler, self).__init__(application, request, **kwargs)
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
 
     def get(self):
         username = self.get_argument('username', None)
@@ -107,7 +107,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
         super(UserLoginHandler, self).__init__(application, request, **kwargs)
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
 
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']
