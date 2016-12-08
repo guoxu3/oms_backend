@@ -60,7 +60,6 @@ class TaskHandler(tornado.web.RequestHandler):
                 task_data['task_id'] = uuid.uuid1().hex
                 task_data['create_time'] = int(time.mktime(datetime.datetime.now().timetuple()))
                 # task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
-                print task_data
                 if db.insert_task(task_data):
                     ok = True
                     info = {'task_id': task_data['task_id']}
@@ -78,7 +77,6 @@ class TaskHandler(tornado.web.RequestHandler):
     def delete(self):
         task_id = self.get_argument('task_id')
         if db.get_task(task_id):
-            print "aaa"
             if db.delete_task(task_id):
                 ok = True
                 info = 'delete task successful'
@@ -86,7 +84,6 @@ class TaskHandler(tornado.web.RequestHandler):
                 ok = False
                 info = 'delete task failed'
         else:
-            print "bbb"
             ok = False
             info = 'no such a task'
 
