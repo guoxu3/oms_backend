@@ -77,12 +77,18 @@ class TaskHandler(tornado.web.RequestHandler):
     # delete 删除task信息
     def delete(self):
         task_id = self.get_argument('task_id')
-        if db.delete_task(task_id):
-            ok = True
-            info = 'delete task successful'
+        if db.get_task(task_id):
+            print "aaa"
+            if db.delete_task(task_id):
+                ok = True
+                info = 'delete task successful'
+            else:
+                ok = False
+                info = 'delete task failed'
         else:
+            print "bbb"
             ok = False
-            info = 'delete task failed'
+            info = 'no such a task'
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))

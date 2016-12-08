@@ -98,7 +98,6 @@ def insert_task(task_dict):
         setattr(task, key, task_dict[key])
     try:
         task.save()
-        print "11111"
     except Exception:
         log.exception('exception')
         return False
@@ -128,7 +127,6 @@ def insert_task_status(task_status_dict):
         log.exception('exception')
         return False
     else:
-        print "2222"
         return True
     finally:
         db.close()
@@ -137,9 +135,11 @@ def insert_task_status(task_status_dict):
 # 获取task信息
 def get_task(task_id=None, start=0, count=10):
     db.connect()
+    print task_id
     if task_id:
         try:
-            info = Task.select().where(Task.task_id == task_id)
+            info = Task.select().where(Task.task_id == task_id).get()
+            print info.__dict__
         except Exception, e:
             log.exception('exception')
             return False
@@ -218,6 +218,7 @@ def delete_task(task_id):
         log.exception('exception')
         return False
     else:
+        print ""
         if delete_task_status(task_id):
             return True
         else:
