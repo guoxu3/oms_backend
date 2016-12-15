@@ -471,3 +471,30 @@ return:
     'info': {'access_token': 'xxxxxxx'}
 }
 ```
+
+## 权限接口( /admin/user_login )
+### 获取权限列表
+```
+Get /admin/permission
+
+argument:
+    count = 10
+    username = xxxx
+   
+argument explain:
+    start (int, 非必须) 开始查询的id
+    count (int, 非必须) 返回的条数
+
+TIPS:
+
+return:
+{
+	'ok': True,
+	'info': {
+				'permission': 'adduser',
+				'permission_desc': '新增用户'
+				'permission_code': 2,
+			  }
+}
+ 
+```
