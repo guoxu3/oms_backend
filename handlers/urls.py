@@ -5,10 +5,10 @@
 collect all handlers
 """
 
-from handlers import api,user
+from handlers import api,admin
 
 # Routes
 handlers = []
 handlers.extend(api.handlers)
-handlers.extend(user.handlers)
+handlers.extend(admin.handlers)
 

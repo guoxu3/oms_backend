@@ -173,6 +173,18 @@ def is_content_type_right(value):
     return False
 
 
+# 将unicode 转换为str
+def byteify(input):
+    if isinstance(input, dict):
+        return {byteify(key):byteify(value) for key,value in input.iteritems()}
+    elif isinstance(input, list):
+        return [byteify(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input
+
+
 def regex(pattern, data, flags=0):
     if isinstance(pattern, basestring):
         pattern = re.compile(pattern, flags)
