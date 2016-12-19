@@ -3,9 +3,9 @@
 
 import tornado.web
 import tornado.escape
-from lib.judgement import *
-from lib import db
-from lib import encrypt
+from ..lib.judgement import *
+from ..models.db import db_user,db_permission
+from ..lib import encrypt
 import json
 
 
@@ -25,9 +25,9 @@ class UserHandler(tornado.web.RequestHandler):
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
         if username:
-            user_info = db.get_user(username)
+            user_info = db_user.get(username)
         else:
-            user_info = db.get_user(username, start, count)
+            user_info = db_user.get(username, start, count)
 
         if user_info:
             ok = True
@@ -52,7 +52,7 @@ class UserHandler(tornado.web.RequestHandler):
                 user_data = data
                 print data
                 user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
-                if db.insert_user(user_data):
+                if db_user.add(user_data):
                     ok = True
                     info = 'add user successful'
                 else:
@@ -64,13 +64,13 @@ class UserHandler(tornado.web.RequestHandler):
                 # 改密码,确认有新旧密码数据
                 if user_data.has_key('old_passwd') and user_data.has_key('new_passwd'):
                     # 判断旧密码是否正确
-                    saved_user_data = db.get_user(user_data['username'])
+                    saved_user_data = db_user.get(user_data['username'])
                     saved_salt = saved_user_data['salt']
                     saved_passwd = saved_user_data['passwd']
                     _, encrypt_passwd = encrypt.md5_salt(user_data['old_passwd'], saved_salt)
                     if saved_passwd == encrypt_passwd:
                         user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
-                if db.update_user(user_data):
+                if db_user.update(user_data):
                     ok = True
                     info = 'update user successful'
                 else:
@@ -120,10 +120,10 @@ class UserLoginHandler(tornado.web.RequestHandler):
             user_info = json.loads(body)
             username = user_info['username']
             password = user_info['passwd']
-            saved_user_data = db.get_user(username)
+            saved_user_data = db_user.get(username)
             saved_salt = saved_user_data['salt']
             saved_passwd = saved_user_data['passwd']
-            _, encrypt_passwd =  encrypt.md5_salt(password, saved_salt)
+            _, encrypt_passwd = encrypt.md5_salt(password, saved_salt)
             if saved_passwd == encrypt_passwd:
                 access_token = encrypt.make_cookie_secret()
                 ok = True
@@ -139,7 +139,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
         pass
 
 
-# user handler
+# permission handler
 class PermissionHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -154,8 +154,7 @@ class PermissionHandler(tornado.web.RequestHandler):
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
 
-        permission_info = db.get_user(username, start, count)
-
+        permission_info = db_permission.get(start, count)
         if permission_info:
             ok = True
             info = permission_info
@@ -176,48 +175,13 @@ class PermissionHandler(tornado.web.RequestHandler):
             body = json.loads(body)
             action, data = body['action'], body['data']
             if action == 'add':
-                user_data = data
-                print data
-                user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
-                if db.insert_user(user_data):
-                    ok = True
-                    info = 'add user successful'
-                else:
-                    ok = False
-                    info = 'add user failed'
-            elif action == 'update':
-                user_data = data
-                print data
-                # 改密码,确认有新旧密码数据
-                if user_data.has_key('old_passwd') and user_data.has_key('new_passwd'):
-                    # 判断旧密码是否正确
-                    saved_user_data = db.get_user(user_data['username'])
-                    saved_salt = saved_user_data['salt']
-                    saved_passwd = saved_user_data['passwd']
-                    _, encrypt_passwd = encrypt.md5_salt(user_data['old_passwd'], saved_salt)
-                    if saved_passwd == encrypt_passwd:
-                        user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
-                if db.update_user(user_data):
-                    ok = True
-                    info = 'update user successful'
-                else:
-                    ok = False
-                    info = 'update user failed'
+                # todo
+                ok = ''
+                info = ''
+                pass
             else:
                 ok = False
-                info = 'unsupported user action'
-
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
-
-    def delete(self):
-        username = self.get_argument('username')
-        if db.delete_user(username):
-            ok = True
-            info = 'delete user successful'
-        else:
-            ok = False
-            info = 'delete user failed'
+                info = 'unsupported permission action'
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
@@ -228,4 +192,5 @@ class PermissionHandler(tornado.web.RequestHandler):
 handlers = [
     ('/admin/user', UserHandler),
     ('/admin/user_login', UserLoginHandler),
+    ('/admin/permission', PermissionHandler),
 ]

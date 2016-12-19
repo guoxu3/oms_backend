@@ -7,8 +7,8 @@ api handlers
 
 import tornado.web
 import tornado.escape
-from lib.judgement import *
-from lib import db
+from ..lib.judgement import *
+from ..models.db import db_task,db_task_status,db_machine
 import uuid
 import json
 import time, datetime
@@ -31,9 +31,9 @@ class TaskHandler(tornado.web.RequestHandler):
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
         if task_id:
-            task_info = db.get_task(task_id)
+            task_info = db_task.get(task_id)
         else:
-            task_info = db.get_task(task_id, start, count)
+            task_info = db_task.get(task_id, start, count)
 
         if task_info:
             ok = True
@@ -60,7 +60,7 @@ class TaskHandler(tornado.web.RequestHandler):
                 task_data['task_id'] = uuid.uuid1().hex
                 task_data['create_time'] = int(time.mktime(datetime.datetime.now().timetuple()))
                 # task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
-                if db.insert_task(task_data):
+                if db_task.add(task_data):
                     ok = True
                     info = {'task_id': task_data['task_id']}
                 else:
@@ -77,7 +77,7 @@ class TaskHandler(tornado.web.RequestHandler):
     def delete(self):
         task_id = self.get_argument('task_id')
         if db.get_task(task_id):
-            if db.delete_task(task_id):
+            if db_task.delete(task_id):
                 ok = True
                 info = 'delete task successful'
             else:
@@ -111,9 +111,9 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
         if task_id:
-            task_status_info = db.get_task_status(task_id)
+            task_status_info = db_task_status.get(task_id)
         else:
-            task_status_info = db.get_task_status(task_id, start, count)
+            task_status_info = db_task_status.get(task_id, start, count)
 
         if task_status_info:
             ok = True
@@ -137,7 +137,7 @@ class TaskStatusHandler(tornado.web.RequestHandler):
             action, data = body['action'], body['data']
             if action == 'update':
                 task_status_data = data
-                if db.update_task_status(task_status_data):
+                if db_task_status.update(task_status_data):
                     ok = True
                     info = 'update task status successful'
                 else:
@@ -170,9 +170,9 @@ class MachineInfoHandler(tornado.web.RequestHandler):
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
         if machine_name:
-            machine_info = db.get_machine_info(machine_name)
+            machine_info = db_machine.get(machine_name)
         else:
-            machine_info = db.get_machine_info(machine_name, start, count)
+            machine_info = db_machine.get(machine_name, start, count)
 
         if machine_info:
             ok = True
@@ -195,7 +195,7 @@ class MachineInfoHandler(tornado.web.RequestHandler):
             action, data = body['action'], body['data']
             if action == 'add':
                 machine_info_data = data
-                if db.insert_machine_info(machine_info_data):
+                if db_machine.add(machine_info_data):
                     ok = True
                     info = 'add machine info successful'
                 else:
@@ -203,7 +203,7 @@ class MachineInfoHandler(tornado.web.RequestHandler):
                     info = 'add miachine info failed'
             elif action == 'update':
                 machine_info_data = data
-                if db.update_machine_info(machine_info_data):
+                if db_machine.add(machine_info_data):
                     ok = True
                     info = 'update task status successful'
                 else:
@@ -218,7 +218,7 @@ class MachineInfoHandler(tornado.web.RequestHandler):
 
     def delete(self):
         machine_name = self.get_argument('machine_name')
-        if db.delete_task(machine_name):
+        if db_machine.delete(machine_name):
             ok = True
             info = 'delete task successful'
         else:
