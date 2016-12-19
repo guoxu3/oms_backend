@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+"""
+ 定义permission表的相关操作
+"""
 
 from peewee import *
-from dbbase import BaseModel
-from ...lib.logger import log
+from _db_conn import BaseModel
 
 
 # 定义权限表Permissions

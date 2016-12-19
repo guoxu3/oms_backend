@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
- 定义task相关的操作，包括task表和task_info表
+ 定义task表相关的操作
 """
 
 from peewee import *
-from dbbase import BaseModel
+from _db_conn import BaseModel
 from ...lib.logger import log
 import db_task_status
 
@@ -87,11 +87,11 @@ def update(update_dict):
 
 # 删除 task
 def delete(task_id):
-    delete = (Task
+    del_data = (Task
               .delete()
               .where(Task.task_id == task_id))
     try:
-        delete.execute()
+        del_data.execute()
     except Exception, e:
         log.exception('exception')
         return False

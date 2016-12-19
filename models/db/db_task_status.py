@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+"""
+ 定义task_status表相关的操作
+"""
 
 from peewee import *
-from dbbase import BaseModel
+from _db_conn import BaseModel
 from ...lib.logger import log
 
 
@@ -73,11 +76,11 @@ def update(update_dict):
 
 # 删除 task_status
 def delete(task_id):
-    delete = (TaskStatus
+    del_data = (TaskStatus
               .delete()
               .where(TaskStatus.task_id == task_id))
     try:
-        delete.execute()
+        del_data.execute()
     except Exception, e:
         log.exception('exception')
         return False

@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+"""
+ 定义machine表的相关操作
+"""
 
 from peewee import *
-from dbbase import BaseModel
+from _db_conn import BaseModel
 from ...lib.logger import log
 
 
 # 定义machine_info表
-class MachineInfo(BaseModel):
+class Machine(BaseModel):
     id = IntegerField()
     machine_name = CharField(unique=True)
     inside_ip = CharField()
@@ -17,25 +20,23 @@ class MachineInfo(BaseModel):
     location = CharField()
 
     class Meta:
-        db_table = 'machine_info'
+        db_table = 'machine'
 
 
 # 获取machine_info信息
 def get(machine_name=None, start=0, count=10):
     if machine_name:
         try:
-            info = MachineInfo.select().where(MachineInfo.machine_name == machine_name).get()
+            info = Machine.select().where(Machine.machine_name == machine_name).get()
         except Exception, e:
             log.exception('exception')
             return False
         else:
             return info.__dict__['_data']
-        finally:
-            db.close()
     else:
         data_list = []
         try:
-            for info in MachineInfo.select().offset(start).limit(count):
+            for info in Machine.select().offset(start).limit(count):
                 data_list.append(info.__dict__['_data'])
         except Exception, e:
             log.exception('exception')
@@ -46,11 +47,11 @@ def get(machine_name=None, start=0, count=10):
 
 # 插入数据到machine_info表
 def add(machine_info_dict):
-    machine_info = MachineInfo()
+    machine = Machine()
     for key in machine_info_dict:
-        setattr(machine_info, key, machine_info_dict[key])
+        setattr(machine, key, machine_info_dict[key])
     try:
-        machine_info.save()
+        machine.save()
     except Exception, e:
         log.exception('exception')
         return False
@@ -59,13 +60,13 @@ def add(machine_info_dict):
 
 
 # 更新machine_info数据
-def update(machine_info_dict):
-    machine_info = MachineInfo.get(machine_name=machine_info_dict['machine_name'])
-    for key in machine_info_dict:
+def update(machine_dict):
+    machine = Machine.get(machine_name=machine_dict['machine_name'])
+    for key in machine_dict:
         if key != 'machine_name':
-            setattr(machine_info, key, machine_info_dict[key])
+            setattr(machine, key, machine_dict[key])
     try:
-        machine_info.save()
+        machine.save()
     except Exception, e:
         log.exception('exception')
         return False
@@ -75,11 +76,11 @@ def update(machine_info_dict):
 
 # 删除machine_info数据
 def delete(machine_name):
-    delete = (MachineInfo
+    del_data = (Machine
               .delete()
-              .where(MachineInfo.machine_name == machine_name))
+              .where(Machine.machine_name == machine_name))
     try:
-        delete.execute()
+        del_data.execute()
     except Exception, e:
         log.exception('exception')
         return False

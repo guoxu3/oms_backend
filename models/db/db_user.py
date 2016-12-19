@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+"""
+ 定义user表相关的操作
+"""
 
 from peewee import *
-from dbbase import BaseModel
+from _db_conn import BaseModel
 from ...lib.logger import log
+
 
 # 定义user表
 class User(BaseModel):
@@ -28,8 +32,6 @@ def get(username=None, start=0, count=10):
             return False
         else:
             return info.__dict__['_data']
-        finally:
-            db.close()
     else:
         data_list = []
         try:
@@ -73,16 +75,16 @@ def update(user_dict):
 
 # 删除用户
 def delete(username):
-    delete = (User
+    del_data = (User
               .delete()
               .where(User.username == username))
     try:
-        delete.execute()
+        del_data.execute()
     except Exception:
         log.exception('exception')
         return False
     else:
-        if get_user(username):
+        if get(username):
             return False
         else:
             return True
