@@ -6,7 +6,7 @@
 
 from peewee import *
 from _db_conn import BaseModel
-from ...lib.logger import log
+from lib.logger import log
 
 
 # 定义user表
@@ -21,6 +21,18 @@ class User(BaseModel):
 
     class Meta:
         db_table = 'user'
+
+
+# 获取总数量
+def row_count():
+    try:
+        count = User.select().count()
+    except Exception, e:
+            log.exception('exception')
+            return 0
+    else:
+        return count
+
 
 # 获取用户信息
 def get(username=None, start=0, count=10):

@@ -6,7 +6,7 @@
 
 from peewee import *
 from _db_conn import BaseModel
-from ...lib.logger import log
+from lib.logger import log
 
 
 # 定义machine_info表
@@ -21,6 +21,17 @@ class Machine(BaseModel):
 
     class Meta:
         db_table = 'machine'
+
+
+# 获取总数量
+def row_count():
+    try:
+        count = Machine.select().count()
+    except Exception, e:
+            log.exception('exception')
+            return 0
+    else:
+        return count
 
 
 # 获取machine_info信息

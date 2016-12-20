@@ -6,7 +6,7 @@
 
 from peewee import *
 from _db_conn import BaseModel
-from ...lib.logger import log
+from lib.logger import log
 import db_task_status
 
 
@@ -22,6 +22,17 @@ class Task(BaseModel):
 
     class Meta:
         db_table = 'task'
+
+
+# 获取总数量
+def row_count():
+    try:
+        count = Task.select().count()
+    except Exception, e:
+            log.exception('exception')
+            return 0
+    else:
+        return count
 
 
 # 插入数据到task表

@@ -3,9 +3,9 @@
 
 import tornado.web
 import tornado.escape
-from ..lib.judgement import *
-from ..models.db import db_user,db_permission
-from ..lib import encrypt
+from lib.judgement import *
+from models.db import db_user,db_permission
+from lib import encrypt
 import json
 
 
@@ -31,7 +31,7 @@ class UserHandler(tornado.web.RequestHandler):
 
         if user_info:
             ok = True
-            info = user_info
+            info = {'data': user_info, 'count': db_user.row_count()}
         else:
             ok = False
             info = 'get user info failed'
@@ -157,7 +157,7 @@ class PermissionHandler(tornado.web.RequestHandler):
         permission_info = db_permission.get(start, count)
         if permission_info:
             ok = True
-            info = permission_info
+            info = {'data': permission_info, 'count': db_permission.row_count()}
         else:
             ok = False
             info = 'get permission info failed'

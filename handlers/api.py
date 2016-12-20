@@ -7,8 +7,8 @@ api handlers
 
 import tornado.web
 import tornado.escape
-from ..lib.judgement import *
-from ..models.db import db_task,db_task_status,db_machine
+from lib.judgement import *
+from models.db import db_task,db_task_status,db_machine
 import uuid
 import json
 import time, datetime
@@ -37,7 +37,7 @@ class TaskHandler(tornado.web.RequestHandler):
 
         if task_info:
             ok = True
-            info = task_info
+            info = {'data': task_info, 'count': db_task.row_count()}
         else:
             ok = False
             info = 'no such a task'
@@ -117,7 +117,7 @@ class TaskStatusHandler(tornado.web.RequestHandler):
 
         if task_status_info:
             ok = True
-            info = task_status_info
+            info = {'data': task_status_info, 'count': db_task_status.row_count()}
         else:
             ok = False
             info = 'no such a task status'
@@ -176,7 +176,7 @@ class MachineInfoHandler(tornado.web.RequestHandler):
 
         if machine_info:
             ok = True
-            info = machine_info
+            info = {'data': machine_info, 'count': db_machine.row_count*()}
         else:
             ok = False
             info = 'no such a machine info'

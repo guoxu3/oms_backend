@@ -3,7 +3,7 @@
 
 from peewee import *
 from playhouse.pool import PooledMySQLDatabase
-from ...lib import config
+from lib import config
 
 
 # mysql 连接池
