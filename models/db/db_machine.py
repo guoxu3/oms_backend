@@ -28,8 +28,8 @@ def row_count():
     try:
         count = Machine.select().count()
     except Exception, e:
-            log.exception('exception')
-            return 0
+        log.exception('exception')
+        return 0
     else:
         return count
 
@@ -88,8 +88,8 @@ def update(machine_dict):
 # 删除machine_info数据
 def delete(machine_name):
     del_data = (Machine
-              .delete()
-              .where(Machine.machine_name == machine_name))
+                .delete()
+                .where(Machine.machine_name == machine_name))
     try:
         del_data.execute()
     except Exception, e:

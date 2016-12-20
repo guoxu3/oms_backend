@@ -28,8 +28,8 @@ def row_count():
     try:
         count = TaskStatus.select().count()
     except Exception, e:
-            log.exception('exception')
-            return 0
+        log.exception('exception')
+        return 0
     else:
         return count
 
@@ -88,8 +88,8 @@ def update(update_dict):
 # 删除 task_status
 def delete(task_id):
     del_data = (TaskStatus
-              .delete()
-              .where(TaskStatus.task_id == task_id))
+                .delete()
+                .where(TaskStatus.task_id == task_id))
     try:
         del_data.execute()
     except Exception, e:

@@ -25,8 +25,8 @@ def row_count():
     try:
         count = Permissions.select().count()
     except Exception, e:
-            log.exception('exception')
-            return 0
+        log.exception('exception')
+        return 0
     else:
         return count
 
@@ -56,4 +56,3 @@ def add(permissions_dict):
         return False
     else:
         return True
-

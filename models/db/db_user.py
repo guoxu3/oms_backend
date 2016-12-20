@@ -28,8 +28,8 @@ def row_count():
     try:
         count = User.select().count()
     except Exception, e:
-            log.exception('exception')
-            return 0
+        log.exception('exception')
+        return 0
     else:
         return count
 
@@ -88,8 +88,8 @@ def update(user_dict):
 # 删除用户
 def delete(username):
     del_data = (User
-              .delete()
-              .where(User.username == username))
+                .delete()
+                .where(User.username == username))
     try:
         del_data.execute()
     except Exception:
