@@ -14,6 +14,7 @@ class User(BaseModel):
     id = IntegerField()
     mail = CharField(unique=True)
     username = CharField(unique=True)
+    nickname = CharField(unique=True)
     passwd = CharField()
     salt = CharField()
     department = CharField()
