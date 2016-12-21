@@ -60,7 +60,6 @@ class UserHandler(tornado.web.RequestHandler):
                     info = 'add user failed'
             elif action == 'update':
                 user_data = data
-                print data
                 # 改密码,确认有新旧密码数据
                 if user_data.has_key('old_passwd') and user_data.has_key('new_passwd'):
                     # 判断旧密码是否正确
@@ -70,12 +69,22 @@ class UserHandler(tornado.web.RequestHandler):
                     _, encrypt_passwd = encrypt.md5_salt(user_data['old_passwd'], saved_salt)
                     if saved_passwd == encrypt_passwd:
                         user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
-                if db_user.update(user_data):
-                    ok = True
-                    info = 'update user successful'
+                        if db_user.update(user_data):
+                            ok = True
+                            info = 'update user successful'
+                        else:
+                            ok = False
+                            info = 'update user failed'
+                    else:
+                        ok = False
+                        info = 'password auth failed'
                 else:
-                    ok = False
-                    info = 'update user failed'
+                    if db_user.update(user_data):
+                        ok = True
+                        info = 'update user successful'
+                    else:
+                        ok = False
+                        info = 'update user failed'
             else:
                 ok = False
                 info = 'unsupported user action'
@@ -85,7 +94,7 @@ class UserHandler(tornado.web.RequestHandler):
 
     def delete(self):
         username = self.get_argument('username')
-        if db.delete_user(username):
+        if db_user.delete(username):
             ok = True
             info = 'delete user successful'
         else:

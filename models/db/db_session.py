@@ -25,7 +25,7 @@ class Session(BaseModel):
 # 获取用户sessions信息
 def get(access_token):
     try:
-        info = User.select().where(User.username == username).get()
+        info = Session.select().where(Session.access_token == access_token).get()
     except Exception, e:
         log.exception('exception')
         return False
@@ -33,8 +33,7 @@ def get(access_token):
         return info.__dict__['_data']
 
 
-
-# 插入数据到user表中
+# 插入数据到session表中
 def add(session_dict):
     session = Session()
     for key in session_dict:
@@ -48,7 +47,7 @@ def add(session_dict):
         return True
 
 
-# 更新用户信息
+# 更新session信息
 def update(session_dict):
     session = Session.get(access_toke=session_dict['access_token'])
     for key in session_dict:
@@ -63,7 +62,7 @@ def update(session_dict):
         return True
 
 
-# 删除用户
+# 删除session信息
 def delete(access_token):
     del_data = (Session
                 .delete()
