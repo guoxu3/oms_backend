@@ -49,17 +49,21 @@ def add(session_dict):
 
 # 更新session信息
 def update(session_dict):
-    session = Session.get(access_toke=session_dict['access_token'])
-    for key in session_dict:
-        if key != 'access_token':
-            setattr(session, key, session_dict[key])
-    try:
-        session.save()
-    except Exception, e:
-        log.exception('exception')
-        return False
+    session = Session.get(username=session_dict['usename'])
+    # 如果存在就更新，不存在就新增
+    if session:
+        for key in session_dict:
+            if key != 'username':
+                setattr(session, key, session_dict[key])
+        try:
+            session.save()
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return True
     else:
-        return True
+        add(session_dict)
 
 
 # 删除session信息

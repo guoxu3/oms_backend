@@ -8,6 +8,7 @@ read the config file
 
 import os
 import ConfigParser
+import re
 
 
 # get config file
@@ -27,3 +28,15 @@ dbname = get_config("database", "dbname")
 # server config
 port = get_config("server", "port")
 address = get_config("server", "address")
+
+# session config
+# default expiration time 7200s
+exp_second = 7200
+# get config
+exp_time = get_config("session", "exp_time")
+if re.match("^[0-9]*h$", exp_time):
+    exp_second = int(exp_time.replace('h','')) * 3600
+elif re.match("^[0-9]*m$", exp_time):
+    exp_second = int(exp_time.replace('m','')) * 60
+elif re.match("^[0-9]*s$", exp_time):
+    exp_second = int(exp_time.replace('s',''))

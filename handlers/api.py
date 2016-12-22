@@ -8,6 +8,7 @@ api handlers
 import tornado.web
 import tornado.escape
 from lib.judgement import *
+from lib.common import *
 from models.db import db_task,db_task_status,db_machine
 import uuid
 import json
@@ -15,6 +16,9 @@ import time, datetime
 
 
 # task handler 处理task相关操作
+from python.sd3a.lib.common import cur_timestamp
+
+
 class TaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -58,7 +62,7 @@ class TaskHandler(tornado.web.RequestHandler):
             if action == 'add':
                 task_data = data
                 task_data['task_id'] = uuid.uuid1().hex
-                task_data['create_time'] = int(time.mktime(datetime.datetime.now().timetuple()))
+                task_data['create_time'] = cur_timestamp()
                 # task_data['task_id'] = '0358c3c78f5211e685855cf9389306a2'
                 if db_task.add(task_data):
                     ok = True

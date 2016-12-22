@@ -4,8 +4,10 @@
 import tornado.web
 import tornado.escape
 from lib.judgement import *
-from models.db import db_user,db_permission
+from lib.common import *
+from models.db import db_user,db_permission,db_session
 from lib import encrypt
+from lib import config
 import json
 
 
@@ -135,8 +137,18 @@ class UserLoginHandler(tornado.web.RequestHandler):
             _, encrypt_passwd = encrypt.md5_salt(password, saved_salt)
             if saved_passwd == encrypt_passwd:
                 access_token = encrypt.make_cookie_secret()
-                ok = True
-                info = {'access_token': access_token}
+                session_data = {}
+                session_data['access_token'] = access_token
+                session_data['username'] = username
+                session_data['create_time'] = cur_timestamp()
+                session_data['expiration_time'] = session_data['create_time'] + config.exp_second
+                # 将session信息写到数据库中
+                if db_session.update(session_data):
+                    ok = True
+                    info = {'access_token': access_token}
+                else:
+                    ok = False
+                    info = "error ,please contact with the system administrator"
             else:
                 ok = False
                 info = 'username or password error'

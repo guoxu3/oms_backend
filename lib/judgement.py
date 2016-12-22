@@ -173,18 +173,6 @@ def is_content_type_right(value):
     return False
 
 
-# 将unicode 转换为str
-def byteify(input):
-    if isinstance(input, dict):
-        return {byteify(key):byteify(value) for key,value in input.iteritems()}
-    elif isinstance(input, list):
-        return [byteify(element) for element in input]
-    elif isinstance(input, unicode):
-        return input.encode('utf-8')
-    else:
-        return input
-
-
 def regex(pattern, data, flags=0):
     if isinstance(pattern, basestring):
         pattern = re.compile(pattern, flags)
@@ -200,49 +188,6 @@ def email(data):
 def ip(data):
     pattern = r'((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)'
     return regex(pattern, data, re.IGNORECASE)
-
-
-def xmldatetime(value):
-    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(value)))
-
-
-def xmldatetimeym(value):
-    return time.strftime('%Y-%m', time.localtime(int(value)))
-
-
-def xmldatetimeymd(value):
-    return time.strftime('%Y-%m-%d', time.localtime(int(value)))
-
-
-def xmldatetimey(value):
-    return time.strftime('%Y', time.localtime(int(value)))
-
-
-def xmldatetimed(value):
-    return time.strftime('%d', time.localtime(int(value)))
-
-
-def xmldatetimem(value):
-    return time.strftime('%m', time.localtime(int(value)))
-
-
-def get_api_data(url, project, password, value):
-    headers = {"User-Agent": 'curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 '
-                             'NSS/3.13.1.0 zlib/1.2.3 libidn/1.18 libssh2/1.2.2',
-               "Host": 'portal.4399.com',
-               "Accept": "*/*",
-               "Proxy-Connection": "Keep-Alive",
-               "Content-Type": "application/x-www-form-urlencoded"}
-
-    params = urllib.urlencode({"password": password, "method": value})
-    try:
-        conn = httplib.HTTPConnection(url, 80, timeout=2)
-        conn.request("POST", "/api/{0}/get_api.php".format(project), body=params, headers=headers)
-        response = conn.getresponse().read()
-        response = [info for info in response.split('\n') if re.match('^(\w)', info)]
-        return response
-    except Exception, e:
-        return False
 
 
 byte_map = ('B', 'KB', 'MB', 'GB', 'TB')
