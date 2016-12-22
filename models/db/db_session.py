@@ -13,7 +13,7 @@ from lib.logger import log
 # 定义user表
 class Session(BaseModel):
     id = IntegerField()
-    usename = CharField(unique=True)
+    username = CharField(unique=True)
     access_token = CharField(unique=True)
     create_time = IntegerField()
     expiration_time = IntegerField()
@@ -33,25 +33,23 @@ def get(access_token):
         return info.__dict__['_data']
 
 
-# 插入数据到session表中
-def add(session_dict):
-    session = Session()
-    for key in session_dict:
-        setattr(session, key, session_dict[key])
-    try:
-        session.save()
-    except Exception, e:
-        log.exception('exception')
-        return False
-    else:
-        return True
-
-
 # 更新session信息
+# 如果有就更新，没有就新增
 def update(session_dict):
-    session = Session.get(username=session_dict['usename'])
-    # 如果存在就更新，不存在就新增
-    if session:
+    try:
+        session = Session.get(username=session_dict['username'])
+    except:
+        session = Session()
+        for key in session_dict:
+            setattr(session, key, session_dict[key])
+        try:
+            session.save()
+        except Exception, e:
+            log.exception('exception')
+            return False
+        else:
+            return True
+    else:
         for key in session_dict:
             if key != 'username':
                 setattr(session, key, session_dict[key])
@@ -62,8 +60,6 @@ def update(session_dict):
             return False
         else:
             return True
-    else:
-        add(session_dict)
 
 
 # 删除session信息

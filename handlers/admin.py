@@ -131,18 +131,16 @@ class UserLoginHandler(tornado.web.RequestHandler):
             user_info = json.loads(body)
             username = user_info['username']
             password = user_info['passwd']
+            # 根据用户名获取存在数据库中的salt值和加密字符串，与传入的密码加密后的值进行比对
             saved_user_data = db_user.get(username)
             saved_salt = saved_user_data['salt']
             saved_passwd = saved_user_data['passwd']
             _, encrypt_passwd = encrypt.md5_salt(password, saved_salt)
             if saved_passwd == encrypt_passwd:
+                # 生成session信息并写到数据库中
                 access_token = encrypt.make_cookie_secret()
-                session_data = {}
-                session_data['access_token'] = access_token
-                session_data['username'] = username
-                session_data['create_time'] = cur_timestamp()
+                session_data = {'access_token': access_token, 'username': username, 'create_time': cur_timestamp()}
                 session_data['expiration_time'] = session_data['create_time'] + config.exp_second
-                # 将session信息写到数据库中
                 if db_session.update(session_data):
                     ok = True
                     info = {'access_token': access_token}
@@ -174,7 +172,6 @@ class PermissionHandler(tornado.web.RequestHandler):
     def get(self):
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
-
         permission_info = db_permission.get(start, count)
         if permission_info:
             ok = True
