@@ -14,6 +14,7 @@ import db_task_status
 class Task(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
+    creator = CharField()
     ip = CharField()
     create_time = IntegerField()
     action = CharField()

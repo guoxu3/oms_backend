@@ -13,6 +13,7 @@ from lib.logger import log
 class TaskStatus(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
+    executor = CharField()
     status = IntegerField()
     start_time = IntegerField()
     revert_time = IntegerField()

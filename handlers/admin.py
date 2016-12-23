@@ -196,7 +196,6 @@ class PermissionHandler(tornado.web.RequestHandler):
                 # todo
                 ok = ''
                 info = ''
-                pass
             else:
                 ok = False
                 info = 'unsupported permission action'
