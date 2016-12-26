@@ -5,24 +5,9 @@
 """
 
 from peewee import *
-from _db_conn import BaseModel
+from _db_init import *
 from lib.logger import log
 import db_task_status
-
-
-# 定义task表
-class Task(BaseModel):
-    id = IntegerField()
-    task_id = CharField(unique=True)
-    creator = CharField()
-    ip = CharField()
-    create_time = IntegerField()
-    action = CharField()
-    content = CharField()
-    description = CharField()
-
-    class Meta:
-        db_table = 'task'
 
 
 # 获取总数量

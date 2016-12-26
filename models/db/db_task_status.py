@@ -5,23 +5,8 @@
 """
 
 from peewee import *
-from _db_conn import BaseModel
+from _db_init import *
 from lib.logger import log
-
-
-# 定义task_status表
-class TaskStatus(BaseModel):
-    id = IntegerField()
-    task_id = CharField(unique=True)
-    executor = CharField()
-    status = IntegerField()
-    start_time = IntegerField()
-    revert_time = IntegerField()
-    percent = IntegerField()
-    revert = IntegerField()
-
-    class Meta:
-        db_table = 'task_status'
 
 
 # 获取总数量

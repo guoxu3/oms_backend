@@ -5,22 +5,8 @@
 """
 
 from peewee import *
-from _db_conn import BaseModel
+from _db_init import *
 from lib.logger import log
-
-
-# 定义machine_info表
-class Machine(BaseModel):
-    id = IntegerField()
-    machine_name = CharField(unique=True)
-    inside_ip = CharField()
-    outside_ip = CharField()
-    usage = CharField()
-    is_initialized = IntegerField()
-    location = CharField()
-
-    class Meta:
-        db_table = 'machine'
 
 
 # 获取总数量

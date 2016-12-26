@@ -5,19 +5,8 @@
 """
 
 from peewee import *
-from _db_conn import BaseModel
+from _db_init import *
 from lib.logger import log
-
-
-# 定义权限表Permissions
-class Permissions(BaseModel):
-    id = IntegerField()
-    permission = CharField(unique=True)
-    permission_desc = CharField()
-    permission_code = IntegerField(unique=True)
-
-    class Meta:
-        db_table = 'permissions'
 
 
 # 获取总数量

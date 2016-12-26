@@ -5,23 +5,8 @@
 """
 
 from peewee import *
-from _db_conn import BaseModel
+from _db_init import *
 from lib.logger import log
-
-
-# 定义user表
-class User(BaseModel):
-    id = IntegerField()
-    mail = CharField(unique=True)
-    username = CharField(unique=True)
-    nickname = CharField(unique=True)
-    passwd = CharField()
-    salt = CharField()
-    department = CharField()
-    permissions = CharField()
-
-    class Meta:
-        db_table = 'user'
 
 
 # 获取总数量

@@ -6,20 +6,8 @@
 
 
 from peewee import *
-from _db_conn import BaseModel
+from _db_init import *
 from lib.logger import log
-
-
-# 定义user表
-class Session(BaseModel):
-    id = IntegerField()
-    username = CharField(unique=True)
-    access_token = CharField(unique=True)
-    create_time = IntegerField()
-    expiration_time = IntegerField()
-
-    class Meta:
-        db_table = 'session'
 
 
 # 获取用户sessions信息
