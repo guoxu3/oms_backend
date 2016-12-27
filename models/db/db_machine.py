@@ -4,7 +4,6 @@
  定义machine表的相关操作
 """
 
-from peewee import *
 from _db_init import *
 from lib.logger import log
 

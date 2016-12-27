@@ -140,7 +140,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
                 # 生成session信息并写到数据库中
                 access_token = encrypt.make_cookie_secret()
                 session_data = {'access_token': access_token, 'username': username, 'create_time': cur_timestamp()}
-                session_data['expiration_time'] = session_data['create_time'] + config.exp_second
+                session_data['expire_time'] = session_data['create_time'] + config.expire_second
                 if db_session.update(session_data):
                     ok = True
                     info = {'access_token': access_token}

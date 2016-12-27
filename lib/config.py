@@ -31,12 +31,12 @@ address = get_config("server", "address")
 
 # session config
 # default expiration time 7200s
-exp_second = 7200
+expire_second = 7200
 # get config
-exp_time = get_config("session", "exp_time")
-if re.match("^[0-9]*h$", exp_time):
-    exp_second = int(exp_time.replace('h','')) * 3600
-elif re.match("^[0-9]*m$", exp_time):
-    exp_second = int(exp_time.replace('m','')) * 60
-elif re.match("^[0-9]*s$", exp_time):
-    exp_second = int(exp_time.replace('s',''))
+expire_time = get_config("session", "expire_time")
+if re.match("^[0-9]*h$", expire_time):
+    expire_second = int(expire_time.replace('h','')) * 3600
+elif re.match("^[0-9]*m$", expire_time):
+    expire_second = int(expire_time.replace('m','')) * 60
+elif re.match("^[0-9]*s$", expire_time):
+    expire_second = int(expire_time.replace('s',''))

@@ -12,13 +12,9 @@ from lib.common import *
 from models.db import db_task,db_task_status,db_machine
 import uuid
 import json
-import time, datetime
 
 
 # task handler 处理task相关操作
-from python.sd3a.lib.common import cur_timestamp
-
-
 class TaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -80,7 +76,7 @@ class TaskHandler(tornado.web.RequestHandler):
     # delete 删除task信息
     def delete(self):
         task_id = self.get_argument('task_id')
-        if db.get_task(task_id):
+        if db_task.get(task_id):
             if db_task.delete(task_id):
                 ok = True
                 info = 'delete task successful'

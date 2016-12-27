@@ -89,7 +89,7 @@ class Session(BaseModel):
     username = CharField(unique=True)
     access_token = CharField(unique=True)
     create_time = IntegerField()
-    expiration_time = IntegerField()
+    expire_time = IntegerField()
 
     class Meta:
         db_table = 'session'
