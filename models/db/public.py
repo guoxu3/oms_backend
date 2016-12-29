@@ -23,6 +23,6 @@ def has_permission(access_token, handler_permission):
     permission_list = list(get_info_by_session(access_token)['permissions'])
     expire_time = get_info_by_session(access_token)['expire_time']
     if cur_timestamp() > expire_time:
-        return {'ok': False, 'info': 'please login agin'}
+        return {'ok': False, 'info': 'login timeout, please login again'}
     if handler_permission not in permission_list:
         return {'ok': False, 'info': 'no permission'}
