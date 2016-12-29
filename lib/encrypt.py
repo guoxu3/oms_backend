@@ -35,7 +35,6 @@ def md5_salt(encrypt_str, salt=create_salt()):
     @param salt:  加盐的值
     @return: md5加密后的字符串
     """
-
     return salt,md5(encrypt_str + salt).hexdigest()
 
 
@@ -43,3 +42,8 @@ def md5_salt(encrypt_str, salt=create_salt()):
 def make_cookie_secret():
     return base64.b64encode(
         uuid.uuid4().bytes + uuid.uuid4().bytes)
+
+
+# bash64 加密
+def base64_encode(value):
+    return base64.b16decode(value)

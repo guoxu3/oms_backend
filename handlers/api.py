@@ -9,6 +9,8 @@ import tornado.web
 import tornado.escape
 from lib.judgement import *
 from lib.common import *
+from lib.encrypt import *
+from models.salt_api import SaltAPI as sapi
 from models.db import db_task,db_task_status,db_machine
 import uuid
 import json
@@ -247,6 +249,28 @@ class UpdateHandler(tornado.web.RequestHandler):
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
         if is_content_type_right(content_type) and is_json(body):
+            body = json.load(body)
+            action, data = body['action'], body['data']
+            if action == 'update':
+                task_id = data['task_id']
+                username = ''
+                task = db_task.get(task_id)
+                encode_update_string = base64_encode(username + '@' + task['repository'] + "@" + task['content'])
+                task_status = {'task_id': task_id, 'status': 1, 'start_time': cur_timestamp(), 'executor': username}
+                db_task_status.update(task_status)
+                result = sapi.run_script(task['ip'], 'salt://scripts/update_file.sh', encode_update_string)
+                if result:
+                    ok = True
+                    info = 'run script successful'
+                else:
+                    ok = False
+                    info = 'run script failed'
+            elif action == 'revert':
+                pass
+                # todo
+            else:
+                ok = False
+                info = 'unsupported task action'
             # todo
             ok = True
             info = ''
