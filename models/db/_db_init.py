@@ -88,7 +88,7 @@ class Session(BaseModel):
     id = IntegerField()
     username = CharField(unique=True)
     access_token = CharField(unique=True)
-    create_time = IntegerField()
+    action_time = IntegerField()
     expire_time = IntegerField()
 
     class Meta:

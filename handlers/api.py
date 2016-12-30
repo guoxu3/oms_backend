@@ -29,20 +29,34 @@ class TaskHandler(tornado.web.RequestHandler):
 
     # get 获取task信息
     def get(self):
+        local_permission = 1
         task_id = self.get_argument('task_id', None)
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
-        if task_id:
-            task_info = db_task.get(task_id)
-        else:
-            task_info = db_task.get(task_id, start, count)
+        token = self.get_argument('token', None)
+        if token:
+            rlt = has_permission(token, local_permission)
+            if rlt == 0:
+                if task_id:
+                    task_info = db_task.get(task_id)
+                else:
+                    task_info = db_task.get(task_id, start, count)
 
-        if task_info:
-            ok = True
-            info = {'data': task_info, 'count': db_task.row_count()}
+                if task_info:
+                    ok = True
+                    info = {'data': task_info, 'count': db_task.row_count()}
+                else:
+                    ok = False
+                    info = 'no such a task'
+            elif rlt == 1:
+                ok = False
+                info = 'login timeout'
+            elif rlt == 2:
+                ok = False
+                info = 'no permission'
         else:
             ok = False
-            info = 'no such a task'
+            info = 'please login first'
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))

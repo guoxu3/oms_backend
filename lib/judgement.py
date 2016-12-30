@@ -14,6 +14,8 @@ import base64
 import uuid
 import markdown2
 import json
+from common import *
+from models.db.public import *
 
 
 class ObjectDict(dict):
@@ -171,6 +173,20 @@ def is_content_type_right(value):
     if type == "application/json" and charset == "utf8":
         return True
     return False
+
+
+# 判断用户是否具有权限
+# 登陆超时返回 1，无权限返回 2
+# 可正常操作返回 0
+def has_permission(access_token, local_permission):
+    info = get_info_by_session(access_token)
+    permission_list = list(info['permissions'])
+    expire_time = info['expire_time']
+    if cur_timestamp() > expire_time:
+        return 1
+    if handler_permission not in permission_list:
+        return 2
+    return 0
 
 
 def regex(pattern, data, flags=0):
