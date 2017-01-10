@@ -184,7 +184,7 @@ def has_permission(access_token, local_permission):
     expire_time = info['expire_time']
     if cur_timestamp() > expire_time:
         return 1
-    if handler_permission not in permission_list:
+    if local_permission not in permission_list:
         return 2
     return 0
 

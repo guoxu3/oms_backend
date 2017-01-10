@@ -33,7 +33,8 @@ class TaskHandler(tornado.web.RequestHandler):
         task_id = self.get_argument('task_id', None)
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
-        token = self.get_argument('token', None)
+        token = self.get_secure_cookie("access_token")
+        print token
         if token:
             rlt = has_permission(token, local_permission)
             if rlt == 0:
@@ -301,7 +302,7 @@ class UpdateHandler(tornado.web.RequestHandler):
 
 handlers = [
     ('/api/task', TaskHandler),
-    ('/api/task_status', TaskStatusHandler),
+    ('/api/api/task_status', TaskStatusHandler),
     ('/api/update', UpdateHandler),
     ('/api/machine_info', MachineInfoHandler),
 ]

@@ -142,8 +142,9 @@ class UserLoginHandler(tornado.web.RequestHandler):
                 session_data = {'access_token': access_token, 'username': username, 'create_time': cur_timestamp()}
                 session_data['expire_time'] = session_data['create_time'] + config.expire_second
                 if db_session.update(session_data):
+                    self.set_secure_cookie("access_token", access_token, domain=".miaodeli.com", path="/")
                     ok = True
-                    info = {'access_token': access_token}
+                    info = {}
                 else:
                     ok = False
                     info = "error ,please contact with the system administrator"
@@ -207,7 +208,7 @@ class PermissionHandler(tornado.web.RequestHandler):
         pass
 
 handlers = [
-    ('/admin/user', UserHandler),
-    ('/admin/user_login', UserLoginHandler),
-    ('/admin/permission', PermissionHandler),
+    ('/api/user', UserHandler),
+    ('/api/user_login', UserLoginHandler),
+    ('/api/permission', PermissionHandler),
 ]

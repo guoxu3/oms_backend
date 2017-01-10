@@ -15,8 +15,8 @@ class Application(tornado.web.Application):
         import handlers.urls
 
         settings = {
-            'debug': True,
-            'cookie_secret': 'sji1fI23fdsffsd1fsdjwrzlHeGfd34nFHdfssfsd'
+            "debug": True,
+            "cookie_secret": "sji1fI23fdsffsd1fsdjwrzlHeGfd34nFHdfssfsd"
         }
         super(Application, self).__init__(handlers.urls.handlers, **settings)
 
