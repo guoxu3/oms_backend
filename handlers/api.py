@@ -26,6 +26,16 @@ class TaskHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
+        self.ok = True
+        self.info = ""
+        self.token = self.get_secure_cookie("access_token")
+        if self.token:
+            if is_expired(self.token):
+                self.ok = False
+                self.info = "login time out"
+        else:
+            self.ok = False
+            self.info = "please login first"
 
     # get 获取task信息
     def get(self):
@@ -33,31 +43,21 @@ class TaskHandler(tornado.web.RequestHandler):
         task_id = self.get_argument('task_id', None)
         start = self.get_argument('start', 0)
         count = self.get_argument('count', 10)
-        token = self.get_secure_cookie("access_token")
-        print token
-        if token:
-            rlt = has_permission(token, local_permission)
-            if rlt == 0:
-                if task_id:
-                    task_info = db_task.get(task_id)
-                else:
-                    task_info = db_task.get(task_id, start, count)
-
+        if self.ok:
+            if has_permission(self.token, local_permission):
+                task_info = db_task.get(task_id, start, count)
                 if task_info:
                     ok = True
                     info = {'data': task_info, 'count': db_task.row_count()}
                 else:
                     ok = False
                     info = 'no such a task'
-            elif rlt == 1:
-                ok = False
-                info = 'login timeout'
-            elif rlt == 2:
+            else:
                 ok = False
                 info = 'no permission'
         else:
-            ok = False
-            info = 'please login first'
+            ok = self.ok
+            info = self.info
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
@@ -121,6 +121,14 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
+        self.token = self.get_secure_cookie("access_token")
+        if self.token:
+            if is_expired(self.token):
+                self.ok = False
+                self.info = "login time out"
+        else:
+            self.ok = False
+            self.info = "please login first"
 
     # get 获取task_status信息
     def get(self):
@@ -259,6 +267,14 @@ class UpdateHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.token = self.get_secure_cookie("access_token")
+        if self.token:
+            if is_expired(self.token):
+                self.ok = False
+                self.info = "login time out"
+        else:
+            self.ok = False
+            self.info = "please login first"
 
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']

@@ -24,12 +24,10 @@ def get(access_token):
 # 更新session信息
 # 如果有就更新，没有就新增
 def update(session_dict):
-    print session_dict['username']
     try:
         session = Session.get(username=session_dict['username'])
     except Exception:
         log.exception('exception')
-        print "aaaa"
         session = Session()
         for key in session_dict:
             setattr(session, key, session_dict[key])
@@ -41,7 +39,6 @@ def update(session_dict):
         else:
             return True
     else:
-        print "bbb"
         for key in session_dict:
             if key != 'username':
                 setattr(session, key, session_dict[key])

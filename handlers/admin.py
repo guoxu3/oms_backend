@@ -139,8 +139,8 @@ class UserLoginHandler(tornado.web.RequestHandler):
             if saved_passwd == encrypt_passwd:
                 # 生成session信息并写到数据库中
                 access_token = encrypt.make_cookie_secret()
-                session_data = {'access_token': access_token, 'username': username, 'create_time': cur_timestamp()}
-                session_data['expire_time'] = session_data['create_time'] + config.expire_second
+                session_data = {'access_token': access_token, 'username': username, 'action_time': cur_timestamp()}
+                session_data['expire_time'] = session_data['action_time'] + config.expire_second
                 if db_session.update(session_data):
                     self.set_secure_cookie("access_token", access_token, domain=".miaodeli.com", path="/")
                     ok = True

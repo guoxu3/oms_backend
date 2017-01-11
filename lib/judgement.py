@@ -5,17 +5,13 @@
     == 验证类 ==
 """
 
-import types
 import re
-import time
-import httplib
-import urllib
-import base64
-import uuid
 import markdown2
 import json
 from common import *
 from models.db.public import *
+from models.db import db_session
+from lib import config
 
 
 class ObjectDict(dict):
@@ -176,17 +172,27 @@ def is_content_type_right(value):
 
 
 # 判断用户是否具有权限
-# 登陆超时返回 1，无权限返回 2
-# 可正常操作返回 0
 def has_permission(access_token, local_permission):
     info = get_info_by_session(access_token)
-    permission_list = list(info['permissions'])
+    permission_list = list(eval(info['permissions']))
+    if local_permission not in permission_list:
+        return False
+    else:
+        return True
+
+
+# 判断登陆是否过期，如果没过期则更新时间
+def is_expired(access_token):
+    info = get_info_by_session(access_token)
     expire_time = info['expire_time']
     if cur_timestamp() > expire_time:
-        return 1
-    if local_permission not in permission_list:
-        return 2
-    return 0
+        return True
+    else:
+        session_data = {'username': info['username'], 'action_time': cur_timestamp()}
+        session_data['expire_time'] = session_data['action_time'] + config.expire_second
+        db_session.update(session_data)
+        return False
+
 
 
 def regex(pattern, data, flags=0):
