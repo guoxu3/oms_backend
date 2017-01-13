@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-api handlers
+    task status handlers
 """
 
 import tornado.web
@@ -16,7 +16,6 @@ import uuid
 import json
 
 
-# task status handler  处理task_status相关操作
 class TaskStatusHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -26,6 +25,9 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
+        self.handler_permission = 2
+        self.get_permission = 2.1
+        self.post_permision = 2.2
         self.ok = True
         self.info = ""
         self.token = self.get_secure_cookie("access_token")
@@ -37,7 +39,6 @@ class TaskStatusHandler(tornado.web.RequestHandler):
             self.ok = False
             self.info = "please login first"
 
-    # get 获取task_status信息
     def get(self):
         if self.ok:
             if has_permission(self.token, local_permission):
@@ -65,35 +66,31 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
-    # post 新增或更新等操作，接收json,操作类型由action定义
     def post(self):
-        if self.ok:
-            if has_permission(self.token, local_permission):
-                content_type = dict(self.request.headers)['Content-Type']
-                body = self.request.body
-                if not is_content_type_right(content_type) or not is_json(body):
-                    ok = False
-                    info = 'body or content-type format error'
+        """
+        update task status, called by shell script
+        Does not require authentication
+        """
+        content_type = dict(self.request.headers)['Content-Type']
+        body = self.request.body
+        if not is_content_type_right(content_type) or not is_json(body):
+            ok = False
+            info = 'body or content-type format error'
+        else:
+            body = json.loads(body)
+            action, data = body['action'], body['data']
+            if action == 'update':
+                task_status_data = data
+                if db_task_status.update(task_status_data):
+                    ok = True
+                    info = 'update task status successful'
                 else:
-                    body = json.loads(body)
-                    action, data = body['action'], body['data']
-                    if action == 'update':
-                        task_status_data = data
-                        if db_task_status.update(task_status_data):
-                            ok = True
-                            info = 'update task status successful'
-                        else:
-                            ok = False
-                            info = 'update task status failed'
-                    else:
-                        ok = False
-                        info = 'unsupported task status action'
+                    ok = False
+                    info = 'update task status failed'
             else:
                 ok = False
-                info = 'no permission'
-        else:
-            ok = self.ok
-            info = self.info
+                info = 'unsupported task status action'
+
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))

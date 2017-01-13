@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-    == 验证类 ==
+    judge funtions
 """
 
 import re
@@ -24,7 +24,6 @@ class ObjectDict(dict):
         self[key] = value
 
 
-# 判断是否为整数 15
 def is_number(value):
     # if False == type(value) is int:
     # return str(value).isdigtal()
@@ -33,54 +32,36 @@ def is_number(value):
     return str(value).isdigit()
 
 
-# 判断是否为字符串 string
 def is_string(value):
     return isinstance(value, bytes)
 
 
-# 判断是否为浮点数 1.324
 def is_float(value):
     return isinstance(value, float)
 
 
-# 判断是否为字典 {'a1':'1','a2':'2'}
 def is_dict(value):
     return isinstance(value, dict)
 
 
-# 判断是否为tuple [1,2,3]
 def is_tuple(value):
     return isinstance(value, tuple)
 
 
-# 判断是否为List [1,3,4]
 def is_list(value):
     return isinstance(value, list)
 
 
-# 判断是否为布尔值 True
 def is_boolean(value):
     return isinstance(value, bool)
 
 
-# 判断是否为货币型 1.32
-def is_currency(value):
-    # 数字是否为整数或浮点数
-    if is_float(value) and is_number(value) and value > 0:
-        # 数字不能为负数
-        # return is_number(currencyObj)
-        return False
-    return True
-
-
-# 判断某个变量是否为空 x
 def is_empty(value):
     if len(value) == 0:
         return True
     return False
 
 
-# 不为空
 def not_empty(value):
     if is_none(value):
         return False
@@ -89,12 +70,11 @@ def not_empty(value):
     return True
 
 
-# 判断变量是否为None None
 def is_none(value):
     return isinstance(value, type(None))  # == "None" or value == "none":
 
 
-# 判断是否为日期格式,并且是否符合日历规则 2010-01-31
+# date format: 2010-01-31
 def is_date(value):
     if len(value) == 10:
         rule = '(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)$/'
@@ -105,7 +85,6 @@ def is_date(value):
     return False
 
 
-# 判断是否为邮件地址
 def is_email(value):
     rule = '[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$'
     match = re.match(rule, value)
@@ -115,7 +94,6 @@ def is_email(value):
     return False
 
 
-# 判断是否为中文字符串
 def is_chinese_char_string(value):
     for x in value:
         if (x >= u"\u4e00" and x <= u"\u9fa5") or (x >= u'\u0041' and x <= u'\u005a') or (
@@ -126,15 +104,15 @@ def is_chinese_char_string(value):
     return True
 
 
-# 判断是否为中文字符
 def is_chinese_char(value):
     if value[0] > chr(127):
         return True
     return False
 
 
-# 判断帐号是否合法 字母开头，允许4-16字节，允许字母数字下划线
-def is_legala_ccounts(value):
+# 4-16 byters, allowed alphanumeric characters and underscores
+# must begin with characters
+def is_legal_accounts(value):
     rule = '[a-zA-Z][a-zA-Z0-9_]{3,15}$'
     match = re.match(rule, value)
 
@@ -143,7 +121,6 @@ def is_legala_ccounts(value):
     return False
 
 
-# 匹配IP地址
 def is_ip_addr(value):
     pattern = r"\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
     if re.match(pattern, value):
@@ -152,7 +129,6 @@ def is_ip_addr(value):
         return True
 
 
-# 判断是否是json
 def is_json(value):
     try:
         json.loads(value)
@@ -161,7 +137,7 @@ def is_json(value):
     return True
 
 
-# 判断content-type 是不是application/json;charset=utf8
+# content-type must be "application/json;charset=utf8"
 def is_content_type_right(value):
     value = str.lower(value.replace(" ", ""))
     type = value.split(";")[0]
@@ -171,9 +147,8 @@ def is_content_type_right(value):
     return False
 
 
-# 判断用户是否具有权限
 def has_permission(access_token, local_permission):
-    info = get_info_by_session(access_token)
+    info = get_info_by_token(access_token)
     permission_list = list(eval(info['permissions']))
     if local_permission not in permission_list:
         return False
@@ -181,9 +156,10 @@ def has_permission(access_token, local_permission):
         return True
 
 
-# 判断登陆是否过期，如果没过期则更新时间
+# judge user action time
+# if expired retern Fales, else update user action time
 def is_expired(access_token):
-    info = get_info_by_session(access_token)
+    info = get_info_by_token(access_token)
     expire_time = info['expire_time']
     if cur_timestamp() > expire_time:
         return True
@@ -193,37 +169,3 @@ def is_expired(access_token):
         db_session.update(session_data)
         return False
 
-
-
-def regex(pattern, data, flags=0):
-    if isinstance(pattern, basestring):
-        pattern = re.compile(pattern, flags)
-
-    return pattern.match(data)
-
-
-def email(data):
-    pattern = r'^.+@[^.].*\.[a-z]{2,10}$'
-    return regex(pattern, data, re.IGNORECASE)
-
-
-def ip(data):
-    pattern = r'((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)'
-    return regex(pattern, data, re.IGNORECASE)
-
-
-byte_map = ('B', 'KB', 'MB', 'GB', 'TB')
-
-
-def size_readify(size, precise=1):
-    """do this kind of things:
-    1024 => 1 KB"""
-    level = 0
-    while size >= 1024:
-        size = size / 1024.0
-        level += 1
-    return str(round(size, precise)) + ' ' + byte_map[level]
-
-
-def markdownhtml(text):
-    return markdown2.markdown(text, extras=["wiki-tables", "code-color", "fenced-code-blocks"])

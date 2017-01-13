@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-api handlers
+    task handlers
 """
 
 import tornado.web
@@ -10,13 +10,11 @@ import tornado.escape
 from lib.judgement import *
 from lib.common import *
 from lib.encrypt import *
-from models.salt_api import SaltAPI as sapi
 from models.db import db_task,db_task_status,db_machine
 import uuid
 import json
 
 
-# task handler 处理task相关操作
 class TaskHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -26,6 +24,10 @@ class TaskHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
+        self.handler_permission = 1
+        self.get_permission = 1.1
+        self.post_permission = 1.2
+        self.delete_permission = 1.3
         self.ok = True
         self.info = ""
         self.token = self.get_secure_cookie("access_token")
@@ -37,7 +39,6 @@ class TaskHandler(tornado.web.RequestHandler):
             self.ok = False
             self.info = "please login first"
 
-    # get 获取task信息
     def get(self):
         local_permission = 1
         task_id = self.get_argument('task_id', None)
@@ -62,7 +63,6 @@ class TaskHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
-    # post 新增或者更新操作，接收json,操作类型由action定义
     def post(self):
         if self.ok:
             if has_permission(self.token, local_permission):
@@ -96,7 +96,6 @@ class TaskHandler(tornado.web.RequestHandler):
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
-    # delete 删除task信息
     def delete(self):
         if self.ok:
             if has_permission(self.token, local_permission):
