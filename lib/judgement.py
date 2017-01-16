@@ -147,17 +147,24 @@ def is_content_type_right(value):
     return False
 
 
-def has_permission(access_token, local_permission):
+# imput: access_token, local_permission_list
+# get user permissions by access_token
+def has_permission(access_token, local_permission_list):
+    permission_list = []
     info = get_info_by_token(access_token)
-    permission_list = list(eval(info['permissions']))
-    if local_permission not in permission_list:
+    for a in info['permissions'].split(','):
+        permission_list.append(a)
+    # '0' represent administrator
+    if '0' in permission_list:
+        return True
+    if set(permission_list) & set(local_permission_list) == set([]):
         return False
     else:
         return True
 
 
 # judge user action time
-# if expired retern Fales, else update user action time
+# if expired retern False, else update user action time
 def is_expired(access_token):
     info = get_info_by_token(access_token)
     expire_time = info['expire_time']

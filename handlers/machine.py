@@ -26,6 +26,10 @@ class MachineHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
+        self.handler_permission = '1'
+        self.get_permission = '1.1'
+        self.post_permission = '1.2'
+        self.delete_permission = '1.3'
         self.ok = True
         self.info = ""
         self.token = self.get_secure_cookie("access_token")

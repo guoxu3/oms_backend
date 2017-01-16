@@ -25,3 +25,12 @@ taskhandler: 2
 	└── post: 2.2（预留）
 			└── update: NULL,开放对外调用，不做验证
 ```
+###permission:
+```
+permissionhandler:3
+	│ 
+	├── get: 3.1
+	│  
+	└── post: 3.2（预留）
+			└── update: NULL,开放对外调用，不做验证
+```

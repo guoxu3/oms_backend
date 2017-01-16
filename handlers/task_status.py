@@ -40,8 +40,9 @@ class TaskStatusHandler(tornado.web.RequestHandler):
             self.info = "please login first"
 
     def get(self):
+        local_permission_list = [self.handler_permission, self.get_permission]
         if self.ok:
-            if has_permission(self.token, local_permission):
+            if has_permission(self.token, local_permission_list):
                 task_id = self.get_argument('task_id', None)
                 start = self.get_argument('start', 0)
                 count = self.get_argument('count', 10)
