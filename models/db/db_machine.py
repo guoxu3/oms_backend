@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
- 定义machine表的相关操作
+    machine table operation
 """
 
 from _db_init import *
 from lib.logger import log
 
 
-# 获取总数量
 def row_count():
     try:
         count = Machine.select().count()
@@ -19,7 +18,6 @@ def row_count():
         return count
 
 
-# 获取machine_info信息
 def get(machine_name=None, start=0, count=10):
     if machine_name:
         try:
@@ -41,7 +39,6 @@ def get(machine_name=None, start=0, count=10):
             return data_list
 
 
-# 插入数据到machine_info表
 def add(machine_info_dict):
     machine = Machine()
     for key in machine_info_dict:
@@ -55,7 +52,6 @@ def add(machine_info_dict):
         return True
 
 
-# 更新machine_info数据
 def update(machine_dict):
     machine = Machine.get(machine_name=machine_dict['machine_name'])
     for key in machine_dict:
@@ -70,7 +66,6 @@ def update(machine_dict):
         return True
 
 
-# 删除machine_info数据
 def delete(machine_name):
     del_data = (Machine
                 .delete()

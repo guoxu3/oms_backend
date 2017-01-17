@@ -26,6 +26,9 @@ class UpdateHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.handler_permission = '5'
+        self.get_permission = '5.1'
+        self.post_permission = '5.2'
         self.ok = True
         self.info = ""
         self.token = self.get_secure_cookie("access_token")
@@ -38,6 +41,17 @@ class UpdateHandler(tornado.web.RequestHandler):
             self.info = "please login first"
 
     def post(self):
+        post_pay_permission = '5.2.1'
+        post_static_permission = '5.2.2'
+        post_exp_permission = '5.2.3'
+        post_exp_v4_permission = '5.2.4'
+        post_sample_api_permission = '5.2.5'
+        post_sample_api_v4_permission = '5.2.6'
+        post_card_permission = '5.2.7'
+        post_channel_permission = '5.2.8'
+        post_ground_permission = '5.2.9'
+        post_api_permission = '5.2.10'
+        post_stock_permission = '5.2.11'
         if self.ok:
             if has_permission(self.token, local_permission):
                 content_type = dict(self.request.headers)['Content-Type']

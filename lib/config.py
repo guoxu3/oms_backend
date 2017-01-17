@@ -3,7 +3,7 @@
 
 
 """
-read the config file
+    read the config file ,parse config
 """
 
 import os
@@ -30,9 +30,7 @@ port = get_config("server", "port")
 address = get_config("server", "address")
 
 # session config
-# default expiration time 7200s
-expire_second = 7200
-# get config
+expire_second = 7200 # default expiration time 7200s
 expire_time = get_config("session", "expire_time")
 if re.match("^[0-9]*h$", expire_time):
     expire_second = int(expire_time.replace('h','')) * 3600

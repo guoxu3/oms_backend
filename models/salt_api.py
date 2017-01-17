@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 
 """
- 调用salt api，需要在服务器上安装部署salt
- salt 文档：
+ use salt api，you need to install salt on your server first
+ salt documentation：
     https://docs.saltstack.com/en/latest/contents.html
- api 文档：
+ salt api documentation：
     https://docs.saltstack.com/en/latest/topics/api.html
 
 """

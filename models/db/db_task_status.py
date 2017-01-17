@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
- 定义task_status表相关的操作
+    task_status table operation
 """
 
 from peewee import *
@@ -9,7 +9,6 @@ from _db_init import *
 from lib.logger import log
 
 
-# 获取总数量
 def row_count():
     try:
         count = TaskStatus.select().count()
@@ -20,7 +19,6 @@ def row_count():
         return count
 
 
-# 插入数据到task_status表
 def add(task_status_dict):
     task_status = TaskStatus()
     for key in task_status_dict:
@@ -34,7 +32,6 @@ def add(task_status_dict):
         return True
 
 
-# 获取task_status信息
 def get(task_id=None, start=0, count=10):
     if task_id:
         try:
@@ -56,7 +53,6 @@ def get(task_id=None, start=0, count=10):
             return data_list
 
 
-# 更新task_status
 def update(update_dict):
     task_status = TaskStatus.get(task_id=update_dict['task_id'])
     for key in update_dict:
@@ -71,7 +67,6 @@ def update(update_dict):
         return True
 
 
-# 删除 task_status
 def delete(task_id):
     del_data = (TaskStatus
                 .delete()

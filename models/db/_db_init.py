@@ -5,7 +5,7 @@ from peewee import *
 from playhouse.pool import PooledMySQLDatabase
 from lib import config
 
-# mysql 连接池
+# mysql connection pool
 db = PooledMySQLDatabase(
     database=config.dbname,
     host=config.dbhost,
@@ -18,13 +18,13 @@ db = PooledMySQLDatabase(
 )
 
 
-# 定义基础类，指定所在的数据库
+# base model
 class BaseModel(Model):
     class Meta:
         database = db
 
 
-# 定义task表
+# task table
 class Task(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
@@ -39,7 +39,7 @@ class Task(BaseModel):
         db_table = 'task'
 
 
-# 定义task_status表
+# task_status table
 class TaskStatus(BaseModel):
     id = IntegerField()
     task_id = CharField(unique=True)
@@ -54,7 +54,7 @@ class TaskStatus(BaseModel):
         db_table = 'task_status'
 
 
-# 定义machine_info表
+# machine table
 class Machine(BaseModel):
     id = IntegerField()
     machine_name = CharField(unique=True)
@@ -68,7 +68,7 @@ class Machine(BaseModel):
         db_table = 'machine'
 
 
-# 定义user表
+# user table
 class User(BaseModel):
     id = IntegerField()
     mail = CharField(unique=True)
@@ -83,7 +83,7 @@ class User(BaseModel):
         db_table = 'user'
 
 
-# 定义session表
+# session table
 class Session(BaseModel):
     id = IntegerField()
     username = CharField(unique=True)
@@ -95,7 +95,7 @@ class Session(BaseModel):
         db_table = 'session'
 
 
-# 定义权限表Permissions
+# permissions table
 class Permissions(BaseModel):
     id = IntegerField()
     permission = CharField(unique=True)

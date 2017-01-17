@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-加密函数
+    encrypt functions
 """
 
 from random import Random
@@ -13,8 +13,8 @@ import base64
 
 def create_salt(salt_length=4):
     """
-    随机生成指定长度的salt，用于和原始字符串组合，进行md5加密
-    @param salt_length:  生成的salt值的长度
+    Randomly generated specified length of salt
+    @param salt_length:  length of salt value
     @return:
     """
 
@@ -31,19 +31,19 @@ def create_salt(salt_length=4):
 
 def md5_salt(encrypt_str, salt=create_salt()):
     """
-    @param encrypt_str:  要加密的字符串
-    @param salt:  加盐的值
-    @return: md5加密后的字符串
+    @param encrypt_str:  String needed to be encrypted
+    @param salt:  salt value
+    @return:  md5 encrypt string
     """
     return salt,md5(encrypt_str + salt).hexdigest()
 
 
-# 生成cookie值
+# create cookie value
 def make_cookie_secret():
     return base64.b64encode(
         uuid.uuid4().bytes + uuid.uuid4().bytes)
 
 
-# bash64 加密
+# base64 encrypt
 def base64_encode(value):
     return base64.b16decode(value)

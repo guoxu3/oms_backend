@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
- public database action
+ public database operation
 """
 
 import db_session,db_user

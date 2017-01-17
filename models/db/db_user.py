@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
- 定义user表相关的操作
+    user table operation
 """
 
 from peewee import *
@@ -9,7 +9,6 @@ from _db_init import *
 from lib.logger import log
 
 
-# 获取总数量
 def row_count():
     try:
         count = User.select().count()
@@ -20,7 +19,6 @@ def row_count():
         return count
 
 
-# 获取用户信息
 def get(username=None, start=0, count=10):
     if username:
         try:
@@ -42,7 +40,6 @@ def get(username=None, start=0, count=10):
             return data_list
 
 
-# 插入数据到user表中
 def add(user_dict):
     user = User()
     for key in user_dict:
@@ -56,7 +53,6 @@ def add(user_dict):
         return True
 
 
-# 更新用户信息
 def update(user_dict):
     user = User.get(username=user_dict['username'])
     for key in user_dict:
@@ -71,7 +67,6 @@ def update(user_dict):
         return True
 
 
-# 删除用户
 def delete(username):
     del_data = (User
                 .delete()

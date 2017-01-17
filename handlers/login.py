@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+"""
+    user login handler
+"""
+
 import tornado.web
 import tornado.escape
 from lib.judgement import *
@@ -11,7 +15,6 @@ from lib import config
 import json
 
 
-# 登陆接口
 class LoginHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -32,13 +35,13 @@ class LoginHandler(tornado.web.RequestHandler):
             user_info = json.loads(body)
             username = user_info['username']
             password = user_info['passwd']
-            # 根据用户名获取存在数据库中的salt值和加密字符串，与传入的密码加密后的值进行比对
+            # get saved passwd and salt value from database, and compare with user input
             saved_user_data = db_user.get(username)
             saved_salt = saved_user_data['salt']
             saved_passwd = saved_user_data['passwd']
             _, encrypt_passwd = encrypt.md5_salt(password, saved_salt)
             if saved_passwd == encrypt_passwd:
-                # 生成session信息并写到数据库中
+                # create access_token and save in database
                 access_token = encrypt.make_cookie_secret()
                 session_data = {'access_token': access_token, 'username': username, 'action_time': cur_timestamp()}
                 session_data['expire_time'] = session_data['action_time'] + config.expire_second

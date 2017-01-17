@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
-    操作session表
+    session table operation
 """
 
 
@@ -10,7 +10,6 @@ from _db_init import *
 from lib.logger import log
 
 
-# 获取用户sessions信息
 def get(access_token):
     try:
         info = Session.select().where(Session.access_token == access_token).get()
@@ -21,8 +20,8 @@ def get(access_token):
         return info.__dict__['_data']
 
 
-# 更新session信息
-# 如果有就更新，没有就新增
+# update session
+# if username dosnot exist, add a new session record
 def update(session_dict):
     try:
         session = Session.get(username=session_dict['username'])
@@ -51,7 +50,6 @@ def update(session_dict):
             return True
 
 
-# 删除session信息
 def delete(access_token):
     del_data = (Session
                 .delete()

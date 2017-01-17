@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-api handlers
+    machine handlers
 """
 
 import tornado.web
@@ -16,7 +16,6 @@ import uuid
 import json
 
 
-# machine info handler
 class MachineHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -26,10 +25,10 @@ class MachineHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
-        self.handler_permission = '1'
-        self.get_permission = '1.1'
-        self.post_permission = '1.2'
-        self.delete_permission = '1.3'
+        self.handler_permission = '6'
+        self.get_permission = '6.1'
+        self.post_permission = '6.2'
+        self.delete_permission = '6.3'
         self.ok = True
         self.info = ""
         self.token = self.get_secure_cookie("access_token")
@@ -42,8 +41,9 @@ class MachineHandler(tornado.web.RequestHandler):
             self.info = "please login first"
 
     def get(self):
+        local_permission_list = [self.handler_permission, self.get_permission]
         if self.ok:
-            if has_permission(self.token, local_permission):
+            if has_permission(self.token, local_permission_list):
                 machine_name = self.get_argument('machine_name', None)
                 start = self.get_argument('start', 0)
                 count = self.get_argument('count', 10)
@@ -69,17 +69,20 @@ class MachineHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(response))
 
     def post(self):
+        post_add_permission = '6.2.1'
+        post_update_permission = '6.2.2'
         if self.ok:
-            if has_permission(self.token, local_permission):
-                content_type = dict(self.request.headers)['Content-Type']
-                body = self.request.body
-                if not is_content_type_right(content_type) or not is_json(body):
-                    ok = False
-                    info = 'body or content-type format error'
-                else:
-                    body = json.loads(body)
-                    action, data = body['action'], body['data']
-                    if action == 'add':
+            content_type = dict(self.request.headers)['Content-Type']
+            body = self.request.body
+            if not is_content_type_right(content_type) or not is_json(body):
+                ok = False
+                info = 'body or content-type format error'
+            else:
+                body = json.loads(body)
+                action, data = body['action'], body['data']
+                if action == 'add':
+                    local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
+                    if has_permission(self.token, local_permission_list):
                         machine_info_data = data
                         if db_machine.add(machine_info_data):
                             ok = True
@@ -87,7 +90,12 @@ class MachineHandler(tornado.web.RequestHandler):
                         else:
                             ok = False
                             info = 'add miachine info failed'
-                    elif action == 'update':
+                    else:
+                        ok = False
+                        info = 'no permission'
+                elif action == 'update':
+                    local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
+                    if has_permission(self.token, local_permission_list):
                         machine_info_data = data
                         if db_machine.add(machine_info_data):
                             ok = True
@@ -97,10 +105,10 @@ class MachineHandler(tornado.web.RequestHandler):
                             info = 'update task status failed'
                     else:
                         ok = False
-                        info = 'unsupported task status action'
-            else:
-                ok = False
-                info = 'no permission'
+                        info = 'no permission'
+                else:
+                    ok = False
+                    info = 'unsupported task status action'
         else:
             ok = self.ok
             info = self.info
@@ -109,8 +117,9 @@ class MachineHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(response))
 
     def delete(self):
+        local_permission_list = [self.handler_permission, self.delete_permission]
         if self.ok:
-            if has_permission(self.token, local_permission):
+            if has_permission(self.token, local_permission_list):
                 machine_name = self.get_argument('machine_name')
                 if db_machine.delete(machine_name):
                     ok = True

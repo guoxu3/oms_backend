@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
- 定义permission表的相关操作
+    permission table operation
 """
 
 from peewee import *
@@ -9,7 +9,6 @@ from _db_init import *
 from lib.logger import log
 
 
-# 获取总数量
 def row_count():
     try:
         count = Permissions.select().count()
@@ -20,7 +19,6 @@ def row_count():
         return count
 
 
-# 获取权限信息
 def get(start=0, count=10):
     data_list = []
     try:
@@ -33,7 +31,6 @@ def get(start=0, count=10):
         return data_list
 
 
-# 插入数据到permissions表中
 def add(permissions_dict):
     permissions = Permissions()
     for key in permissions_dict:

@@ -5,7 +5,8 @@ import logging
 import time
 import os
 
-log_filename = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0] + "/log/" + "oms-" + time.strftime('%Y%m%d') + ".log"
+root_path = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+log_filename = root_path + "/log/" + "oms-" + time.strftime('%Y%m%d') + ".log"
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',

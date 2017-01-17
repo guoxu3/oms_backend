@@ -12,7 +12,6 @@ from lib.judgement import *
 from lib.common import *
 
 
-
 class LogoutHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
@@ -35,14 +34,13 @@ class LogoutHandler(tornado.web.RequestHandler):
                 info = "log out successful"
         else:
             ok = True
-            info = "Do not log in yet"
+            info = "Not log in yet"
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
 
     def options(self):
         pass
-
 
 handlers = [
     ('/api/logout', LogoutHandler),
