@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 
 """
-collect all handlers
+   collect all handlers
 """
 
-from handlers import task,task_status,machine,update,user,login
+from handlers import task, task_status, machine, update, user, login
 from handlers import permission
 
 # Routes

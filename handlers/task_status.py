@@ -100,5 +100,5 @@ class TaskStatusHandler(tornado.web.RequestHandler):
         pass
 
 handlers = [
-    ('/api/api/task_status', TaskStatusHandler),
+    ('/api/task_status', TaskStatusHandler),
 ]
