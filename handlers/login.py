@@ -37,24 +37,28 @@ class LoginHandler(tornado.web.RequestHandler):
             password = user_info['passwd']
             # get saved passwd and salt value from database, and compare with user input
             saved_user_data = db_user.get(username)
-            saved_salt = saved_user_data['salt']
-            saved_passwd = saved_user_data['passwd']
-            _, encrypt_passwd = encrypt.md5_salt(password, saved_salt)
-            if saved_passwd == encrypt_passwd:
-                # create access_token and save in database
-                access_token = encrypt.make_cookie_secret()
-                session_data = {'access_token': access_token, 'username': username, 'action_time': cur_timestamp()}
-                session_data['expire_time'] = session_data['action_time'] + config.expire_second
-                if db_session.update(session_data):
-                    self.set_secure_cookie("access_token", access_token, domain=".miaodeli.com", path="/")
-                    ok = True
-                    info = {}
+            if saved_user_data:
+                saved_salt = saved_user_data['salt']
+                saved_passwd = saved_user_data['passwd']
+                _, encrypt_passwd = encrypt.md5_salt(password, saved_salt)
+                if saved_passwd == encrypt_passwd:
+                    # create access_token and save in database
+                    access_token = encrypt.make_cookie_secret()
+                    session_data = {'access_token': access_token, 'username': username, 'action_time': cur_timestamp()}
+                    session_data['expire_time'] = session_data['action_time'] + config.expire_second
+                    if db_session.update(session_data):
+                        self.set_secure_cookie("access_token", access_token, domain=".miaodeli.com", path="/")
+                        ok = True
+                        info = {}
+                    else:
+                        ok = False
+                        info = "error ,please contact with the system administrator"
                 else:
                     ok = False
-                    info = "error ,please contact with the system administrator"
+                    info = 'password error'
             else:
                 ok = False
-                info = 'username or password error'
+                info = 'no such a user'
 
         response = dict(ok=ok, info=info)
         self.write(tornado.escape.json_encode(response))
