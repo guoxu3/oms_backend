@@ -47,7 +47,8 @@ class LoginHandler(tornado.web.RequestHandler):
                     session_data = {'access_token': access_token, 'username': username, 'action_time': cur_timestamp()}
                     session_data['expire_time'] = session_data['action_time'] + config.expire_second
                     if db_session.update(session_data):
-                        self.set_secure_cookie("access_token", access_token, domain=".miaodeli.com", path="/")
+                        self.set_secure_cookie("access_token", access_token)
+                        self.set_cookie("username", username)
                         ok = True
                         info = {}
                     else:
