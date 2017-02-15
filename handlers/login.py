@@ -25,6 +25,22 @@ class LoginHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
 
+    def get(self):
+        token = self.get_secure_cookie("access_token")
+        if token:
+            if is_expired(token):
+                ok = False
+                info = "login time out"
+            else:
+                ok = True
+                info = ""
+        else:
+            ok = False
+            info = "please login first"
+
+        response = dict(ok=ok, info=info)
+        self.write(tornado.escape.json_encode(response))
+
     def post(self):
         content_type = dict(self.request.headers)['Content-Type']
         body = self.request.body
