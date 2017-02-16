@@ -31,6 +31,8 @@ class Task(BaseModel):
     creator = CharField()
     ip = CharField()
     create_time = IntegerField()
+    target = CharField()
+    version = IntegerField()
     action = CharField()
     content = CharField()
     description = CharField()

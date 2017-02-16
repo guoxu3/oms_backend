@@ -54,7 +54,7 @@ class MachineHandler(tornado.web.RequestHandler):
 
                 if machine_info:
                     ok = True
-                    info = {'data': machine_info, 'count': db_machine.row_count*()}
+                    info = {'data': machine_info, 'count': db_machine.row_count()}
                 else:
                     ok = False
                     info = 'no such a machine info'
