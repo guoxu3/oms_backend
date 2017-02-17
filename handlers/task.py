@@ -10,6 +10,7 @@ import tornado.escape
 from lib.judgement import *
 from lib.common import *
 from lib.encrypt import *
+from lib.send_mail import send_mail
 from models.db import db_task,db_task_status,db_machine
 import uuid
 import json
@@ -73,13 +74,17 @@ class TaskHandler(tornado.web.RequestHandler):
                 info = 'body or content-type format error'
             else:
                 body = json.loads(body)
-                action, task_data = body['action'], body['data']
+                action, task_data, mailto = body['action'], body['data'], body['mailto']
                 if action == 'add':
                     local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
                     if has_permission(self.token, local_permission_list):
                         task_data['task_id'] = uuid.uuid1().hex
                         task_data['create_time'] = cur_timestamp()
                         if db_task.add(task_data):
+                            if list(mailto):
+                                message = task_data['creator'] + " create a new task, see in " \
+                                                        "http://oms.example.com/task?task_id=" + task_data['task_id']
+                                send_mail(list(mailto), message)
                             ok = True
                             info = {'task_id': task_data['task_id']}
                         else:

@@ -38,3 +38,10 @@ elif re.match("^[0-9]*m$", expire_time):
     expire_second = int(expire_time.replace('m','')) * 60
 elif re.match("^[0-9]*s$", expire_time):
     expire_second = int(expire_time.replace('s',''))
+
+# mail config
+mail_open = get_config("mail", "mail_open")
+mail_host = get_config("mail", "mail_host")
+mail_user = get_config("mail", "mail_user")
+mail_pass = get_config("mail", "mail_pass")
+mail_postfix = get_config("mail", "mail_postfix")
