@@ -30,17 +30,7 @@ def add(task_dict):
         log.exception('exception')
         return False
     else:
-        task_status_dict = {'task_id': task_dict['task_id'],
-                            'start_time': 0,
-                            'revert_time': 0,
-                            'status': 0,
-                            'percent': 0,
-                            'revert': 0
-                            }
-        if db_task_status.add(task_status_dict):
-            return True
-        else:
-            return False
+        return False
 
 
 def get(task_id=None, start=0, count=10):
@@ -88,7 +78,4 @@ def delete(task_id):
         log.exception('exception')
         return False
     else:
-        if db_task_status.delete(task_id):
-            return True
-        else:
-            return False
+        return False
