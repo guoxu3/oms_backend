@@ -38,21 +38,35 @@ return:
         'data': [
             {
                 'id': 1, 
-                'task_id': '0358c3c78f5211e685855cf9389306a2'
+                'task_id': '0358c3c78f5211e685855cf9389306a2',
+                'creator': 'xxxx'
                 'ip': '192.168.1.1',
                 'action': 'update',
                 'create_time': 1480471675,
                 'content': '/path/to/file',
-                'description': '更新xxx功能'
+                'description': '更新xxx功能',
+                'executor': 'xxxx'
+                'start_time': 1480471675,
+                'revert_time': 1480471675,
+                'status': 0,
+                'percent': 0,
+                'revert': 0
             },
              {
-                'id': 1, 
-                'task_id': '0358c3c78f5211e685855cf9389306a2'
+                'id': 2, 
+                'task_id': '0358c3c78f5211e685855cf9389306a2',
+                'creator': 'xxxx'
                 'ip': '192.168.1.1',
                 'action': 'update',
                 'create_time': 1480471675,
                 'content': '/path/to/file',
-                'description': '更新xxx功能'
+                'description': '更新xxx功能',
+                'executor': 'xxxx'
+                'start_time': 1480471675,
+                'revert_time': 1480471675,
+                'status': 0,
+                'percent': 0,
+                'revert': 0
             }
         ],
         'count': 100
@@ -68,20 +82,25 @@ argument:
     'action': 'add'
 	'data': {
     			'ip' : '192.168.1.1'
-       		    'action': 'update',
+    			'creator': 'xxx',
+       		    'action': 'update_db',
+       		    'target': 'db_name'
+       		    'version': '1234'
        		    'content': '/path/to/file',
-       		    'description': '更新xxx功能'			 
+       		    'description': '更新xxx功能'      		   
        		}
 }
 
 argument explain:
     ip (string, 必须) 执行命令的机器IP
     action (string, 必须) 执行的指令
+    creator （string, 必须）创建任务人
+    target（string，必须）更新目标（目录名、数据库名等）
+    version（string，非必需）svn或其他版本管理工具的版本号
     content (string, 必须) 变更的内容，文件名
     description (string, 必须) 变更的描述
     
 TIPS:
-    新增task是会同步新增task_status
 
 return:
 {
@@ -110,92 +129,10 @@ return:
 }
 ```
 
-
-##任务信息接口( /api/task_status )
-#### 获取task信息
+##服务器信息接口( /api/machine )
+### 获取machine信息
 ```
-GET /api/task_status
-
-argument:
-    start = 0
-    count = 10
-    task_id = 0358c3c78f5211e685855cf9389306a2
-
-argument explain:
-    start (int, 非必须) 开始查询的id
-    count (int, 非必须) 返回的条数
-    task_id (string, 非必须) 查询单条task_id 对应的消息
-
-TIPS:
-    有 task_id 时不读取start和count值
-
-return:
-{
-    'ok': True,
-    'info': 
-        'data':[
-            {
-                'id': 1, 
-                'task_id': '0358c3c78f5211e685855cf9389306a2'
-                'start_time': 1480471675,
-                'revert_time': 1480471675,
-                'status': 0,
-                'percent': 0,
-                'revert': 0
-            },
-            {
-                'id': 1, 
-                'task_id': '0358c3c78f5211e685855cf9389306a2'
-                'start_time': 1480471675,
-                'revert_time': 1480471675,
-                'status': 0,
-                'percent': 0,
-                'revert': 0
-            }
-        ],
-        'count':100       
-}
-```
-
-### 更新task_status
-```
-POST /api/task_status
-
-argument:
-{  
-    'action': 'update'
-	'data': {
-    			'task_id' : '0358c3c78f5211e685855cf9389306a2'
-    			'start_time' : 1480471675,
-    			'revert_time' : 1480471675,
-       		    'percent': 10,
-       		    'status': 1,
-       		    'revert': 1			 
-       	  }
-}
-
-argument explain:
-    task_id (string, 必须) 需要修改的task id
-    start_time (int, 非必须) 执行的任务开始时间
-    revert_time (int, 非必须) 回退文件的时间
-    percent (int, 必须) 更新进度比例 
-    status (int, 必须) 是否开始更新 
-    revert (int, 必须) 是否回退
-    
-TIPS:
-    
-
-return:
-{
-    'ok': True,
-    'info': 'update task status ok'
-}
-```
-
-##服务器信息接口( /api/machine_info )
-### 获取machine_info信息
-```
-GET /api/machine_info
+GET /api/machine
 
 argument:
     start = 0
@@ -238,9 +175,9 @@ return:
 }
 ```
 
-### 新增machine_info
+### 新增machine
 ```
-POST /api/machine_info
+POST /api/machine
 
 argument:
 {  
@@ -273,9 +210,9 @@ return:
 }
 ```
 
-### 更新machine_info
+### 更新machine
 ```
-POST /api/machine_info
+POST /api/machine
 
 argument:
 {  
@@ -308,9 +245,9 @@ return:
 }
 ```
 
-### 删除machine_info
+### 删除machine
 ```
-DELETE /api/machine_info
+DELETE /api/machine
 
 argument:
     machine_name = 'web01'
@@ -330,10 +267,10 @@ return:
 	待开发
 ```
 
-## 用户信息接口( /admin/user )
+## 用户信息接口( /api/user )
 ### 获取user信息
 ```
-GET /admin/user
+GET /api/user
 
 argument:
     start = 0
@@ -355,6 +292,7 @@ return:
 				'id': 11,
 				'mail': 'user@example.com'
 				'username': 'xxx',
+				'nickname': '二狗子',
 				'department': 'dev',
 				'permissions': '1,2,3'
 			  }
@@ -364,7 +302,7 @@ return:
 
 ### 新增user
 ```
-POST /admin/user
+POST /api/user
 
 argument:
 {  
@@ -406,7 +344,7 @@ return:
 
 ### 更新user
 ```
-POST /admin/user
+POST /api/user
 
 argument:
 {  
@@ -441,7 +379,7 @@ return:
 
 ### 删除user
 ```
-DELETE /admin/user
+DELETE /api/user
 
 argument:
     username = xxxx
@@ -456,10 +394,29 @@ return:
 }
 ```
 
-## 登陆接口( /admin/user_login )
+## 登陆接口( /api/login )
 ### 登陆认证
 ```
-POST /admin/user_login
+GET /api/login
+
+argument:
+    username
+
+argument explain:
+    username (string, 必须) 用户名
+    
+TIPS:
+    返回用户是否登陆或者是否登陆超时
+return:
+{  
+    'ok': True
+	'info': login timeout
+}
+```
+
+### 登陆认证
+```
+POST /api/login
 
 argument:
 {
@@ -478,10 +435,10 @@ return:
 }
 ```
 
-## 权限接口( /admin/user_login )
+## 权限接口( /api/permission )
 ### 获取权限列表
 ```
-Get /admin/permission
+Get /api/permission
 
 argument:
     count = 10
