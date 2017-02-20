@@ -7,12 +7,9 @@
 
 import tornado.web
 import tornado.escape
-from lib.judgement import *
-from lib.common import *
-from lib.encrypt import *
-from models.salt_api import SaltAPI as sapi
-from models.db import db_task,db_task_status,db_machine
-import uuid
+from lib import verify, common, encrypt
+from models.db import db_task,db_machine
+import public
 import json
 
 
@@ -29,113 +26,107 @@ class MachineHandler(tornado.web.RequestHandler):
         self.get_permission = '6.1'
         self.post_permission = '6.2'
         self.delete_permission = '6.3'
-        self.ok = True
-        self.info = ""
         self.token = self.get_secure_cookie("access_token")
-        if self.token:
-            if is_expired(self.token):
-                self.ok = False
-                self.info = "login time out"
-        else:
-            self.ok = False
-            self.info = "please login first"
 
     def get(self):
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
         local_permission_list = [self.handler_permission, self.get_permission]
-        if self.ok:
-            if has_permission(self.token, local_permission_list):
-                machine_name = self.get_argument('machine_name', None)
-                start = self.get_argument('start', 0)
-                count = self.get_argument('count', 10)
-                if machine_name:
-                    machine_info = db_machine.get(machine_name)
-                else:
-                    machine_info = db_machine.get(machine_name, start, count)
+        ok, info = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
-                if machine_info:
-                    ok = True
-                    info = {'data': machine_info, 'count': db_machine.row_count()}
-                else:
-                    ok = False
-                    info = 'no such a machine info'
-            else:
-                ok = False
-                info = 'no permission'
+        machine_name = self.get_argument('machine_name', None)
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+
+        machine_info = db_machine.get(machine_name, start, count)
+        if machine_info:
+            ok = True
+            info = {'data': machine_info, 'count': db_machine.row_count()}
         else:
-            ok = self.ok
-            info = self.info
-
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+            ok = False
+            info = 'No such a machine info'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
         post_add_permission = '6.2.1'
         post_update_permission = '6.2.2'
-        if self.ok:
-            content_type = dict(self.request.headers)['Content-Type']
-            body = self.request.body
-            if not is_content_type_right(content_type) or not is_json(body):
-                ok = False
-                info = 'body or content-type format error'
-            else:
-                body = json.loads(body)
-                action, data = body['action'], body['data']
-                if action == 'add':
-                    local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-                    if has_permission(self.token, local_permission_list):
-                        machine_info_data = data
-                        if db_machine.add(machine_info_data):
-                            ok = True
-                            info = 'add machine info successful'
-                        else:
-                            ok = False
-                            info = 'add miachine info failed'
-                    else:
-                        ok = False
-                        info = 'no permission'
-                elif action == 'update':
-                    local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
-                    if has_permission(self.token, local_permission_list):
-                        machine_info_data = data
-                        if db_machine.add(machine_info_data):
-                            ok = True
-                            info = 'update task status successful'
-                        else:
-                            ok = False
-                            info = 'update task status failed'
-                    else:
-                        ok = False
-                        info = 'no permission'
-                else:
-                    ok = False
-                    info = 'unsupported task status action'
-        else:
-            ok = self.ok
-            info = self.info
 
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        ok, info = public.check_content_type(self.request)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        body = json.loads(self.request.body)
+        action, data = body['action'], body['data']
+        if action == 'add':
+            local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
+            ok, info = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            machine_info_data = data
+            if db_machine.add(machine_info_data):
+                ok = True
+                info = 'Add machine info successful'
+            else:
+                ok = False
+                info = 'Add miachine info failed'
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if action == 'update':
+            local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
+            ok, info = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            machine_info_data = data
+            if db_machine.add(machine_info_data):
+                ok = True
+                info = 'update task status successful'
+            else:
+                ok = False
+                info = 'update task status failed'
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        ok = False
+        info = 'Unsupported task status action'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def delete(self):
-        local_permission_list = [self.handler_permission, self.delete_permission]
-        if self.ok:
-            if has_permission(self.token, local_permission_list):
-                machine_name = self.get_argument('machine_name')
-                if db_machine.delete(machine_name):
-                    ok = True
-                    info = 'delete task successful'
-                else:
-                    ok = False
-                    info = 'delete task  failed'
-            else:
-                ok = False
-                info = 'no permission'
-        else:
-            ok = self.ok
-            info = self.info
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+        local_permission_list = [self.handler_permission, self.delete_permission]
+        ok, info = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        machine_name = self.get_argument('machine_name')
+        if db_machine.delete(machine_name):
+            ok = True
+            info = 'Delete task successful'
+        else:
+            ok = False
+            info = 'Delete task  failed'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

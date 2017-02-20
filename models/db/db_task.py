@@ -7,7 +7,7 @@
 from peewee import *
 from _db_init import *
 from lib.logger import log
-import db_task_status
+
 
 
 def row_count():

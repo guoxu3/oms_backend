@@ -7,13 +7,10 @@
 
 import tornado.web
 import tornado.escape
-from lib.judgement import *
-from lib.common import *
+from lib import verify, common, encrypt, mail
 from models.db import db_user,db_permission,db_session
-from lib import encrypt
-from lib import config
 import json
-
+import public
 
 class UserHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
@@ -28,134 +25,118 @@ class UserHandler(tornado.web.RequestHandler):
         self.get_permission = '4.1'
         self.post_permission = '4.2'
         self.delete_permission = '4.3'
-        self.ok = True
-        self.info = ""
         self.token = self.get_secure_cookie("access_token")
-        if self.token:
-            if is_expired(self.token):
-                self.ok = False
-                self.info = "login time out"
-        else:
-            self.ok = False
-            self.info = "please login first"
 
     def get(self):
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
         local_permission_list = [self.handler_permission, self.get_permission]
-        if self.ok:
-            if has_permission(self.token, local_permission_list):
-                username = self.get_argument('username', None)
-                start = self.get_argument('start', 0)
-                count = self.get_argument('count', 10)
-                if username:
-                    user_info = db_user.get(username)
-                else:
-                    user_info = db_user.get(username, start, count)
+        ok, info = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
-                if user_info:
-                    ok = True
-                    info = {'data': user_info, 'count': db_user.row_count()}
-                else:
-                    ok = False
-                    info = 'get user info failed'
-            else:
-                ok = False
-                info = 'no permission'
+        username = self.get_argument('username', None)
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+
+        user_info = db_user.get(username, start, count)
+        if user_info:
+            ok = True
+            info = {'data': user_info, 'count': db_user.row_count()}
         else:
-            ok = self.ok
-            info = self.info
-
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+            ok = False
+            info = 'Get user info failed'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
         post_add_permission = '4.2.1'
-        post_update_permission = '4.2.2'
-        if self.ok:
-            content_type = dict(self.request.headers)['Content-Type']
-            body = self.request.body
-            if not is_content_type_right(content_type) or not is_json(body):
-                ok = False
-                info = 'body or content-type format error'
-            else:
-                body = json.loads(body)
-                action, data = body['action'], body['data']
-                if action == 'add':
-                    local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-                    if has_permission(self.token, local_permission_list):
-                        user_data = data
-                        print data
-                        user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
-                        if db_user.add(user_data):
-                            ok = True
-                            info = 'add user successful'
-                        else:
-                            ok = False
-                            info = 'add user failed'
-                    else:
-                        ok = False
-                        info = 'no permission'
-                elif action == 'update':
-                    local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
-                    if has_permission(self.token, local_permission_list):
-                        user_data = data
-                        # 改密码,确认有新旧密码数据
-                        if user_data.has_key('old_passwd') and user_data.has_key('new_passwd'):
-                            # 判断旧密码是否正确
-                            saved_user_data = db_user.get(user_data['username'])
-                            saved_salt = saved_user_data['salt']
-                            saved_passwd = saved_user_data['passwd']
-                            _, encrypt_passwd = encrypt.md5_salt(user_data['old_passwd'], saved_salt)
-                            if saved_passwd == encrypt_passwd:
-                                user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
-                                if db_user.update(user_data):
-                                    ok = True
-                                    info = 'update user successful'
-                                else:
-                                    ok = False
-                                    info = 'update user failed'
-                            else:
-                                ok = False
-                                info = 'password auth failed'
-                        else:
-                            if db_user.update(user_data):
-                                ok = True
-                                info = 'update user successful'
-                            else:
-                                ok = False
-                                info = 'update user failed'
-                    else:
-                        ok = False
-                        info = 'no permission'
-                else:
-                    ok = False
-                    info = 'unsupported user action'
-        else:
-            ok = self.ok
-            info = self.info
+        post_user_update_permission = '4.2.2'
+        post_admin_update_info_permission = '4.2.3'
 
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+        post_add_permission = '1.2.1'
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        ok, info = public.check_content_type(self.request)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        body = json.loads(self.request.body)
+        action, data = body['action'], body['data']
+        if action == 'add':
+            local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
+            ok, info = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            user_data = data
+            user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
+            if db_user.add(user_data):
+                ok = True
+                info = 'Add user successful'
+            else:
+                ok = False
+                info = 'Add user failed'
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if action == 'update':
+            local_permission_list = [self.handler_permission, self.post_permission, post_user_update_permission]
+            ok, info = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            user_data = data
+            if 'old_passwd' in user_data:
+                ok, info = public.check_password(data['username'], data['old_passwd'])
+                if not ok:
+                    self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                    return
+
+                user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['new_passwd'])
+
+            if db_user.update(user_data):
+                ok = True
+                info = 'Update password successful'
+            else:
+                ok = False
+                info = 'Update password failed'
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        ok = False
+        info = 'Unsupported user action'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def delete(self):
-        local_permission_list = [self.handler_permission, self.delete_permission]
-        if self.ok:
-            if has_permission(self.token, local_permission_list):
-                username = self.get_argument('username')
-                if db_user.delete(username):
-                    ok = True
-                    info = 'delete user successful'
-                else:
-                    ok = False
-                    info = 'delete user failed'
-            else:
-                ok = False
-                info = 'no permission'
-        else:
-            ok = self.ok
-            info = self.info
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+        local_permission_list = [self.handler_permission, self.delete_permission]
+        ok, info = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        username = self.get_argument('username')
+        if db_user.delete(username):
+            ok = True
+            info = 'Delete user successful'
+        else:
+            ok = False
+            info = 'Delete user failed'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

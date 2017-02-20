@@ -3,11 +3,9 @@
 
 import tornado.web
 import tornado.escape
-from lib.judgement import *
-from lib.common import *
+from lib import verify, common, encrypt, mail
 from models.db import db_user,db_permission,db_session
-from lib import encrypt
-from lib import config
+import public
 import json
 
 
@@ -25,69 +23,59 @@ class PermissionHandler(tornado.web.RequestHandler):
         self.get_permission = '3.1'
         self.post_permission = '3.2'
         self.delete_permission = '3.3'
-        self.ok = True
-        self.info = ""
         self.token = self.get_secure_cookie("access_token")
-        if self.token:
-            if is_expired(self.token):
-                self.ok = False
-                self.info = "login time out"
-        else:
-            self.ok = False
-            self.info = "please login first"
 
     def get(self):
-        local_permission_list = [self.handler_permission, self.get_permission]
-        if self.ok:
-            if has_permission(self.token, local_permission_list):
-                start = self.get_argument('start', 0)
-                count = self.get_argument('count', 10)
-                permission_info = db_permission.get(start, count)
-                if permission_info:
-                    ok = True
-                    info = {'data': permission_info, 'count': db_permission.row_count()}
-                else:
-                    ok = False
-                    info = 'get permission info failed'
-            else:
-                ok = False
-                info = 'no permission'
-        else:
-            ok = self.ok
-            info = self.info
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+        local_permission_list = [self.handler_permission, self.get_permission]
+        ok, info = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        start = self.get_argument('start', 0)
+        count = self.get_argument('count', 10)
+        permission_info = db_permission.get(start, count)
+        if permission_info:
+            ok = True
+            info = {'data': permission_info, 'count': db_permission.row_count()}
+        else:
+            ok = False
+            info = 'Get permission info failed'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
         post_add_permission = '3.2.1'
-        if self.ok:
-            content_type = dict(self.request.headers)['Content-Type']
-            body = self.request.body
-            if not is_content_type_right(content_type) or not is_json(body):
-                ok = False
-                info = 'body or content-type format error'
-            else:
-                body = json.loads(body)
-                action, data = body['action'], body['data']
-                if action == 'add':
-                    local_permission_list = [self.handler_permission, self.get_permission, post_add_permission]
-                    if has_permission(self.token, local_permission_list):
-                        # todo
-                        ok = ''
-                        info = ''
-                    else:
-                        ok = False
-                        info = 'no permission'
-                else:
-                    ok = False
-                    info = 'unsupported permission action'
-        else:
-            ok = self.ok
-            info = self.info
+        ok, info = public.check_login(self.token)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+        ok, info = public.check_content_type(self.request)
+        if not ok:
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        body = json.loads(self.request.body)
+        action, data = body['action'], body['data']
+        if action == 'update':
+            local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
+            ok, info = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+            # todo
+            ok = ''
+            info = ''
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
+        ok = False
+        info = 'Unsupported permission action'
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

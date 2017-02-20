@@ -8,8 +8,6 @@
 
 import tornado.web
 import tornado.escape
-from lib.judgement import *
-from lib.common import *
 
 
 class LogoutHandler(tornado.web.RequestHandler):
@@ -24,20 +22,13 @@ class LogoutHandler(tornado.web.RequestHandler):
 
     def get(self):
         if self.get_secure_cookie("access_token"):
-            try:
-                self.set_secure_cookie("access_token", "")
-            except:
-                ok = False
-                info = "log out failed"
-            else:
-                ok = True
-                info = "log out successful"
+            self.set_secure_cookie("access_token", "")
+            ok = True
+            info = "Logout successful"
         else:
             ok = True
-            info = "Not log in yet"
-
-        response = dict(ok=ok, info=info)
-        self.write(tornado.escape.json_encode(response))
+            info = "Not login yet"
+        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

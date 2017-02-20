@@ -150,17 +150,21 @@ def is_content_type_right(value):
 # imput: access_token, local_permission_list
 # get user permissions by access_token
 def has_permission(access_token, local_permission_list):
+    ok = False
+    info = "No permission"
     permission_list = []
     info = get_info_by_token(access_token)
     for a in info['permissions'].split(','):
         permission_list.append(a)
     # '0' represent administrator
     if '0' in permission_list:
-        return True
-    if set(permission_list) & set(local_permission_list) == set([]):
-        return False
-    else:
-        return True
+        ok = True
+        info = ""
+    if set(permission_list) & set(local_permission_list) != set([]):
+        ok = True
+        ok = ""
+    return ok, info
+
 
 
 # judge user action time
