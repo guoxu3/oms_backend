@@ -12,6 +12,7 @@ from models.db import db_user,db_permission,db_session
 import json
 import public
 
+
 class UserHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
