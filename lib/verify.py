@@ -6,7 +6,6 @@
 """
 
 import re
-import markdown2
 import json
 from common import *
 from models.db.public import *
