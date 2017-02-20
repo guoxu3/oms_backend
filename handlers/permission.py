@@ -80,7 +80,6 @@ class PermissionHandler(tornado.web.RequestHandler):
     def options(self):
         pass
 
-
 handlers = [
     ('/api/permission', PermissionHandler),
 ]

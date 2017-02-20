@@ -13,7 +13,7 @@ from lib.logger import log
 def get(access_token):
     try:
         info = Session.select().where(Session.access_token == access_token).get()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -32,7 +32,7 @@ def update(session_dict):
             setattr(session, key, session_dict[key])
         try:
             session.save()
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:
@@ -43,7 +43,7 @@ def update(session_dict):
                 setattr(session, key, session_dict[key])
         try:
             session.save()
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:

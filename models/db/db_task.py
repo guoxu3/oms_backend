@@ -37,7 +37,7 @@ def get(task_id=None, start=0, count=10):
     if task_id:
         try:
             info = Task.select().where(Task.task_id == task_id).get()
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:
@@ -47,7 +47,7 @@ def get(task_id=None, start=0, count=10):
         try:
             for info in Task.select().offset(start).limit(count):
                 data_list.append(info.__dict__['_data'])
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:
@@ -61,7 +61,7 @@ def update(update_dict):
             setattr(task, key, update_dict[key])
     try:
         task.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -74,7 +74,7 @@ def delete(task_id):
                 .where(Task.task_id == task_id))
     try:
         del_data.execute()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:

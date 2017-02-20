@@ -35,7 +35,7 @@ def md5_salt(encrypt_str, salt=create_salt()):
     @param salt:  salt value
     @return:  md5 encrypt string
     """
-    return salt,md5(encrypt_str + salt).hexdigest()
+    return salt, md5(encrypt_str + salt).hexdigest()
 
 
 # create cookie value

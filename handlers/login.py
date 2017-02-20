@@ -22,9 +22,10 @@ class LoginHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
+        self.token = self.get_secure_cookie("access_token")
 
     def get(self):
-        ok, info = public.check_login(self.get_secure_cookie("access_token"))
+        ok, info = public.check_login(self.token)
         if not ok:
             self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return

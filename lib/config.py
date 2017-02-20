@@ -30,14 +30,14 @@ port = get_config("server", "port")
 address = get_config("server", "address")
 
 # session config
-expire_second = 7200 # default expiration time 7200s
+expire_second = 7200    # default expiration time 7200s
 expire_time = get_config("session", "expire_time")
 if re.match("^[0-9]*h$", expire_time):
-    expire_second = int(expire_time.replace('h','')) * 3600
+    expire_second = int(expire_time.replace('h', '')) * 3600
 elif re.match("^[0-9]*m$", expire_time):
-    expire_second = int(expire_time.replace('m','')) * 60
+    expire_second = int(expire_time.replace('m', '')) * 60
 elif re.match("^[0-9]*s$", expire_time):
-    expire_second = int(expire_time.replace('s',''))
+    expire_second = int(expire_time.replace('s', ''))
 
 # mail config
 mail_open = get_config("mail", "mail_open")

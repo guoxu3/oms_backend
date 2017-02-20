@@ -29,7 +29,7 @@ def send_mail(mailto_list, message):
             server.login(mail_user, mail_pass)
             server.sendmail(msg['From'], mailto_list, msg.as_string())
             server.close()
-        except Exception, e:
+        except Exception:
             log.exception('exception')
         else:
             log.info("sending mail successful.")

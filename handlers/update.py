@@ -9,7 +9,7 @@ import tornado.web
 import tornado.escape
 from lib import verify, common, encrypt, mail
 from models.salt_api import SaltAPI as sapi
-from models.db import db_task,db_machine
+from models.db import db_task, db_machine
 import json
 import public
 
@@ -69,9 +69,15 @@ class UpdateHandler(tornado.web.RequestHandler):
             else:
                 ok = False
                 info = 'Execute script failed'
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
         elif action == 'update_db':
-            pass
             # todo
+            ok = ''
+            info = ''
+            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
         ok = False
         info = 'Unsupported update action'

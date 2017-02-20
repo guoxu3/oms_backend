@@ -11,7 +11,7 @@ from lib.logger import log
 def row_count():
     try:
         count = Machine.select().count()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return 0
     else:
@@ -22,7 +22,7 @@ def get(machine_name=None, start=0, count=10):
     if machine_name:
         try:
             info = Machine.select().where(Machine.machine_name == machine_name).get()
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:
@@ -45,7 +45,7 @@ def add(machine_info_dict):
         setattr(machine, key, machine_info_dict[key])
     try:
         machine.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -59,7 +59,7 @@ def update(machine_dict):
             setattr(machine, key, machine_dict[key])
     try:
         machine.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -72,6 +72,6 @@ def delete(machine_name):
                 .where(Machine.machine_name == machine_name))
     try:
         del_data.execute()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False

@@ -55,9 +55,8 @@ class UserHandler(tornado.web.RequestHandler):
     def post(self):
         post_add_permission = '4.2.1'
         post_user_update_permission = '4.2.2'
-        post_admin_update_info_permission = '4.2.3'
+        post_admin_update_permission = '4.2.3'
 
-        post_add_permission = '1.2.1'
         ok, info = public.check_login(self.token)
         if not ok:
             self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))

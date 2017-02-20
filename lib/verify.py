@@ -8,7 +8,7 @@
 import re
 import json
 from common import *
-from models.db.public import *
+from models.db import public
 from models.db import db_session
 from lib import config
 
@@ -76,7 +76,10 @@ def is_none(value):
 # date format: 2010-01-31
 def is_date(value):
     if len(value) == 10:
-        rule = '(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)$/'
+        rule = "(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-" \
+               "(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|" \
+               "(02-(0[1-9]|[1][0-9]|2[0-8]))))" \
+               "|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)$/"
         match = re.match(rule, value)
         if match:
             return True
@@ -95,8 +98,8 @@ def is_email(value):
 
 def is_chinese_char_string(value):
     for x in value:
-        if (x >= u"\u4e00" and x <= u"\u9fa5") or (x >= u'\u0041' and x <= u'\u005a') or (
-                        x >= u'\u0061' and x <= u'\u007a'):
+        if (x >= u"\u4e00" and x <= u"\u9fa5") or (x >= u'\u0041' and x <= u'\u005a') or \
+                ( x >= u'\u0061' and x <= u'\u007a'):
             continue
         else:
             return False
@@ -121,7 +124,8 @@ def is_legal_accounts(value):
 
 
 def is_ip_addr(value):
-    pattern = r"\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
+    pattern = r"\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\." \
+              r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
     if re.match(pattern, value):
         return False
     else:
@@ -137,11 +141,11 @@ def is_json(value):
 
 
 # content-type must be "application/json;charset=utf8"
-def is_content_type_right(value):
-    value = str.lower(value.replace(" ", ""))
-    type = value.split(";")[0]
-    charset = value.split(";")[1].split("=")[1].replace("-", "")
-    if type == "application/json" and charset == "utf8":
+def is_content_type_right(data):
+    data = str.lower(data.replace(" ", ""))
+    content_type = data.split(";")[0]
+    charset = data.split(";")[1].split("=")[1].replace("-", "")
+    if content_type == "application/json" and charset == "utf8":
         return True
     return False
 
@@ -152,8 +156,8 @@ def has_permission(access_token, local_permission_list):
     ok = False
     info = "No permission"
     permission_list = []
-    info = get_info_by_token(access_token)
-    for a in info['permissions'].split(','):
+    user_info = public.get_info_by_token(access_token)
+    for a in user_info['permissions'].split(','):
         permission_list.append(a)
     # '0' represent administrator
     if '0' in permission_list:
@@ -161,15 +165,15 @@ def has_permission(access_token, local_permission_list):
         info = ""
     if set(permission_list) & set(local_permission_list) != set([]):
         ok = True
-        ok = ""
-    return ok, info
+        info = ""
 
+    return ok, info
 
 
 # judge user action time
 # if expired retern False, else update user action time
 def is_expired(access_token):
-    info = get_info_by_token(access_token)
+    info = public.get_info_by_token(access_token)
     expire_time = info['expire_time']
     if cur_timestamp() > expire_time:
         return True
@@ -178,4 +182,3 @@ def is_expired(access_token):
         session_data['expire_time'] = session_data['action_time'] + config.expire_second
         db_session.update(session_data)
         return False
-

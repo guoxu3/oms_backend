@@ -12,7 +12,7 @@ from lib.logger import log
 def row_count():
     try:
         count = User.select().count()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return 0
     else:
@@ -23,7 +23,7 @@ def get(username=None, start=0, count=10):
     if username:
         try:
             info = User.select().where(User.username == username).get()
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:
@@ -46,7 +46,7 @@ def add(user_dict):
         setattr(user, key, user_dict[key])
     try:
         user.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -60,7 +60,7 @@ def update(user_dict):
             setattr(user, key, user_dict[key])
     try:
         user.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:

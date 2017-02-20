@@ -12,7 +12,7 @@ from lib.logger import log
 def row_count():
     try:
         count = Permissions.select().count()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return 0
     else:
@@ -24,7 +24,7 @@ def get(start=0, count=10):
     try:
         for info in Permissions.select().offset(start).limit(count):
             data_list.append(info.__dict__['_data'])
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:
@@ -37,7 +37,7 @@ def add(permissions_dict):
         setattr(permissions, key, permissions_dict[key])
     try:
         permissions.save()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return False
     else:

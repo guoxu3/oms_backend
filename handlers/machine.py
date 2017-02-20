@@ -8,7 +8,7 @@
 import tornado.web
 import tornado.escape
 from lib import verify, common, encrypt
-from models.db import db_task,db_machine
+from models.db import db_task, db_machine
 import public
 import json
 
@@ -130,6 +130,7 @@ class MachineHandler(tornado.web.RequestHandler):
 
     def options(self):
         pass
+
 
 handlers = [
     ('/api/machine', MachineHandler),
