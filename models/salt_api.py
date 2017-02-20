@@ -20,7 +20,7 @@ class SaltAPI:
         # todo
 
     @staticmethod
-    def run_script(self, tgt, script_path, script_args):
+    def run_script(tgt, script_path, script_args):
         """
         tgt : a list, ie. ['host1', 'host2', ....],can not be ['*']
         script_path: string, ie. salt://scripts/test.sh or /srv/run/scripts/test.sh
@@ -30,7 +30,7 @@ class SaltAPI:
         script = [script_path] + list(script_args)
         try:
             result = client.cmd(tgt, 'cmd.script', script, expr_form='list')
-        except Exception,e:
+        except Exception:
             log.exception('exception')
         else:
             return result
