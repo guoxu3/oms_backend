@@ -36,24 +36,15 @@ class Task(BaseModel):
     action = CharField()
     content = CharField()
     description = CharField()
-
-    class Meta:
-        db_table = 'task'
-
-
-# task_status table
-class TaskStatus(BaseModel):
-    id = IntegerField()
-    task_id = CharField(unique=True)
     executor = CharField()
-    status = IntegerField()
+    status = BooleanField()
     start_time = IntegerField()
     revert_time = IntegerField()
     percent = IntegerField()
-    revert = IntegerField()
+    revert = BooleanField()
 
     class Meta:
-        db_table = 'task_status'
+        db_table = 'task'
 
 
 # machine table

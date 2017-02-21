@@ -9,7 +9,6 @@ from _db_init import *
 from lib.logger import log
 
 
-
 def row_count():
     try:
         count = Task.select().count()
