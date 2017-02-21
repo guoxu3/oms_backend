@@ -27,22 +27,22 @@ class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
         ok, info = public.check_content_type(self.request)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         user_info = json.loads(self.request.body)
         username, password = user_info['username'], user_info['passwd']
         ok, info = public.check_password(username, password)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         access_token = encrypt.make_cookie_secret()
@@ -58,7 +58,7 @@ class LoginHandler(tornado.web.RequestHandler):
         else:
             ok = False
             info = "Login error, please contact with the system administrator"
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

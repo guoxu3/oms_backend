@@ -32,13 +32,13 @@ class TaskHandler(tornado.web.RequestHandler):
     def get(self):
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         local_permission_list = [self.handler_permission, self.get_permission]
         ok, info = verify.has_permission(self.token, local_permission_list)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         task_id = self.get_argument('task_id', None)
@@ -51,20 +51,19 @@ class TaskHandler(tornado.web.RequestHandler):
         else:
             ok = False
             info = 'No such a task'
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
         post_add_permission = '1.2.1'
 
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
-        
+
         ok, info = public.check_content_type(self.request)
         if not ok:
-            print "bbb"
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         body = json.loads(self.request.body)
@@ -74,7 +73,7 @@ class TaskHandler(tornado.web.RequestHandler):
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
             ok, info = verify.has_permission(self.token, local_permission_list)
             if not ok:
-                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
             task_data['task_id'] = uuid.uuid1().hex
@@ -84,30 +83,28 @@ class TaskHandler(tornado.web.RequestHandler):
                     message = task_data['creator'] + " create a new task, see in " \
                                                      "http://oms.example.com/task?task_id=" + task_data['task_id']
                     mail.send_mail(list(mailto), message)
-                print "xxxx"
                 ok = True
                 info = {'task_id': task_data['task_id']}
             else:
                 ok = False
                 info = 'Add task failed'
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
-            print ok, info
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         ok = False
         info = 'Unsupported task action'
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def delete(self):
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         local_permission_list = [self.handler_permission, self.delete_permission]
         ok, info = verify.has_permission(self.token, local_permission_list)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         task_id = self.get_argument('task_id')
@@ -121,7 +118,7 @@ class TaskHandler(tornado.web.RequestHandler):
         else:
             ok = True
             info = 'No such a task'
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

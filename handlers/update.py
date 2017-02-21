@@ -45,12 +45,12 @@ class UpdateHandler(tornado.web.RequestHandler):
 
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         ok, info = public.check_content_type(self.request)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         body = json.load(self.request.body)
@@ -69,19 +69,19 @@ class UpdateHandler(tornado.web.RequestHandler):
             else:
                 ok = False
                 info = 'Execute script failed'
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         elif action == 'update_db':
             # todo
             ok = ''
             info = ''
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         ok = False
         info = 'Unsupported update action'
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

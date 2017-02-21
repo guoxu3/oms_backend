@@ -28,7 +28,7 @@ class LogoutHandler(tornado.web.RequestHandler):
         else:
             ok = True
             info = "Not login yet"
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass

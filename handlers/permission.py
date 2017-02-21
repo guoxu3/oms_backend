@@ -28,13 +28,13 @@ class PermissionHandler(tornado.web.RequestHandler):
     def get(self):
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         local_permission_list = [self.handler_permission, self.get_permission]
         ok, info = verify.has_permission(self.token, local_permission_list)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         start = self.get_argument('start', 0)
@@ -46,18 +46,18 @@ class PermissionHandler(tornado.web.RequestHandler):
         else:
             ok = False
             info = 'Get permission info failed'
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
         post_add_permission = '3.2.1'
         ok, info = public.check_login(self.token)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         ok, info = public.check_content_type(self.request)
         if not ok:
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         body = json.loads(self.request.body)
@@ -66,16 +66,16 @@ class PermissionHandler(tornado.web.RequestHandler):
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
             ok, info = verify.has_permission(self.token, local_permission_list)
             if not ok:
-                self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
             # todo
             ok = ''
             info = ''
-            self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
         ok = False
         info = 'Unsupported permission action'
-        self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
         pass
