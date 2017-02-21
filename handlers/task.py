@@ -55,18 +55,21 @@ class TaskHandler(tornado.web.RequestHandler):
 
     def post(self):
         post_add_permission = '1.2.1'
+
         ok, info = public.check_login(self.token)
         if not ok:
             self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
-
+        
         ok, info = public.check_content_type(self.request)
         if not ok:
+            print "bbb"
             self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         body = json.loads(self.request.body)
         action, task_data, mailto = body['action'], body['data'], body['mailto']
+        print action, task_data, mailto
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
             ok, info = verify.has_permission(self.token, local_permission_list)
@@ -81,12 +84,15 @@ class TaskHandler(tornado.web.RequestHandler):
                     message = task_data['creator'] + " create a new task, see in " \
                                                      "http://oms.example.com/task?task_id=" + task_data['task_id']
                     mail.send_mail(list(mailto), message)
+                print "xxxx"
                 ok = True
                 info = {'task_id': task_data['task_id']}
             else:
                 ok = False
                 info = 'Add task failed'
             self.write(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            print ok, info
+            return
 
         ok = False
         info = 'Unsupported task action'

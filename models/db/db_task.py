@@ -29,7 +29,7 @@ def add(task_dict):
         log.exception('exception')
         return False
     else:
-        return False
+        return True
 
 
 def get(task_id=None, start=0, count=10):
@@ -77,4 +77,4 @@ def delete(task_id):
         log.exception('exception')
         return False
     else:
-        return False
+        return True

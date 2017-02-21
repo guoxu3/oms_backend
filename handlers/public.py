@@ -6,12 +6,13 @@ from models.db import db_user
 
 
 def check_login(token):
-    ok = True
-    info = ""
     if token:
         if verify.is_expired(token):
             ok = False
             info = "Login timeout"
+        else:
+            ok = True
+            info = ""
     else:
         ok = False
         info = "Please login first"
