@@ -8,10 +8,10 @@ api handlers
 import tornado.web
 import tornado.escape
 from lib import verify, common, encrypt, mail
-from models.salt_api import SaltAPI as sapi
-from models.db import db_task, db_machine
+from lib.salt_api import SaltAPI as sapi
+from db import db_task, db_machine
 import json
-import public
+import check
 
 
 # 调用更新脚本
@@ -43,12 +43,12 @@ class UpdateHandler(tornado.web.RequestHandler):
         post_api_permission = '5.2.10'
         post_stock_permission = '5.2.11'
 
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        ok, info = public.check_content_type(self.request)
+        ok, info = check.check_content_type(self.request)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return

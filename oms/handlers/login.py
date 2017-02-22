@@ -8,8 +8,9 @@
 import tornado.web
 import tornado.escape
 from lib import common, encrypt, config, verify
-from models.db import db_session
-import public
+from db import db_session
+import check
+import check
 import json
 
 
@@ -25,7 +26,7 @@ class LoginHandler(tornado.web.RequestHandler):
         self.token = self.get_secure_cookie("access_token")
 
     def get(self):
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -33,14 +34,14 @@ class LoginHandler(tornado.web.RequestHandler):
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
-        ok, info = public.check_content_type(self.request)
+        ok, info = check.check_content_type(self.request)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         user_info = json.loads(self.request.body)
         username, password = user_info['username'], user_info['passwd']
-        ok, info = public.check_password(username, password)
+        ok, info = check.check_password(username, password)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return

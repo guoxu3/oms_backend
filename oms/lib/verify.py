@@ -8,8 +8,8 @@
 import re
 import json
 from common import *
-from models.db import public
-from models.db import db_session
+from db import public
+from db import db_session
 from lib import config
 
 

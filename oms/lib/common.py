@@ -8,7 +8,7 @@
 import time
 import datetime
 from lib import config
-from models.db import db_session
+from db import db_session
 
 
 def unicode_to_str(_input):

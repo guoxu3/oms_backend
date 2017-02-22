@@ -8,9 +8,9 @@
 import tornado.web
 import tornado.escape
 from lib import verify, common, encrypt, mail
-from models.db import db_user,db_permission,db_session
+from db import db_user,db_permission,db_session
 import json
-import public
+import check
 
 
 class UserHandler(tornado.web.RequestHandler):
@@ -29,7 +29,7 @@ class UserHandler(tornado.web.RequestHandler):
         self.token = self.get_secure_cookie("access_token")
 
     def get(self):
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -58,12 +58,12 @@ class UserHandler(tornado.web.RequestHandler):
         post_user_update_permission = '4.2.2'
         post_admin_update_permission = '4.2.3'
 
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        ok, info = public.check_content_type(self.request)
+        ok, info = check.check_content_type(self.request)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -97,7 +97,7 @@ class UserHandler(tornado.web.RequestHandler):
 
             user_data = data
             if 'old_passwd' in user_data:
-                ok, info = public.check_password(data['username'], data['old_passwd'])
+                ok, info = check.check_password(data['username'], data['old_passwd'])
                 if not ok:
                     self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                     return
@@ -118,7 +118,7 @@ class UserHandler(tornado.web.RequestHandler):
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def delete(self):
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return

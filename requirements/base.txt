@@ -1,4 +1,0 @@
-ConfigParser
-tornado
-peewee
-json

@@ -4,8 +4,8 @@
 import tornado.web
 import tornado.escape
 from lib import verify, common, encrypt, mail
-from models.db import db_user,db_permission,db_session
-import public
+from db import db_user,db_permission,db_session
+import check
 import json
 
 
@@ -26,7 +26,7 @@ class PermissionHandler(tornado.web.RequestHandler):
         self.token = self.get_secure_cookie("access_token")
 
     def get(self):
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -50,12 +50,12 @@ class PermissionHandler(tornado.web.RequestHandler):
 
     def post(self):
         post_add_permission = '3.2.1'
-        ok, info = public.check_login(self.token)
+        ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        ok, info = public.check_content_type(self.request)
+        ok, info = check.check_content_type(self.request)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return

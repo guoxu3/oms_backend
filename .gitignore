@@ -1,5 +1,5 @@
-conf/oms_test.conf
+oms/conf/oms_test.conf
 test.txt
 *.pyc
-log/*
-test/*
+oms/log/*
+oms/test/*
