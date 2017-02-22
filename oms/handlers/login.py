@@ -7,9 +7,9 @@
 
 import tornado.web
 import tornado.escape
-from lib import common, encrypt, config, verify
+from lib import encrypt, config, verify
 from db import db_session
-import check
+import utils
 import check
 import json
 
@@ -47,7 +47,7 @@ class LoginHandler(tornado.web.RequestHandler):
             return
 
         access_token = encrypt.make_cookie_secret()
-        action_time = common.cur_timestamp()
+        action_time = utils.cur_timestamp()
         session_data = {'access_token': access_token, 'username': username, 'action_time': action_time,
                         'expire_time': action_time + config.expire_second}
 

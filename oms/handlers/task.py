@@ -7,8 +7,9 @@
 
 import tornado.web
 import tornado.escape
-from lib import verify, common, encrypt, mail
+from lib import verify, encrypt, mail
 from db import db_task
+import utils
 import uuid
 import json
 import check
@@ -77,7 +78,7 @@ class TaskHandler(tornado.web.RequestHandler):
                 return
 
             task_data['task_id'] = uuid.uuid1().hex
-            task_data['create_time'] = common.cur_timestamp()
+            task_data['create_time'] = utils.cur_timestamp()
             if db_task.add(task_data):
                 if list(mailto):
                     message = task_data['creator'] + " create a new task, see in " \

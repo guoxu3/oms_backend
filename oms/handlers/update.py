@@ -7,9 +7,10 @@ api handlers
 
 import tornado.web
 import tornado.escape
-from lib import verify, common, encrypt, mail
+from lib import verify, encrypt, mail
 from lib.salt_api import SaltAPI as sapi
 from db import db_task, db_machine
+import utils
 import json
 import check
 
@@ -60,7 +61,7 @@ class UpdateHandler(tornado.web.RequestHandler):
             username = ''
             task = db_task.get(task_id)
             encode_update_string = encrypt.base64_encode(username + '@' + task['repository'] + "@" + task['content'])
-            task_status = {'task_id': task_id, 'status': 1, 'start_time': common.cur_timestamp(), 'executor': username}
+            task_status = {'task_id': task_id, 'status': 1, 'start_time': utils.cur_timestamp(), 'executor': username}
             db_task.update(task_status)
             result = sapi.run_script(task['ip'], 'salt://scripts/update_file.sh', encode_update_string)
             if result:

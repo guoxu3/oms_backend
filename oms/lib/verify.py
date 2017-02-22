@@ -7,10 +7,10 @@
 
 import re
 import json
-from common import *
-from db import public
+import utils
 from db import db_session
 from lib import config
+from db import db_utils
 
 
 class ObjectDict(dict):
@@ -156,7 +156,7 @@ def has_permission(access_token, local_permission_list):
     ok = False
     info = "No permission"
     permission_list = []
-    user_info = public.get_info_by_token(access_token)
+    user_info = db_utils.get_info_by_token(access_token)
     for a in user_info['permissions'].split(','):
         permission_list.append(a)
     # '0' represent administrator
@@ -173,12 +173,13 @@ def has_permission(access_token, local_permission_list):
 # judge user action time
 # if expired retern False, else update user action time
 def is_expired(access_token):
-    info = public.get_info_by_token(access_token)
+    info = db_utils.get_info_by_token(access_token)
     expire_time = info['expire_time']
-    if cur_timestamp() > expire_time:
+    if utils.cur_timestamp() > expire_time:
         return True
     else:
-        session_data = {'username': info['username'], 'action_time': cur_timestamp()}
-        session_data['expire_time'] = session_data['action_time'] + config.expire_second
+        action_time = utils.cur_timestamp()
+        session_data = {'username': info['username'], 'action_time': action_time,
+                        'expire_time': action_time + config.expire_second }
         db_session.update(session_data)
         return False

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import db_session,db_user
+from db import db_session, db_user
 
 
 # get username、expired_time and permissions

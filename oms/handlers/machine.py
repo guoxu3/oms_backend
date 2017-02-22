@@ -7,7 +7,7 @@
 
 import tornado.web
 import tornado.escape
-from lib import verify, common, encrypt
+from lib import verify, encrypt
 from db import db_task, db_machine
 import check
 import json
