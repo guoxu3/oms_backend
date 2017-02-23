@@ -150,11 +150,19 @@ def is_content_type_right(data):
     return False
 
 
-# imput: access_token, local_permission_list
-# get user permissions by access_token
 def has_permission(access_token, local_permission_list):
+    """
+        verify if user has permisson
+        @param access_token:  user's access_token, get form cookie
+        @param local_permission_list:  function permission list
+        @return ok: Boolean, has permission or not
+        @return info: String , info return to user
+        @return is_admin: Boolean
+    """
+
     ok = False
     info = "No permission"
+    is_admin = False
     permission_list = []
     user_info = db_utils.get_info_by_token(access_token)
     for a in user_info['permissions'].split(','):
@@ -163,16 +171,21 @@ def has_permission(access_token, local_permission_list):
     if '0' in permission_list:
         ok = True
         info = ""
+        is_admin = True
     if set(permission_list) & set(local_permission_list) != set([]):
         ok = True
         info = ""
 
-    return ok, info
+    return ok, info, is_admin
 
 
-# judge user action time
-# if expired retern False, else update user action time
 def is_expired(access_token):
+    """
+        verify if user has action time
+        @param access_token:  user's access_token, get form cookie
+        @return  Boolean, expired or not
+
+    """
     info = db_utils.get_info_by_token(access_token)
     expire_time = info['expire_time']
     if utils.cur_timestamp() > expire_time:

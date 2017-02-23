@@ -32,7 +32,7 @@ class PermissionHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.get_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -64,7 +64,7 @@ class PermissionHandler(tornado.web.RequestHandler):
         action, data = body['action'], body['data']
         if action == 'update':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-            ok, info = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return

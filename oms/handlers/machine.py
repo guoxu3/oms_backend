@@ -35,7 +35,7 @@ class MachineHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.get_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -71,7 +71,7 @@ class MachineHandler(tornado.web.RequestHandler):
         action, data = body['action'], body['data']
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-            ok, info = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
@@ -88,7 +88,7 @@ class MachineHandler(tornado.web.RequestHandler):
 
         if action == 'update':
             local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
-            ok, info = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
@@ -114,7 +114,7 @@ class MachineHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.delete_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return

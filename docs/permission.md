@@ -1,9 +1,11 @@
 ##permission规则
 ```
 以数字来定义handler，小数点后为handler子权限,依次类推
-0为管理员，1 为拥有handler1的所有权限
+0为管理员，拥有所有权限
+1 为拥有handler number 为1的所有操作权限
 ```
 ---
+
 ###task:
 ```
 taskhandler: 1
@@ -16,6 +18,7 @@ taskhandler: 1
 	│
 	└── delete: 1.3
 ```
+
 ###task_status:
 ```
 taskhandler: 2
@@ -25,6 +28,7 @@ taskhandler: 2
 	└── post: 2.2（预留）
 			└── update: NULL,开放对外调用，不做验证
 ```
+
 ###permission:
 ```
 permissionhandler: 3
@@ -34,6 +38,7 @@ permissionhandler: 3
 	└── post: 3.2
 			└── add: 3.2.1
 ```
+
 ###user:
 ```
 userhandler: 4
@@ -46,7 +51,8 @@ userhandler: 4
 	│
 	└── delete: 4.3
 			
-```	
+```
+
 ###update:
 ```
 updatehandler: 5
@@ -66,9 +72,10 @@ updatehandler: 5
 			├── api: 5.2.10
 			└── stock: 5.2.11		
 ```	
+
 ###machine:
 ```
-machinehandler: 5
+machinehandler: 6
 	│ 
 	├── get: 6.1
 	│  
@@ -77,5 +84,4 @@ machinehandler: 5
 	│		└── update: 6.2.2
 	│
 	└── delete: 6.3
-			
-```	
+```

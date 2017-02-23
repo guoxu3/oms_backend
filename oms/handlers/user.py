@@ -35,7 +35,7 @@ class UserHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.get_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -72,7 +72,7 @@ class UserHandler(tornado.web.RequestHandler):
         action, data = body['action'], body['data']
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-            ok, info = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
@@ -90,7 +90,7 @@ class UserHandler(tornado.web.RequestHandler):
 
         if action == 'update':
             local_permission_list = [self.handler_permission, self.post_permission, post_user_update_permission]
-            ok, info = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
@@ -113,6 +113,25 @@ class UserHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
+        # update user info without verify password
+        if action == 'update_all':
+            local_permission_list = [self.handler_permission, self.post_permission, post_admin_update_permission]
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            user_data = data
+            user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
+            if db_user.update(user_data):
+                ok = True
+                info = 'Update user info successful'
+            else:
+                ok = False
+                info = 'Update user info failed'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
         ok = False
         info = 'Unsupported user action'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
@@ -124,8 +143,14 @@ class UserHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.delete_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, is_admin = verify.has_permission(self.token, local_permission_list)
         if not ok:
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if not is_admin:
+            ok = False
+            info = "Only admin can delete a user"
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 

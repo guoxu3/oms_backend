@@ -8,7 +8,7 @@
 import tornado.web
 import tornado.escape
 from lib import verify, encrypt, mail
-from db import db_task
+from db import db_task, db_utils
 import utils
 import uuid
 import json
@@ -37,7 +37,7 @@ class TaskHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.get_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
@@ -69,10 +69,9 @@ class TaskHandler(tornado.web.RequestHandler):
 
         body = json.loads(self.request.body)
         action, task_data, mailto = body['action'], body['data'], body['mailto']
-        print action, task_data, mailto
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-            ok, info = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
@@ -103,22 +102,34 @@ class TaskHandler(tornado.web.RequestHandler):
             return
 
         local_permission_list = [self.handler_permission, self.delete_permission]
-        ok, info = verify.has_permission(self.token, local_permission_list)
+        ok, info, is_admin = verify.has_permission(self.token, local_permission_list)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         task_id = self.get_argument('task_id')
-        if db_task.get(task_id):
-            if db_task.delete(task_id):
-                ok = True
-                info = 'Delete task successful'
-            else:
-                ok = False
-                info = 'Delete task failed'
-        else:
+        task_data = db_task.get(task_id)
+        if not task_data:
             ok = True
             info = 'No such a task'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if not is_admin:
+            executor = db_utils.get_info_by_token(self.token)['username']
+            task_creator = task_data['creator']
+            if executor != task_creator:
+                ok = False
+                info = "Can not delete data create by other people"
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+        if db_task.delete(task_id):
+            ok = True
+            info = 'Delete task successful'
+        else:
+            ok = False
+            info = 'Delete task failed'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
