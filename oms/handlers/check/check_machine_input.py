@@ -4,38 +4,29 @@
 from lib import verify
 
 
-def check_user_input(user_dict):
+def check_machine_input(machine_dict):
     """
-        check user input info format
-        @parm user_dict: Dictionary, an user info dictionary
+        check machine input info format
+        @parm user_dict: Dictionary, an machine info dictionary
         @return ok: Boolean , info check pass or not
         @return info: String, message return to user
     """
     ok = True
     info = ""
-    if 'mail' in user_dict and not verify.is_mail(user_dict['mail']):
+
+    if 'inside_ip' in machine_dict and not verify.is_ip_addr(machine_dict['inside_ip']):
         ok = False
-        info = 'E-mail format error'
+        info = 'Inside ip format error'
         return ok, info
 
-    if 'passwd' in user_dict and not verify.is_password(user_dict['passwd']):
+    if 'outside_ip' in machine_dict and not verify.is_ip_addr(machine_dict['outside_ip']):
         ok = False
-        info = 'Password format error'
+        info = 'Outside ip format error'
         return ok, info
 
-    if 'old_passwd' in user_dict and not verify.is_password(user_dict['old_passwd']):
+    if 'is_initialized' in machine_dict and not verify.is_boolean(machine_dict['is_initialized']):
         ok = False
-        info = 'Old password format error'
-        return ok, info
-
-    if 'new_passwd' in user_dict and not verify.is_password(user_dict['new_passwd']):
-        ok = False
-        info = 'New password format error'
-        return ok, info
-
-    if 'username' in user_dict and not verify.is_legal_accounts(user_dict['username']):
-        ok = False
-        info = 'Username format error'
+        info = 'Initialized info format error'
         return ok, info
 
     return ok, info
