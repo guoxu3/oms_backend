@@ -30,7 +30,6 @@ class UpdateHandler(tornado.web.RequestHandler):
         self.post_permission = '5.2'
         self.token = self.get_secure_cookie("access_token")
 
-
     def post(self):
         post_pay_permission = '5.2.1'
         post_static_permission = '5.2.2'
@@ -54,7 +53,7 @@ class UpdateHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        body = json.load(self.request.body)
+        body = json.loads(self.request.body)
         action, data = body['action'], body['data']
         if action == 'update_file':
             task_id = data['task_id']
@@ -73,10 +72,19 @@ class UpdateHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        elif action == 'update_db':
+        if action == 'update':
             # todo
-            ok = ''
-            info = ''
+            print data
+            ok = True
+            info = 'update'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if action == 'revert':
+            print data
+            # todo
+            ok = True
+            info = 'revert'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
