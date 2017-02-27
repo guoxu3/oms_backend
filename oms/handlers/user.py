@@ -69,7 +69,7 @@ class UserHandler(tornado.web.RequestHandler):
             return
 
         body = json.loads(self.request.body)
-        action, data = body['action'], body['data']
+        action, user_data = body['action'], body['data']
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
             ok, info, _ = verify.has_permission(self.token, local_permission_list)
@@ -77,7 +77,6 @@ class UserHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            user_data = data
             user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
             if db_user.add(user_data):
                 ok = True
@@ -95,7 +94,11 @@ class UserHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            user_data = data
+            ok, info = check.check_user_input(user_data)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
             if 'old_passwd' in user_data:
                 ok, info = check.check_password(data['username'], data['old_passwd'])
                 if not ok:
@@ -122,6 +125,11 @@ class UserHandler(tornado.web.RequestHandler):
                 return
 
             user_data = data
+            ok, info = check.check_user_input(user_data)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
             user_data['salt'], user_data['passwd'] = encrypt.md5_salt(data['passwd'])
             if db_user.update(user_data):
                 ok = True

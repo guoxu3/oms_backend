@@ -68,7 +68,7 @@ class MachineHandler(tornado.web.RequestHandler):
             return
 
         body = json.loads(self.request.body)
-        action, data = body['action'], body['data']
+        action, machine_info_data = body['action'], body['data']
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
             ok, info, _ = verify.has_permission(self.token, local_permission_list)
@@ -76,7 +76,11 @@ class MachineHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            machine_info_data = data
+            ok, info = check.check_machine_input(machine_info_data)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
             if db_machine.add(machine_info_data):
                 ok = True
                 info = 'Add machine info successful'
@@ -93,7 +97,11 @@ class MachineHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            machine_info_data = data
+            ok, info = check.check_machine_input(machine_info_data)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
             if db_machine.add(machine_info_data):
                 ok = True
                 info = 'update task status successful'
