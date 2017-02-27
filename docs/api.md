@@ -263,9 +263,34 @@ return:
 ```
 
 ## 执行更新接口( /api/update )
+### 执行更新
 ```
-	待开发
+POST /api/machine
+
+argument:
+{  
+    'action': 'update'
+	'data': {
+    			'executor' : 'username'
+    			'task_id' : '0358c3c78f5211e685855cf9389306a2'
+       	    }
+}
+
+argument explain:
+    action (操作，必须) 更新或者回退
+    executor (string, 必须) 执行更新的人
+    task_id (string, 必须) 执行的任务id
+    
+TIPS:
+    
+
+return:
+{
+    'ok': True,
+    'info': 'executor task ok'
+}
 ```
+
 
 ## 用户信息接口( /api/user )
 ### 获取user信息

@@ -23,7 +23,6 @@ def create_salt(salt_length=4):
     len_chars = len(chars) - 1
     random = Random()
     for i in xrange(salt_length):
-        # 每次从chars中随机取一位
         salt += chars[random.randint(0, len_chars)]
 
     return salt
