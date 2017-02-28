@@ -74,14 +74,12 @@ class UpdateHandler(tornado.web.RequestHandler):
 
         if action == 'update':
             # todo
-            print data
             ok = True
             info = 'update'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         if action == 'revert':
-            print data
             # todo
             ok = True
             info = 'revert'
