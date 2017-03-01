@@ -53,7 +53,7 @@ CREATE TABLE `permissions` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `permission` VARCHAR(40) NOT NULL,
   `permission_desc` VARCHAR(40) NOT NULL,
-  `permission_code` INT(10),
+  `permission_code` VARCHAR (10),
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 

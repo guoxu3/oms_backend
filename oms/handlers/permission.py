@@ -61,17 +61,28 @@ class PermissionHandler(tornado.web.RequestHandler):
             return
 
         body = json.loads(self.request.body)
-        action, data = body['action'], body['data']
-        if action == 'update':
+        action, permission_data = body['action'], body['data']
+        if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-            ok, info, _ = verify.has_permission(self.token, local_permission_list)
+            ok, info, is_admin = verify.has_permission(self.token, local_permission_list)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
-            # todo
-            ok = ''
-            info = ''
+
+            if not is_admin:
+                ok = False
+                info = "Only admin can delete a user"
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            if db_permission.add(permission_data):
+                ok = True
+                info = 'Add permission successful'
+            else:
+                ok = False
+                info = 'Add permission failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
 
         ok = False
         info = 'Unsupported permission action'

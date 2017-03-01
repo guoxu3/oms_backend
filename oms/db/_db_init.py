@@ -93,7 +93,7 @@ class Permissions(BaseModel):
     id = IntegerField()
     permission = CharField(unique=True)
     permission_desc = CharField()
-    permission_code = IntegerField(unique=True)
+    permission_code = CharField(unique=True)
 
     class Meta:
         db_table = 'permissions'
