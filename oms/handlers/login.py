@@ -31,6 +31,10 @@ class LoginHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
+        if check.check_admin(self.token):
+            info = {'is_admin': True}
+        else:
+            info = {'is_admin': False}
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def post(self):
