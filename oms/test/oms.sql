@@ -7,7 +7,7 @@ CREATE TABLE `task` (
   `ip` VARCHAR(30) NOT NULL,
   `target` VARCHAR(30) NOT NULL,
   `version` INT(30),
-  `action` VARCHAR(30) NOT NULL,
+  `type` VARCHAR(30) NOT NULL,
   `create_time` INT(10) NOT NULL,
   `content` VARCHAR(1000) NOT NULL,
   `description` VARCHAR(1000) NOT NULL,

@@ -33,7 +33,7 @@ class Task(BaseModel):
     create_time = IntegerField()
     target = CharField()
     version = IntegerField()
-    action = CharField()
+    type = CharField()
     content = CharField()
     description = CharField()
     executor = CharField()
