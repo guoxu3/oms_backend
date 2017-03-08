@@ -116,7 +116,7 @@ class UserHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        # update user info without verify password
+        # update user info without verify password, by admin
         if action == 'update_all':
             local_permission_list = [self.handler_permission, self.post_permission, post_admin_update_permission]
             ok, info, _ = verify.has_permission(self.token, local_permission_list)
@@ -124,12 +124,16 @@ class UserHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
+            if user_data['passwd'] == "":
+                user_data.pop('passwd')
+
             ok, info = check.check_user_input(user_data)
             if not ok:
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
+            if 'passwd' in user_data:
+                user_data['salt'], user_data['passwd'] = encrypt.md5_salt(user_data['passwd'])
 
-            user_data['salt'], user_data['passwd'] = encrypt.md5_salt(user_data['passwd'])
             if db_user.update(user_data):
                 ok = True
                 info = 'Update user info successful'
