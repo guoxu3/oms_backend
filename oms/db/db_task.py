@@ -4,7 +4,7 @@
     task table operation
 """
 
-from peewee import *
+
 from _db_init import *
 from lib.logger import log
 
@@ -12,7 +12,7 @@ from lib.logger import log
 def row_count():
     try:
         count = Task.select().count()
-    except Exception, e:
+    except Exception:
         log.exception('exception')
         return 0
     else:
