@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from db._db_init import Task
-from lob.logger import log
+from lib.logger import log
 
 
 def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
