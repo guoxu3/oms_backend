@@ -7,7 +7,7 @@ from peewee import *
 
 
 def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
-    if begin_time == 0 or end_time == 0 or begin_time > end_time or not username:
+    if begin_time == 0 or end_time == 0 or begin_time > end_time:
         return False
 
     user_task_statistic = {}
@@ -43,6 +43,7 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
                 task_sum = info.__dict__['task_sum']
                 create_date = info.__dict__['create_date']
                 user_task_statistic[create_date] = task_sum
+            print user_task_statistic
         except Exception:
             log.exception('exception')
             return False

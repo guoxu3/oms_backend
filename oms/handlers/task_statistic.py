@@ -36,8 +36,8 @@ class TaskStatisticHandler(tornado.web.RequestHandler):
             return
 
         username = self.get_argument('username', None)
-        begin_time = self.get_argument('begin_time', 0)
-        end_time = self.get_argument('end_time', 10)
+        begin_time = int(self.get_argument('begin_time', 1483200000))
+        end_time = int(self.get_argument('end_time', 4102415999))
         task_num_info = db_utils.get_user_task_num_by_time(begin_time, end_time, username)
         if task_num_info:
             ok = True
