@@ -41,8 +41,8 @@ class MachineHandler(tornado.web.RequestHandler):
             return
 
         machine_name = self.get_argument('machine_name', None)
-        start = self.get_argument('start', 0)
-        count = self.get_argument('count', 10)
+        start = int(self.get_argument('start', 0))
+        count = int(self.get_argument('count', 10))
 
         machine_info = db_machine.get(machine_name, start, count)
         if machine_info:
