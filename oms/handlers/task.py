@@ -43,8 +43,8 @@ class TaskHandler(tornado.web.RequestHandler):
             return
 
         task_id = self.get_argument('task_id', None)
-        start = self.get_argument('start', 0)
-        count = self.get_argument('count', 10)
+        start = int(self.get_argument('start', 0))
+        count = int(self.get_argument('count', 10))
         task_info = db_task.get(task_id, start, count)
         if task_info:
             ok = True

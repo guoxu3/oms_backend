@@ -50,7 +50,7 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
     if begin_time == 0 or end_time == 0 or begin_time > end_time or not username:
         return False
 
-    data_list = []
+    user_task_statistic = {}
     try:
         query = (Task
                  .select(Task.creator, fn.COUNT(Task.task_id).alias('task_sum'),
@@ -62,17 +62,17 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
                  .group_by(Task.creator, 'create_date'))
 
         for info in query.execute():
-            data = info.__dict__['_data']
-            data['task_sum'] = info.__dict__['task_sum']
-            data['create_date'] = info.__dict__['create_date']
-            print data
-            data_list.append(data)
+            task_sum = info.__dict__['task_sum']
+            create_date = info.__dict__['create_date']
+            user_task_statistic[create_date] = task_sum
+            print user_task_statistic
+
     except Exception as e:
         print e
         print "aaa"
     else:
-        return data_list
+        return user_task_statistic
 
 
-get_task_num_by_time(1487658528, 1487661737, 'guoxu')
+get_user_task_num_by_time(1487658528, 9999999999, 'guoxu')
 
