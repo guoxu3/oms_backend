@@ -53,19 +53,19 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
     user_task_statistic = {}
     try:
         query = (Task
-                 .select(Task.creator, fn.COUNT(Task.task_id).alias('task_sum'),
-                         fn.FROM_UNIXTIME(Task.create_time, '%Y%m%d').alias('create_date'))
+                 .select(fn.FROM_UNIXTIME(Task.create_time, '%Y%m%d').alias('create_date'),
+                         fn.COUNT(Task.id).alias('task_sum'))
                  .where(
-                        (Task.creator == username) &
-                        (Task.create_time >= begin_time) &
+                        (Task.creator == username),
+                        (Task.create_time >= begin_time),
                         (Task.create_time <= end_time))
-                 .group_by(Task.creator, 'create_date'))
+                 .group_by(SQL('create_date')))
 
         for info in query.execute():
             task_sum = info.__dict__['task_sum']
             create_date = info.__dict__['create_date']
             user_task_statistic[create_date] = task_sum
-            print user_task_statistic
+        print user_task_statistic
 
     except Exception as e:
         print e
@@ -74,5 +74,5 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
         return user_task_statistic
 
 
-get_user_task_num_by_time(1487658528, 9999999999, 'guoxu')
+get_user_task_num_by_time(1486915200, 1489507199, 'guoxu')
 
