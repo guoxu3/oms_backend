@@ -6,7 +6,7 @@ from lib.logger import log
 from peewee import *
 
 
-def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
+def get_task_statistic_by_time(begin_time=0, end_time=0, username=None):
     if begin_time == 0 or end_time == 0 or begin_time > end_time:
         return False
 
@@ -22,9 +22,11 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
                  .group_by(SQL('create_date')))
         try:
             for info in query.execute():
+                print info
                 task_sum = info.__dict__['task_sum']
                 create_date = info.__dict__['create_date']
                 user_task_statistic[create_date] = task_sum
+
         except Exception:
             log.exception('exception')
             return False
@@ -43,7 +45,6 @@ def get_user_task_num_by_time(begin_time=0, end_time=0, username=None):
                 task_sum = info.__dict__['task_sum']
                 create_date = info.__dict__['create_date']
                 user_task_statistic[create_date] = task_sum
-            print user_task_statistic
         except Exception:
             log.exception('exception')
             return False

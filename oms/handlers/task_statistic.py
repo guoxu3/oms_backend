@@ -38,13 +38,18 @@ class TaskStatisticHandler(tornado.web.RequestHandler):
         username = self.get_argument('username', None)
         begin_time = int(self.get_argument('begin_time', 1483200000))
         end_time = int(self.get_argument('end_time', 4102415999))
-        task_num_info = db_utils.get_user_task_num_by_time(begin_time, end_time, username)
-        if task_num_info:
+        is_all = self.get_argument('is_all', False)
+        if is_all:
+            task_statistic_info = db_utils.get_all_user_task_statistic_by_time(begin_time, end_time)
+        else:
+            task_statistic_info = db_utils.get_task_statistic_by_time(begin_time, end_time, username)
+
+        if task_statistic_info != False:
             ok = True
-            info = {'data': task_num_info}
+            info = {'data': task_statistic_info}
         else:
             ok = False
-            info = 'No such a task statistic info'
+            info = 'Get task statistic info failed'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
