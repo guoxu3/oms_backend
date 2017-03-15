@@ -15,8 +15,8 @@ def get_all_user_task_statistic_by_time(begin_time=0, end_time=0):
              .select(Task.creator, fn.COUNT(Task.task_id).alias('task_sum'),
                      fn.FROM_UNIXTIME(Task.create_time, '%Y%m%d').alias('create_date'))
              .where(
-        (Task.create_time >= begin_time) &
-        (Task.create_time <= end_time))
+                    (Task.create_time >= begin_time) &
+                    (Task.create_time <= end_time))
              .group_by(Task.creator, SQL('create_date')))
     try:
         for info in query.execute():
