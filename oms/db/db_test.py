@@ -61,9 +61,10 @@ def get_user_task_num_by_time(begin_time=0, end_time=0):
             task_sum = info.__dict__['task_sum']
             create_date = info.__dict__['create_date']
             if create_date not in user_task_statistic:
-                user_task_statistic[create_date] = [{creator: task_sum}]
+                user_task_statistic[create_date] = {creator: task_sum}
             else:
-                user_task_statistic[create_date].append({creator: task_sum})
+                user_task_statistic[create_date][creator] = task_sum
+        print user_task_statistic
     except Exception:
 
         return False
