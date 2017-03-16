@@ -46,7 +46,25 @@ class Task(BaseModel):
         db_table = 'task'
 
 
+# user table
+class User(BaseModel):
+    id = IntegerField()
+    mail = CharField(unique=True)
+    username = CharField(unique=True)
+    nickname = CharField(unique=True)
+    passwd = CharField()
+    salt = CharField()
+    department = CharField()
+    permissions = CharField()
+
+    class Meta:
+        db_table = 'user'
+
+
 def get_user_task_num_by_time(begin_time=0, end_time=0):
+    user_list = []
+    for a in User.select(User.username):
+        user_list.append(a.__dict__['_data']['username'])
     user_task_statistic = {}
     query = (Task
              .select(Task.creator, fn.COUNT(Task.task_id).alias('task_sum'),
@@ -64,12 +82,12 @@ def get_user_task_num_by_time(begin_time=0, end_time=0):
                 user_task_statistic[create_date] = {creator: task_sum}
             else:
                 user_task_statistic[create_date][creator] = task_sum
-        print user_task_statistic
+        print user_task_statistic, user_list
     except Exception:
 
         return False
     else:
-        return user_task_statistic
+        return user_task_statistic, user_list
 
 
 get_user_task_num_by_time(1486915200, 1489507199)

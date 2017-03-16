@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from db._db_init import Task
+from db._db_init import Task, User
 from lib.logger import log
 from peewee import *
 
@@ -9,6 +9,10 @@ from peewee import *
 def get_all_user_task_statistic_by_time(begin_time=0, end_time=0):
     if begin_time == 0 or end_time == 0 or begin_time > end_time:
         return False
+
+    user_list = []
+    for a in User.select(User.username):
+        user_list.append(a.__dict__['_data']['username'])
 
     user_task_statistic = {}
     query = (Task
@@ -31,4 +35,4 @@ def get_all_user_task_statistic_by_time(begin_time=0, end_time=0):
         log.exception('exception')
         return False
     else:
-        return user_task_statistic
+        return user_task_statistic, user_list
