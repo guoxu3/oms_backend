@@ -37,8 +37,8 @@ class PermissionHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        start = self.get_argument('start', 0)
-        count = self.get_argument('count', 10)
+        start = int(self.get_argument('start', 0))
+        count = int(self.get_argument('count', 10))
         permission_info = db_permission.get(start, count)
         if permission_info:
             ok = True
