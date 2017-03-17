@@ -39,8 +39,9 @@ class PermissionHandler(tornado.web.RequestHandler):
 
         start = int(self.get_argument('start', 0))
         count = int(self.get_argument('count', 10))
+        permission = self.get_argument('permission', None)
         is_all = self.get_argument('all', False)
-        permission_info = db_permission.get(is_all, start, count)
+        permission_info = db_permission.get(is_all, start, count, permission)
         if permission_info:
             ok = True
             info = {'data': permission_info, 'count': db_permission.row_count()}
@@ -51,6 +52,8 @@ class PermissionHandler(tornado.web.RequestHandler):
 
     def post(self):
         post_add_permission = '3.2.1'
+        post_update_permission = '3.2.2'
+
         ok, info = check.check_login(self.token)
         if not ok:
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
@@ -65,14 +68,8 @@ class PermissionHandler(tornado.web.RequestHandler):
         action, permission_data = body['action'], body['data']
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
-            ok, info, is_admin = verify.has_permission(self.token, local_permission_list)
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:
-                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
-                return
-
-            if not is_admin:
-                ok = False
-                info = "Only admin can delete a user"
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
@@ -85,8 +82,52 @@ class PermissionHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
+        if action == 'update':
+            local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            if db_permission.update(permission_data):
+                ok = True
+                info = 'Update permission successful'
+            else:
+                ok = False
+                info = 'Update permission failed'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
         ok = False
         info = 'Unsupported permission action'
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
+    def delete(self):
+        ok, info = check.check_login(self.token)
+        if not ok:
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        local_permission_list = [self.handler_permission, self.delete_permission]
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        permission = self.get_argument('permission')
+        permission_data = db_permission.get(permission)
+        if not permission_data:
+            ok = True
+            info = 'No such a permission info'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if db_permission.delete(permission):
+            ok = True
+            info = 'Delete permission info successful'
+        else:
+            ok = False
+            info = 'Delete permission info  failed'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
