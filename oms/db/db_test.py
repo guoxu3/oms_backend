@@ -61,6 +61,17 @@ class User(BaseModel):
         db_table = 'user'
 
 
+# permissions table
+class Permissions(BaseModel):
+    id = IntegerField()
+    permission = CharField(unique=True)
+    permission_desc = CharField()
+    permission_code = CharField(unique=True)
+
+    class Meta:
+        db_table = 'permissions'
+
+
 def get_user_task_num_by_time(begin_time=0, end_time=0):
     user_list = []
     for a in User.select(User.username):
@@ -90,5 +101,36 @@ def get_user_task_num_by_time(begin_time=0, end_time=0):
         return user_task_statistic, user_list
 
 
-get_user_task_num_by_time(1486915200, 1489507199)
+def get_permission(is_all=False, start=0, count=10):
+    data_list = []
+    if is_all:
+        try:
+            for info in Permissions.select():
+                _data = info.__dict__['_data']
+                permission_code = _data['permission_code']
+                if len(permission_code) == 1:
+                    pid = '0'
+                else:
+                    pid = '.'.join(permission_code.split('.')[:-1])
 
+                name = _data['permission_desc'] + '[' + _data['permission'] + ']' + '[' + _data['permission_code'] + ']'
+                permission_dcit = {
+                    'id': permission_code,
+                    'pId': pid,
+                    'name': name
+                }
+                data_list.append(permission_dcit)
+        except Exception:
+            return False
+        else:
+            return data_list
+    else:
+        try:
+            for info in Permissions.select().offset(start).limit(count):
+                data_list.append(info.__dict__['_data'])
+        except Exception:
+            return False
+        else:
+            return data_list
+
+get_permission(True)

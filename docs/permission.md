@@ -19,14 +19,11 @@ taskhandler: 1
 	└── delete: 1.3
 ```
 
-###task_status:
+###task_statistic:
 ```
-taskhandler: 2
-	│ 
-	├── get: 2.1
-	│  
-	└── post: 2.2（预留）
-			└── update: NULL,开放对外调用，不做验证
+task_statistic_handler: 2
+	│
+	└──  get: 2.1
 ```
 
 ###permission:
@@ -35,8 +32,11 @@ permissionhandler: 3
 	│ 
 	├── get: 3.1
 	│  
-	└── post: 3.2
-			└── add: 3.2.1
+	├── post: 3.2
+	│		└── add: 3.2.1
+	│		└── update: 3.2.2
+	│
+	└── delete: 3.3
 ```
 
 ###user:

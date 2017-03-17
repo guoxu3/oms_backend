@@ -18,10 +18,10 @@ class TaskStatisticHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
         self.token = self.get_secure_cookie("access_token")
-        self.handler_permission = '7'
-        self.get_permission = '7.1'
-        self.post_permission = '7.2'
-        self.delete_permission = '7.3'
+        self.handler_permission = '2'
+        self.get_permission = '2.1'
+        self.post_permission = '2.2'
+        self.delete_permission = '2.3'
 
     def get(self):
         ok, info = check.check_login(self.token)

@@ -39,7 +39,8 @@ class PermissionHandler(tornado.web.RequestHandler):
 
         start = int(self.get_argument('start', 0))
         count = int(self.get_argument('count', 10))
-        permission_info = db_permission.get(start, count)
+        is_all = self.get_argument('all', False)
+        permission_info = db_permission.get(is_all, start, count)
         if permission_info:
             ok = True
             info = {'data': permission_info, 'count': db_permission.row_count()}
