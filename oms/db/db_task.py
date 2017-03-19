@@ -43,7 +43,6 @@ def get(task_id=None, start=0, count=10):
             return info.__dict__['_data']
     else:
         data_list = []
-        print count
         try:
             for info in Task.select().offset(start).limit(count):
                 data_list.append(info.__dict__['_data'])
