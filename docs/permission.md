@@ -60,17 +60,8 @@ updatehandler: 5
 	├── get: 5.1 (预留)
 	│  
 	└── post: 5.2
-			├── pay: 5.2.1
-			├── static: 5.2.2
-			├── exp: 5.2.3
-			├── exp_v4: 5.2.4
-			├── sample_api: 5.2.5
-			├── sample_api_v4: 5.2.6
-			├── card: 5.2.7
-			├── channel: 5.2.8
-			├── ground: 5.2.9
-			├── api: 5.2.10
-			└── stock: 5.2.11		
+			├── update_file: 5.2.1
+			└── update_db: 5.2.2		
 ```	
 
 ###machine:
