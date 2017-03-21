@@ -67,3 +67,6 @@ CREATE TABLE `session` (
   `expire_time` INT(10) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- admin account, username: admin, password: 123456
+insert into user (mail, username, nickname, passwd, salt, department, permissions) values ('admin@example.com', 'admin', 'admin', '4f488100bdc39de2e43fb51aa4dc9f39', 'TJFr', 'ops', '0');
