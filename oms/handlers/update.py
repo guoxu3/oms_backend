@@ -85,7 +85,7 @@ class UpdateHandler(tornado.web.RequestHandler):
 
             ok, info, is_admin = verify.has_permission(self.token, local_permission_list)
             if not is_admin:
-                info = "Only admin can revert"
+                info = "Only admin can revert."
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
