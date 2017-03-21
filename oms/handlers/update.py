@@ -31,17 +31,8 @@ class UpdateHandler(tornado.web.RequestHandler):
         self.token = self.get_secure_cookie("access_token")
 
     def post(self):
-        post_pay_permission = '5.2.1'
-        post_static_permission = '5.2.2'
-        post_exp_permission = '5.2.3'
-        post_exp_v4_permission = '5.2.4'
-        post_sample_api_permission = '5.2.5'
-        post_sample_api_v4_permission = '5.2.6'
-        post_card_permission = '5.2.7'
-        post_channel_permission = '5.2.8'
-        post_ground_permission = '5.2.9'
-        post_api_permission = '5.2.10'
-        post_stock_permission = '5.2.11'
+        post_update_file_permission = '5.2.1'
+        post_update_db_permission = '5.2.2'
 
         ok, info = check.check_login(self.token)
         if not ok:
@@ -55,14 +46,28 @@ class UpdateHandler(tornado.web.RequestHandler):
 
         body = json.loads(self.request.body)
         action, data = body['action'], body['data']
-        if action == 'update_file':
-            task_id = data['task_id']
-            username = ''
-            task = db_task.get(task_id)
-            encode_update_string = encrypt.base64_encode(username + '@' + task['repository'] + "@" + task['content'])
-            task_status = {'task_id': task_id, 'status': 1, 'start_time': utils.cur_timestamp(), 'executor': username}
+        task = db_task.get(data['task_id'])
+        update_type = task['type']
+        excutor = self.get_cookie("username")
+
+        if action == 'update':
+            local_permission_list = [self.handler_permission, self.post_permission]
+            if update_type == 'update_file':
+                local_permission_list = [self.handler_permission, self.post_permission, post_update_file_permission]
+            if update_type == 'update_db':
+                local_permission_list = [self.handler_permission, self.post_permission, post_update_db_permission]
+
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
+                                                         "@" + task['repository'] + "@" + task['content'])
+            task_status = {'task_id': taks['task_id'], 'status': 1,
+                           'start_time': utils.cur_timestamp(), 'executor': excutor}
             db_task.update(task_status)
-            result = sapi.run_script(task['ip'], 'salt://scripts/update_file.sh', encode_update_string)
+            result = sapi.run_script(task['ip'], 'salt://scripts/update.sh', encode_update_string)
             if result:
                 ok = True
                 info = 'Execute script successful'
@@ -70,21 +75,32 @@ class UpdateHandler(tornado.web.RequestHandler):
                 ok = False
                 info = 'Execute script failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
-            return
-
-        if action == 'update':
-            # todo
-            ok = True
-            info = 'update'
-            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
-            return
 
         if action == 'revert':
-            # todo
-            ok = True
-            info = 'revert'
+            local_permission_list = [self.handler_permission, self.post_permission]
+            if update_type == 'update_file':
+                local_permission_list = [self.handler_permission, self.post_permission, post_update_file_permission]
+            if update_type == 'update_db':
+                local_permission_list = [self.handler_permission, self.post_permission, post_update_db_permission]
+
+            ok, info, is_admin = verify.has_permission(self.token, local_permission_list)
+            if not is_admin:
+                info = "Only admin can revert"
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            encode_update_string = encrypt.base64_encode(task['task_id'])
+            task_status = {'task_id': taks['task_id'], 'revert': 1,
+                           'revert_time': utils.cur_timestamp()}
+            db_task.update(task_status)
+            result = sapi.run_script(task['ip'], 'salt://scripts/revert.sh', encode_update_string)
+            if result:
+                ok = True
+                info = 'Execute script successful'
+            else:
+                ok = False
+                info = 'Execute script failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
-            return
 
         ok = False
         info = 'Unsupported update action'
