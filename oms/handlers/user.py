@@ -45,7 +45,7 @@ class UserHandler(tornado.web.RequestHandler):
         count = int(self.get_argument('count', 10))
 
         user_info = db_user.get(username, start, count)
-        if user_info:
+        if user_info is not False:
             ok = True
             info = {'data': user_info, 'count': db_user.row_count()}
         else:

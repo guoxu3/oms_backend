@@ -46,9 +46,9 @@ class TaskStatisticHandler(tornado.web.RequestHandler):
             user_list = False
             task_statistic_info = db_utils.get_task_statistic_by_time(begin_time, end_time, username)
 
-        if task_statistic_info != False:
+        if task_statistic_info is not False:
             ok = True
-            if user_list != False:
+            if user_list is not False:
                 info = {'data': task_statistic_info, 'user_list': user_list}
             else:
                 info = {'data': task_statistic_info}

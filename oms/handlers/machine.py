@@ -45,7 +45,7 @@ class MachineHandler(tornado.web.RequestHandler):
         count = int(self.get_argument('count', 10))
 
         machine_info = db_machine.get(machine_name, start, count)
-        if machine_info:
+        if machine_info is not False:
             ok = True
             info = {'data': machine_info, 'count': db_machine.row_count()}
         else:
@@ -104,15 +104,15 @@ class MachineHandler(tornado.web.RequestHandler):
 
             if db_machine.add(machine_info_data):
                 ok = True
-                info = 'update task status successful'
+                info = 'update machine info successful'
             else:
                 ok = False
-                info = 'update task status failed'
+                info = 'update machine info failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         ok = False
-        info = 'Unsupported task status action'
+        info = 'Unsupported machine info action'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def delete(self):
@@ -130,10 +130,10 @@ class MachineHandler(tornado.web.RequestHandler):
         machine_name = self.get_argument('machine_name')
         if db_machine.delete(machine_name):
             ok = True
-            info = 'Delete task successful'
+            info = 'Delete machine info successful'
         else:
             ok = False
-            info = 'Delete task  failed'
+            info = 'Delete machine info failed'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
