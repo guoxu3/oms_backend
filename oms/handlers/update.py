@@ -63,8 +63,8 @@ class UpdateHandler(tornado.web.RequestHandler):
                 return
 
             encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
-                                                         "@" + task['repository'] + "@" + task['content'])
-            task_status = {'task_id': taks['task_id'], 'status': 1,
+                                                         "@" + task['target'] + "@" + task['content'])
+            task_status = {'task_id': task['task_id'], 'status': 1,
                            'start_time': utils.cur_timestamp(), 'executor': excutor}
             db_task.update(task_status)
             result = sapi.run_script(task['ip'], 'salt://scripts/update.sh', encode_update_string)
@@ -90,7 +90,7 @@ class UpdateHandler(tornado.web.RequestHandler):
                 return
 
             encode_update_string = encrypt.base64_encode(task['task_id'])
-            task_status = {'task_id': taks['task_id'], 'revert': 1,
+            task_status = {'task_id': task['task_id'], 'revert': 1,
                            'revert_time': utils.cur_timestamp()}
             db_task.update(task_status)
             result = sapi.run_script(task['ip'], 'salt://scripts/revert.sh', encode_update_string)

@@ -45,4 +45,4 @@ def make_cookie_secret():
 
 # base64 encrypt
 def base64_encode(value):
-    return base64.b16decode(value)
+    return base64.b64encode(value)
