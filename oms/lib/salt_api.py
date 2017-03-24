@@ -20,14 +20,14 @@ class SaltAPI:
         # todo
 
     @staticmethod
-    def run_script(tgt, script_path, script_args):
+    def run_script(tgt, script_path, script_args_list):
         """
         tgt : a list, ie. ['host1', 'host2', ....],can not be ['*']
         script_path: string, ie. salt://scripts/test.sh or /srv/run/scripts/test.sh
-        script_args: a str a list, ie. ['arg1', 'arg2' ,'arg3',....]
+        script_args: a list, ie. ['arg1', 'arg2' ,'arg3',....]
         """
         client = salt.client.LocalClient()
-        script = [script_path] + list(script_args)
+        script = [script_path] + script_args_list
         try:
             result = client.cmd(tgt, 'cmd.script', script, expr_form='list')
         except Exception:

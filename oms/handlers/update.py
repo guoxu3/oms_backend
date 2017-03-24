@@ -66,14 +66,19 @@ class UpdateHandler(tornado.web.RequestHandler):
                                                          "@" + task['target'] + "@" + task['content'])
             task_status = {'task_id': task['task_id'], 'status': 1,
                            'start_time': utils.cur_timestamp(), 'executor': excutor}
-            db_task.update(task_status)
-            result = sapi.run_script(task['ip'], 'salt://scripts/update.sh', encode_update_string)
-            if result:
+            if not db_task.update(task_status):
+                ok = False
+                info = 'update task status failed'
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
+            result = sapi.run_script([task['ip']], 'salt://scripts/update.sh', [encode_update_string])
+            retcode = result[task['ip']]['retcode']
+            if retcode == 0:
                 ok = True
-                info = 'Execute script successful'
+                info = 'Execute update script successful'
             else:
                 ok = False
-                info = 'Execute script failed'
+                info = 'Execute update script failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
         if action == 'revert':
@@ -92,14 +97,19 @@ class UpdateHandler(tornado.web.RequestHandler):
             encode_update_string = encrypt.base64_encode(task['task_id'])
             task_status = {'task_id': task['task_id'], 'revert': 1,
                            'revert_time': utils.cur_timestamp()}
-            db_task.update(task_status)
-            result = sapi.run_script(task['ip'], 'salt://scripts/revert.sh', encode_update_string)
-            if result:
+            if not db_task.update(task_status):
+                ok = False
+                info = 'update task status failed'
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
+            result = sapi.run_script([task['ip']], 'salt://scripts/revert.sh', [encode_update_string])
+            retcode = result[task['ip']]['retcode']
+            if retcode == 0:
                 ok = True
-                info = 'Execute script successful'
+                info = 'Execute revert script successful'
             else:
                 ok = False
-                info = 'Execute script failed'
+                info = 'Execute revert script failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
         ok = False
