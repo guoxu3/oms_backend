@@ -30,6 +30,37 @@ class UpdateHandler(tornado.web.RequestHandler):
         self.post_permission = '5.2'
         self.token = self.get_secure_cookie("access_token")
 
+    def get(self):
+        ok, info = check.check_login(self.token)
+        if not ok:
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        local_permission_list = [self.handler_permission, self.get_permission]
+        ok, info, _ = verify.has_permission(self.token, local_permission_list)
+        if not ok:
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        task_id = self.get_argument('task_id', None)
+        if not task_id:
+            ok = False
+            info = 'Must have task_id'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        task = db_task.get(task_id)
+        result = sapi.run_script([task['ip']], 'salt://scripts/get_task_log.sh', [task_id])
+        retcode = result[task['ip']]['retcode']
+        if retcode == 0:
+            log_info = result[task['ip']]['stdout']
+            ok = True
+            info = {'data': log_info}
+        else:
+            ok = False
+            info = 'Get Log info Failed'
+        self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
     def post(self):
         post_update_file_permission = '5.2.1'
         post_update_db_permission = '5.2.2'
