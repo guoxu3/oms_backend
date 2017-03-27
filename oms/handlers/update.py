@@ -94,7 +94,8 @@ class UpdateHandler(tornado.web.RequestHandler):
                 return
 
             encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
-                                                         "@" + task['target'] + "@" + task['content'])
+                                                         "@" + task['target'] + "@" + str(task['version']) +
+                                                         "@" + task['content'])
             task_status = {'task_id': task['task_id'], 'status': 1,
                            'start_time': utils.cur_timestamp(), 'executor': excutor}
             if not db_task.update(task_status):
