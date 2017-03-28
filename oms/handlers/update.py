@@ -93,10 +93,6 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
-                                                         "@" + task['target'] + "@" + str(task['version']) +
-                                                         "@" + task['content'])
-
             if task['status'] is True:
                 ok = False
                 info = 'Task has been executed'
@@ -109,7 +105,11 @@ class UpdateHandler(tornado.web.RequestHandler):
                 ok = False
                 info = 'update task status failed'
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
 
+            encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
+                                                         "@" + task['target'] + "@" + str(task['version']) +
+                                                         "@" + task['content'])
             result = sapi.run_script([task['ip']], 'salt://scripts/update.sh', [encode_update_string])
             retcode = result[task['ip']]['retcode']
             if retcode == 0:
@@ -140,6 +140,7 @@ class UpdateHandler(tornado.web.RequestHandler):
                 ok = False
                 info = 'update task status failed'
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
 
             result = sapi.run_script([task['ip']], 'salt://scripts/revert.sh', [encode_update_string])
             retcode = result[task['ip']]['retcode']

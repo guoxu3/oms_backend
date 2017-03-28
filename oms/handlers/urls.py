@@ -5,7 +5,7 @@
    collect all handlers
 """
 
-from handlers import task, machine, update, user, login, logout, permission, task_statistic
+from handlers import task, machine, update, user, login, logout, permission, task_statistic, task_status
 
 # Routes
 handlers = []
@@ -17,3 +17,4 @@ handlers.extend(login.handlers)
 handlers.extend(permission.handlers)
 handlers.extend(logout.handlers)
 handlers.extend(task_statistic.handlers)
+handlers.extend(task_status.handlers)
