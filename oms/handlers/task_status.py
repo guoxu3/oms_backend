@@ -30,8 +30,7 @@ class TaskStatusHandler(tornado.web.RequestHandler):
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
-        body = json.loads(self.request.body)
-        task_status = body['data']
+        task_status = json.loads(self.request.body)
         if not db_task.update(task_status):
             ok = False
             info = 'update task status failed'
