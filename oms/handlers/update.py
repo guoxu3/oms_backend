@@ -96,6 +96,12 @@ class UpdateHandler(tornado.web.RequestHandler):
             encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
                                                          "@" + task['target'] + "@" + str(task['version']) +
                                                          "@" + task['content'])
+
+            if task['status'] is True:
+                ok = False
+                info = 'Task has been executed'
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
             task_status = {'task_id': task['task_id'], 'status': 1,
                            'start_time': utils.cur_timestamp(), 'executor': excutor}
             if not db_task.update(task_status):

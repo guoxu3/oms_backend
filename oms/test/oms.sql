@@ -17,6 +17,8 @@ CREATE TABLE `task` (
   `status` BOOLEAN DEFAULT FALSE ,
   `percent` INT(2) DEFAULT '0',
   `revert` BOOLEAN DEFAULT FALSE ,
+  `failed` BOOLEAN DEFAULT FALSE ,
+  `revert_failed` BOOLEAN DEFAULT FALSE ,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
