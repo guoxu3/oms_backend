@@ -101,6 +101,7 @@ class UpdateHandler(tornado.web.RequestHandler):
                 ok = False
                 info = 'Task has been executed'
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
 
             task_status = {'task_id': task['task_id'], 'status': 1,
                            'start_time': utils.cur_timestamp(), 'executor': excutor}
