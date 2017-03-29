@@ -7,9 +7,13 @@ api handlers
 
 import tornado.web
 import tornado.escape
+import tornado.ioloop
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
 from lib import verify, encrypt, mail
 from lib.salt_api import SaltAPI as sapi
 from db import db_task, db_machine
+from lib.logger import log
 import utils
 import json
 import check
@@ -107,17 +111,9 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
-                                                         "@" + task['target'] + "@" + str(task['version']) +
-                                                         "@" + task['content'])
-            result = sapi.run_script([task['ip']], 'salt://scripts/update.sh', [encode_update_string])
-            retcode = result[task['ip']]['retcode']
-            if retcode == 0:
-                ok = True
-                info = 'Execute update script successful'
-            else:
-                ok = False
-                info = 'Execute update script failed'
+            tornado.ioloop.IOLoop.instance().add_callback(self.salt_run_update(task))
+            ok = True
+            info = 'Execute update script successful'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
         if action == 'revert':
@@ -133,7 +129,6 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            encode_update_string = encrypt.base64_encode(task['task_id'])
             task_status = {'task_id': task['task_id'], 'revert': 1,
                            'revert_time': utils.cur_timestamp()}
             if not db_task.update(task_status):
@@ -142,23 +137,31 @@ class UpdateHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            result = sapi.run_script([task['ip']], 'salt://scripts/revert.sh', [encode_update_string])
-            retcode = result[task['ip']]['retcode']
-            if retcode == 0:
-                ok = True
-                info = 'Execute revert script successful'
-            else:
-                ok = False
-                info = 'Execute revert script failed'
+            tornado.ioloop.IOLoop.instance().add_callback(self.salt_run_revert(task))
+            ok = True
+            info = 'Execute revert script successful'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
         ok = False
         info = 'Unsupported update action'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
+    @run_on_executor
+    def salt_run_update(self, task):
+        encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
+                                                     "@" + task['target'] + "@" + str(task['version']) +
+                                                     "@" + task['content'])
+        result = sapi.run_script([task['ip']], 'salt://scripts/update.sh', [encode_update_string])
+        log.info(result)
+
+    @run_on_executor
+    def salt_run_revert(self, task):
+        encode_update_string = encrypt.base64_encode(task['task_id'])
+        result = sapi.run_script([task['ip']], 'salt://scripts/revert.sh', [encode_update_string])
+        log.info(result)
+
     def options(self):
         pass
-
 
 handlers = [
     ('/api/update', UpdateHandler),
