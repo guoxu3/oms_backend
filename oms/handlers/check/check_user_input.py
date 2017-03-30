@@ -13,7 +13,7 @@ def check_user_input(user_dict):
     """
     ok = True
     info = ""
-    if 'mail' in user_dict and not verify.is_mail(user_dict['mail']):
+    if 'mail' in user_dict and not verify.is_email(user_dict['mail']):
         ok = False
         info = 'E-mail format error'
         return ok, info

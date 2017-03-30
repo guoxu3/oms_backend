@@ -115,7 +115,16 @@ def is_chinese_char(value):
 # 4-16 byters, allowed alphanumeric characters and underscores
 # must begin with characters
 def is_legal_accounts(value):
-    rule = '[a-zA-Z][a-zA-Z0-9_]{3,15}$'
+    rule = '[a-zA-Z0-9_]{3,15}$'
+    match = re.match(rule, value)
+
+    if match:
+        return True
+    return False
+
+
+def is_password(value):
+    rule = '[a-zA-Z0-9_!@#%^&*()]{6,20}$'
     match = re.match(rule, value)
 
     if match:

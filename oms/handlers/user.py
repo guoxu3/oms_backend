@@ -77,6 +77,11 @@ class UserHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
+            ok, info = check.check_user_input(user_data)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
             user_data['salt'], user_data['passwd'] = encrypt.md5_salt(user_data['passwd'])
             if db_user.add(user_data):
                 ok = True
