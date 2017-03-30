@@ -151,13 +151,13 @@ class UpdateHandler(tornado.web.RequestHandler):
         encode_update_string = encrypt.base64_encode(task['task_id'] + '@' + task['type'] +
                                                      "@" + task['target'] + "@" + str(task['version']) +
                                                      "@" + task['content'])
-        result = sapi.run_script([task['ip']], 'salt://scripts/update.sh', [encode_update_string])
+        result = sapi.run_script([task['ip']], 'salt://scripts/update.sh', encode_update_string)
         log.info(result)
 
     @run_on_executor
     def salt_run_revert(self, task):
         encode_update_string = encrypt.base64_encode(task['task_id'])
-        result = sapi.run_script([task['ip']], 'salt://scripts/revert.sh', [encode_update_string])
+        result = sapi.run_script([task['ip']], 'salt://scripts/revert.sh', encode_update_string)
         log.info(result)
 
     def options(self):
