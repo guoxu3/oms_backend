@@ -7,6 +7,7 @@
 
 import tornado.web
 import tornado.escape
+import tornado.ioloop
 from lib import verify, encrypt, mail
 from db import db_task, db_utils
 import utils
@@ -18,6 +19,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class TaskHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(5)
+
     def data_received(self, chunk):
         pass
 
