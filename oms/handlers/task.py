@@ -13,6 +13,8 @@ import utils
 import uuid
 import json
 import check
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
 
 
 class TaskHandler(tornado.web.RequestHandler):
@@ -82,7 +84,7 @@ class TaskHandler(tornado.web.RequestHandler):
                 if list(mailto):
                     message = task_data['creator'] + " create a new task, see in " \
                                                      "http://oms.example.com/task?task_id=" + task_data['task_id']
-                    mail.send_mail(list(mailto), message)
+                    tornado.ioloop.IOLoop.instance().add_callback(self.sending_mail(list(mailto), message))
                 ok = True
                 info = {'task_id': task_data['task_id']}
             else:
@@ -131,6 +133,10 @@ class TaskHandler(tornado.web.RequestHandler):
             ok = False
             info = 'Delete task failed'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+
+    @run_on_executor
+    def sending_mail(self, mailto, message):
+        mail.send_mail(mailto, message)
 
     def options(self):
         pass

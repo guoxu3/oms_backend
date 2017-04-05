@@ -115,7 +115,7 @@ class UpdateHandler(tornado.web.RequestHandler):
             ok = True
             info = 'Execute update script successful'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
-            return 
+            return
 
         if action == 'revert':
             local_permission_list = [self.handler_permission, self.post_permission]
