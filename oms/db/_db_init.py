@@ -56,6 +56,15 @@ class Machine(BaseModel):
     usage = CharField()
     is_initialized = IntegerField()
     location = CharField()
+    remarks = CharField()
+    allowed_users = CharField()
+    nginx = IntegerField()
+    mysql = IntegerField()
+    php = IntegerField()
+    redis = IntegerField()
+    memcache = IntegerField()
+    jdk = IntegerField()
+    tomcat = IntegerField()
 
     class Meta:
         db_table = 'machine'
@@ -71,6 +80,7 @@ class User(BaseModel):
     salt = CharField()
     department = CharField()
     permissions = CharField()
+    ssh_key = CharField()
 
     class Meta:
         db_table = 'user'

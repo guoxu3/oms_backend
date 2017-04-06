@@ -56,6 +56,7 @@ class MachineHandler(tornado.web.RequestHandler):
     def post(self):
         post_add_permission = '6.2.1'
         post_update_permission = '6.2.2'
+        post_update_key_permission = '6.2.2'
 
         ok, info = check.check_login(self.token)
         if not ok:
@@ -91,6 +92,22 @@ class MachineHandler(tornado.web.RequestHandler):
             return
 
         if action == 'update':
+            local_permission_list = [self.handler_permission, self.post_permission, post_update_key_permission]
+            ok, info, _ = verify.has_permission(self.token, local_permission_list)
+            if not ok:
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
+            if db_machine.add(machine_info_data):
+                ok = True
+                info = 'update machine info successful'
+            else:
+                ok = False
+                info = 'update machine info failed'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if action == 'update_key':
             local_permission_list = [self.handler_permission, self.post_permission, post_update_permission]
             ok, info, _ = verify.has_permission(self.token, local_permission_list)
             if not ok:

@@ -32,6 +32,15 @@ CREATE TABLE `machine` (
   `usage` VARCHAR(40) NOT NULL,
   `is_initialized` BOOLEAN DEFAULT FALSE,
   `location` VARCHAR(40) NOT NULL,
+  `remarks` VARCHAR(200),
+  `allowed_users` VARCHAR(1000),
+  `nginx` BOOLEAN DEFAULT FALSE,
+  `mysql` BOOLEAN DEFAULT FALSE,
+  `php` BOOLEAN DEFAULT FALSE,
+  `redis` BOOLEAN DEFAULT FALSE,
+  `memcache` BOOLEAN DEFAULT FALSE,
+  `jdk` BOOLEAN DEFAULT FALSE,
+  `tomcat` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
@@ -46,6 +55,7 @@ CREATE TABLE `user` (
   `salt` VARCHAR(10) NOT NULL,
   `department` VARCHAR(40) NOT NULL,
   `permissions` VARCHAR(40) NOT NULL,
+  `ssh_key` VARCHAR(400),
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
