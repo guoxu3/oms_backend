@@ -24,9 +24,4 @@ def check_machine_input(machine_dict):
         info = 'Outside ip format error'
         return ok, info
 
-    if 'is_initialized' in machine_dict and not verify.is_boolean(machine_dict['is_initialized']):
-        ok = False
-        info = 'Initialized info format error'
-        return ok, info
-
     return ok, info
