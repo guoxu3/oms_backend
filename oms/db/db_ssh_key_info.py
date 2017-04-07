@@ -7,10 +7,10 @@ from lib.logger import log
 
 def add(ssh_key_dict):
     ssh_key_info = SshKeyInfo()
-    for key in task_dict:
+    for key in ssh_key_dict:
         setattr(ssh_key_info, key, ssh_key_dict[key])
     try:
-        task.save()
+        ssh_key_info.save()
     except Exception:
         log.exception('exception')
         return False
@@ -48,7 +48,7 @@ def delete(username, ip, system_user):
                 .where(
                     (SshKeyInfo.username == username) &
                     (SshKeyInfo.ip == ip) &
-                    (SshKeyInfo.syytem_user == system_user)))
+                    (SshKeyInfo.system_user == system_user)))
     try:
         del_data.execute()
     except Exception:

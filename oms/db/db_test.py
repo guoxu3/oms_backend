@@ -46,6 +46,39 @@ class Task(BaseModel):
         db_table = 'task'
 
 
+# machine table
+class Machine(BaseModel):
+    id = IntegerField()
+    machine_name = CharField(unique=True)
+    inside_ip = CharField()
+    outside_ip = CharField()
+    usage = CharField()
+    is_initialized = IntegerField()
+    location = CharField()
+    remarks = CharField()
+    nginx = IntegerField()
+    mysql = IntegerField()
+    php = IntegerField()
+    redis = IntegerField()
+    memcache = IntegerField()
+    jdk = IntegerField()
+    tomcat = IntegerField()
+
+    class Meta:
+        db_table = 'machine'
+
+
+# machine table
+class SshKeyInfo(BaseModel):
+    id = IntegerField()
+    username = CharField()
+    ip = CharField()
+    system_user = CharField()
+
+    class Meta:
+        db_table = 'ssh_key_info'
+
+
 # user table
 class User(BaseModel):
     id = IntegerField()
@@ -133,4 +166,66 @@ def get_permission(is_all=False, start=0, count=10):
         else:
             return data_list
 
-get_permission(True)
+
+def add(ssh_key_dict):
+    ssh_key_info = SshKeyInfo()
+    for key in ssh_key_dict:
+        setattr(ssh_key_info, key, ssh_key_dict[key])
+    try:
+        ssh_key_info.save()
+    except Exception:
+        log.exception('exception')
+        return False
+    else:
+        return True
+
+
+def get(mode=None, username=None, ip=None):
+    data_list = []
+    if mode == 'ip':
+        try:
+            for info in SshKeyInfo.select().where(SshKeyInfo.ip == ip).get():
+                data_list.append(info.__dict__['_data'])
+        except Exception:
+            log.exception('exception')
+            return False
+        else:
+            return data_list
+    elif mode == 'user':
+        try:
+            for info in SshKeyInfo.select().where(SshKeyInfo.username == username).get():
+                data_list.append(info.__dict__['_data'])
+        except Exception:
+            log.exception('exception')
+            return False
+        else:
+            return data_list
+    else:
+        return False
+
+
+def delete(username, ip, system_user):
+    del_data = (SshKeyInfo
+                .delete()
+                .where(
+                    (SshKeyInfo.username == username) &
+                    (SshKeyInfo.ip == ip) &
+                    (SshKeyInfo.system_user == system_user)))
+    try:
+        del_data.execute()
+    except Exception:
+        log.exception('exception')
+        return False
+    else:
+        return True
+
+"""
+print add({'username': 'guoxu', 'ip': '192.168.1.1', 'system_user': 'root'})
+print add({'username': 'guoxu', 'ip': '192.168.1.1', 'system_user': 'admin'})
+print add({'username': 'guoxu', 'ip': '192.168.1.2', 'system_user': 'root'})
+print add({'username': 'guoxu', 'ip': '192.168.1.3', 'system_user': 'root'})
+print add({'username': 'guoxu', 'ip': '192.168.1.4', 'system_user': 'root'})
+print add({'username': 'guoxu', 'ip': '192.168.1.4', 'system_user': 'admin'})
+print add({'username': 'guoxu', 'ip': '192.168.1.5', 'system_user': 'root'})
+"""
+print delete('guoxu', '192.168.1.1', 'root')

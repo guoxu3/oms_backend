@@ -69,11 +69,12 @@ class Machine(BaseModel):
         db_table = 'machine'
 
 
-# machine table
+# ssh_key_info table
 class SshKeyInfo(BaseModel):
     id = IntegerField()
     username = CharField()
     ip = CharField()
+    system_user = CharField()
 
     class Meta:
         db_table = 'ssh_key_info'
