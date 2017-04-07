@@ -490,3 +490,34 @@ return:
 }
  
 ```
+
+## ssh-key 管理接口( /api/ssh_key_manage )
+### 获取ssh-key信息
+```
+Get /api/ssh_key_manage
+
+argument:
+    mode = ip/user
+    username = xxxx
+    ip = 192.168.1.1
+   
+argument explain:
+    mode (string, 必须) 查询的方式，以用户名查询或以IP查询
+    username (strig, 必须) 需要查询的用户名
+    ip (strig, 必须) 需要查询的ip
+
+TIPS:
+
+return:
+{
+	'ok': True,
+	'info': 
+	    'data': [
+	        {
+				'username': 'xxxx',
+				'ip': '192.168.1.1'
+				'system_user': 'root',
+			}
+		]
+}
+ 

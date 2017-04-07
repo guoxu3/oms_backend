@@ -33,7 +33,6 @@ CREATE TABLE `machine` (
   `is_initialized` BOOLEAN DEFAULT FALSE,
   `location` VARCHAR(40) NOT NULL,
   `remarks` VARCHAR(200),
-  `allowed_users` VARCHAR(1000),
   `nginx` BOOLEAN DEFAULT FALSE,
   `mysql` BOOLEAN DEFAULT FALSE,
   `php` BOOLEAN DEFAULT FALSE,
@@ -41,6 +40,16 @@ CREATE TABLE `machine` (
   `memcache` BOOLEAN DEFAULT FALSE,
   `jdk` BOOLEAN DEFAULT FALSE,
   `tomcat` BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+-- ssh_key_info  存储用户与机器对应的ssh-key信息
+DROP TABLE IF EXISTS `ssh_key_info`;
+CREATE TABLE `ssh_key_info` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(40) NOT NULL,
+  `ip` VARCHAR(40) NOT NULL,
+  `system_user` VARCHAR(40) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 

@@ -57,7 +57,6 @@ class Machine(BaseModel):
     is_initialized = IntegerField()
     location = CharField()
     remarks = CharField()
-    allowed_users = CharField()
     nginx = IntegerField()
     mysql = IntegerField()
     php = IntegerField()
@@ -68,6 +67,16 @@ class Machine(BaseModel):
 
     class Meta:
         db_table = 'machine'
+
+
+# machine table
+class SshKeyInfo(BaseModel):
+    id = IntegerField()
+    username = CharField()
+    ip = CharField()
+
+    class Meta:
+        db_table = 'ssh_key_info'
 
 
 # user table
