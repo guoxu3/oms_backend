@@ -520,4 +520,56 @@ return:
 			}
 		]
 }
- 
+```
+
+### 新增ssh-key记录
+```
+POST /api/ssh_key_manage
+
+argument:
+{
+    'action': 'add',
+    'data': {
+                username: 'xxxx',
+                ip: '192.168.1.1',
+                system_user: 'root'
+            }
+}
+
+argument explain:
+    username (string, 必须) 用户名
+    ip (string, 必须) 机器ip
+    system_user (string, 必须) 系统用户权限
+
+return:
+{
+    'ok': True,
+    'info': ''
+}
+```
+
+### 删除ssh-key记录
+```
+POST /api/ssh_key_manage
+
+argument:
+{
+    'action': 'delete',
+    'data': {
+                username: 'xxxx',
+                ip: '192.168.1.1',
+                system_user: 'root'
+            }
+}
+
+argument explain:
+    username (string, 必须) 用户名
+    ip (string, 必须) 机器ip
+    system_user (string, 必须) 系统用户权限
+
+return:
+{
+    'ok': True,
+    'info': ''
+}
+```
