@@ -183,20 +183,23 @@ def add(ssh_key_dict):
 def get(mode=None, username=None, ip=None):
     data_list = []
     if mode == 'ip':
+        print ip
         try:
-            for info in SshKeyInfo.select().where(SshKeyInfo.ip == ip).get():
-                data_list.append(info.__dict__['_data'])
-        except Exception:
-            log.exception('exception')
+            for info in SshKeyInfo.select().where(SshKeyInfo.ip == ip):
+                data = info.__dict__['_data']
+                data_list.append({data['username']: data['system_user']})
+        except Exception, e:
+            print e
             return False
         else:
             return data_list
     elif mode == 'user':
         try:
-            for info in SshKeyInfo.select().where(SshKeyInfo.username == username).get():
-                data_list.append(info.__dict__['_data'])
-        except Exception:
-            log.exception('exception')
+            for info in SshKeyInfo.select().where(SshKeyInfo.username == username):
+                data = info.__dict__['_data']
+                data_list.append({data['ip']: data['system_user']})
+        except Exception, e:
+            print e
             return False
         else:
             return data_list
@@ -228,4 +231,5 @@ print add({'username': 'guoxu', 'ip': '192.168.1.4', 'system_user': 'root'})
 print add({'username': 'guoxu', 'ip': '192.168.1.4', 'system_user': 'admin'})
 print add({'username': 'guoxu', 'ip': '192.168.1.5', 'system_user': 'root'})
 """
-print delete('guoxu', '192.168.1.1', 'root')
+
+print get('ip', '', '192.168.1.4')

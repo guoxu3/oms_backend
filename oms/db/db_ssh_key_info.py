@@ -22,8 +22,9 @@ def get(mode=None, username=None, ip=None):
     data_list = []
     if mode == 'ip':
         try:
-            for info in SshKeyInfo.select().where(SshKeyInfo.ip == ip).get():
-                data_list.append(info.__dict__['_data'])
+            for info in SshKeyInfo.select().where(SshKeyInfo.ip == ip):
+                data = info.__dict__['_data']
+                data_list.append({'username': data['username'], 'system_user': data['system_user']})
         except Exception:
             log.exception('exception')
             return False
@@ -31,8 +32,9 @@ def get(mode=None, username=None, ip=None):
             return data_list
     elif mode == 'user':
         try:
-            for info in SshKeyInfo.select().where(SshKeyInfo.username == username).get():
-                data_list.append(info.__dict__['_data'])
+            for info in SshKeyInfo.select().where(SshKeyInfo.username == username):
+                data = info.__dict__['_data']
+                data_list.append({'ip': data['ip'], 'system_user': data['system_user']})
         except Exception:
             log.exception('exception')
             return False

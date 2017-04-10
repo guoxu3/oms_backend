@@ -11,17 +11,14 @@
 import tornado.web
 import tornado.escape
 from lib import verify, encrypt, mail
-from db import db_task, db_utils
+from db import db_ssh_key_info, db_utils
 import utils
 import uuid
 import json
 import check
 
 
-
 class SshKeyManageHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(5)
-
     def data_received(self, chunk):
         pass
 
@@ -51,7 +48,7 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
         mode = self.get_argument('mode', None)
         username = self.get_argument('username', None)
         ip = self.get_argument('ip', None)
-        key_info = db_ssh_key_manage.get(mode, username, ip)
+        key_info = db_ssh_key_info.get(mode, username, ip)
         if key_info is not False:
             ok = True
             info = {'data': key_info}
@@ -75,7 +72,7 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
             return
 
         body = json.loads(self.request.body)
-        action, task_data, mailto = body['action'], body['data'], body['mailto']
+        action, ssh_key_data = body['action'], body['data']
         if action == 'add':
             local_permission_list = [self.handler_permission, self.post_permission, post_add_permission]
             ok, info, _ = verify.has_permission(self.token, local_permission_list)
@@ -83,14 +80,13 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            # todo
-
-            if True:
+            if db_ssh_key_info.add(ssh_key_data):
                 ok = True
-                info = {'task_id': task_data['task_id']}
+                info = ''
+                # todo
             else:
                 ok = False
-                info = 'Add task failed'
+                info = 'Add ssh-key info failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
@@ -101,14 +97,13 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            # todo
-
-            if True:
+            if db_ssh_key_info.delete(ssh_key_data['username'], ssh_key_data['ip'], ssh_key_data['system_user']):
                 ok = True
-                info = {'task_id': task_data['task_id']}
+                info = ''
+                # todo
             else:
                 ok = False
-                info = 'Add task failed'
+                info = 'Delete ssh-key info failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
@@ -121,5 +116,5 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
 
 
 handlers = [
-    ('/api/ssh', SshKeyManageHandler),
+    ('/api/ssh_key_manage', SshKeyManageHandler),
 ]
