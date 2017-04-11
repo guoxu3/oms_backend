@@ -6,7 +6,8 @@
 """
 
 from handlers import task, machine, update, user, login, logout, permission, task_statistic, task_status
-from handlers import ssh_key_manage
+from handlers import ssh_key_manage, initialize
+
 # Routes
 handlers = []
 handlers.extend(task.handlers)
@@ -19,3 +20,4 @@ handlers.extend(logout.handlers)
 handlers.extend(task_statistic.handlers)
 handlers.extend(task_status.handlers)
 handlers.extend(ssh_key_manage.handlers)
+handlers.extend(initialize.handlers)

@@ -573,3 +573,73 @@ return:
     'info': ''
 }
 ```
+
+## initialize 初始化接口( /api/initialize )
+### 更新初始化状态信息
+```
+Get /api/initialize
+
+argument:
+    ip = 192.168.1.1
+    software = init|mysql|nginx|php|redis|memcahced|jdk|tomcat
+    status = 0|1
+   
+argument explain:
+    ip (string, 必须) 机器IP
+    software (strig, 必须) 软件名，init 为初始化操作标识
+    status (int, 必须) 0为失败，1为成功
+
+TIPS:
+
+return:
+{
+	'ok': True,
+	'info': ''
+}
+```
+
+### 初始化机器
+```
+POST /api/initialize
+
+argument:
+{
+    'action': 'initialize',
+    'data': {
+              'ip': 192.168.1.1
+              }
+}
+
+argument explain:
+    ip (string, 必须) 机器ip
+
+return:
+{
+    'ok': True,
+    'info': 'Initializing...'
+}
+```
+
+### 安装机器软件机器
+```
+POST /api/initialize
+
+argument:
+{
+    'action': 'install',
+    'data': {
+              'ip': 192.168.1.1,
+              'software': 'mysql,nginx'
+              }
+}
+
+argument explain:
+    ip (string, 必须) 机器ip
+    software (string, 必须) 需要安装的软件名，多个以逗号分割
+
+return:
+{
+    'ok': True,
+    'info': 'Software installing...'
+}
+```
