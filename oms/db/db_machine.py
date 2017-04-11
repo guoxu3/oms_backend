@@ -32,7 +32,7 @@ def get(machine_name=None, start=0, count=10):
         try:
             for info in Machine.select().offset(start).limit(count):
                 data_list.append(info.__dict__['_data'])
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:
@@ -74,4 +74,23 @@ def delete(machine_name):
         del_data.execute()
     except Exception:
         log.exception('exception')
+        return False
+
+
+def update_initialize_status(ip=None, software=None, status=0):
+    if ip:
+        if software == 'init':
+            query = Machine.update(is_initialized = status).where(Machine.inside_ip == ip)
+        elif software in ['mysql', 'php', 'redis', 'nginx', 'memcached', 'jdk', 'tomcat']:
+            query = Machine.update(software = status).where(Machine.inside_ip == ip)
+        else:
+            return False
+
+        try:
+            query.execute()
+        except Exception:
+            log.exception('exception')
+        else:
+            return True
+    else:
         return False
