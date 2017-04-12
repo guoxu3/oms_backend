@@ -10,6 +10,7 @@ import tornado.escape
 import tornado.ioloop
 from lib import verify, encrypt, mail
 from db import db_machine
+from lib.salt_api import SaltAPI as sapi
 import json
 import check
 from lib.logger import log
@@ -82,7 +83,7 @@ class InitializeHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            tornado.ioloop.IOLoop.instance().add_callback(self.install_software(data['ip'], date['software']))
+            tornado.ioloop.IOLoop.instance().add_callback(self.install_software(data['ip'], data['software']))
             ok = True
             info = 'Software installing...'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
