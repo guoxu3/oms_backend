@@ -31,9 +31,9 @@ def get(username=None, start=0, count=10):
     else:
         data_list = []
         try:
-            for info in User.select().offset(start).limit(count):
+            for info in User.select().order_by(User.id).offset(start).limit(count):
                 data_list.append(info.__dict__['_data'])
-        except Exception, e:
+        except Exception:
             log.exception('exception')
             return False
         else:

@@ -23,7 +23,7 @@ def get(is_all=False, start=0, count=10, permission=None):
     data_list = []
     if is_all:
         try:
-            for info in Permissions.select():
+            for info in Permissions.select().order_by(Permissions.id):
                 _data = info.__dict__['_data']
                 permission_code = _data['permission_code']
                 if len(permission_code) == 1:

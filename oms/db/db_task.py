@@ -35,7 +35,7 @@ def add(task_dict):
 def get(task_id=None, start=0, count=10):
     if task_id:
         try:
-            info = Task.select().where(Task.task_id == task_id).get()
+            info = Task.select().order_by(Task.id).where(Task.task_id == task_id).get()
         except Exception:
             log.exception('exception')
             return False

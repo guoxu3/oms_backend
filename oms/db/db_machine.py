@@ -30,7 +30,7 @@ def get(machine_name=None, start=0, count=10):
     else:
         data_list = []
         try:
-            for info in Machine.select().offset(start).limit(count):
+            for info in Machine.select().order_by(Machine.id).offset(start).limit(count):
                 data_list.append(info.__dict__['_data'])
         except Exception:
             log.exception('exception')
