@@ -61,7 +61,7 @@ class Machine(BaseModel):
     mysql = IntegerField()
     php = IntegerField()
     redis = IntegerField()
-    memcached = IntegerField()
+    memcache = IntegerField()
     jdk = IntegerField()
     tomcat = IntegerField()
 
