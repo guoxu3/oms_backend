@@ -81,3 +81,15 @@ def delete(username):
             return False
         else:
             return True
+
+
+def get_user_list():
+    data_list = []
+    try:
+        for info in User.select().order_by(User.id):
+            data_list.append(info.__dict__['_data']['username'])
+    except Exception:
+        log.exception('exception')
+        return False
+    else:
+        return data_list

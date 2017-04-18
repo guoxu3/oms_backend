@@ -94,3 +94,15 @@ def update_initialize_status(ip=None, software=None, status=0):
             return True
     else:
         return False
+
+
+def get_machine_ip_list():
+    data_list = []
+    try:
+        for info in Machine.select().order_by(Machine.id):
+            data_list.append(info.__dict__['_data']['inside_ip'])
+    except Exception:
+        log.exception('exception')
+        return False
+    else:
+        return data_list

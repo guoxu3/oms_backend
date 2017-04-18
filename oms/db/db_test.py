@@ -222,14 +222,28 @@ def delete(username, ip, system_user):
     else:
         return True
 
-"""
-print add({'username': 'guoxu', 'ip': '192.168.1.1', 'system_user': 'root'})
-print add({'username': 'guoxu', 'ip': '192.168.1.1', 'system_user': 'admin'})
-print add({'username': 'guoxu', 'ip': '192.168.1.2', 'system_user': 'root'})
-print add({'username': 'guoxu', 'ip': '192.168.1.3', 'system_user': 'root'})
-print add({'username': 'guoxu', 'ip': '192.168.1.4', 'system_user': 'root'})
-print add({'username': 'guoxu', 'ip': '192.168.1.4', 'system_user': 'admin'})
-print add({'username': 'guoxu', 'ip': '192.168.1.5', 'system_user': 'root'})
-"""
 
-print get('ip', '', '192.168.1.4')
+def get_user_list():
+    data_list = []
+    try:
+        for info in User.select().order_by(User.id):
+            data_list.append(info.__dict__['_data']['username'])
+    except Exception as e:
+        print e
+        return False
+    else:
+        return data_list
+
+
+def get_machine_list():
+    data_list = []
+    try:
+        for info in Machine.select().order_by(Machine.id):
+            data_list.append(info.__dict__['_data']['inside_ip'])
+    except Exception as e:
+        print e
+        return False
+    else:
+        return data_list
+
+print get_machine_list()
