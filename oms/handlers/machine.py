@@ -43,8 +43,13 @@ class MachineHandler(tornado.web.RequestHandler):
         machine_name = self.get_argument('machine_name', None)
         start = int(self.get_argument('start', 0))
         count = int(self.get_argument('count', 10))
+        get_ip_list = self.get_argument('get_ip_list', None)
 
-        machine_info = db_machine.get(machine_name, start, count)
+        if get_ip_list == 'true':
+            machine_info = db_machine.get_machine_ip_list()
+        else:
+            machine_info = db_machine.get(machine_name, start, count)
+
         if machine_info is not False:
             ok = True
             info = {'data': machine_info, 'count': db_machine.row_count()}
