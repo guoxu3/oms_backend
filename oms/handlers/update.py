@@ -21,6 +21,7 @@ import check
 
 # 调用更新脚本
 class UpdateHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(5)
     def data_received(self, chunk):
         pass
 
@@ -54,7 +55,7 @@ class UpdateHandler(tornado.web.RequestHandler):
             return
 
         task = db_task.get(task_id)
-        result = sapi.run_script([task['ip']], 'salt://scripts/get_task_log.sh', [task_id])
+        result = sapi.run_script([task['ip']], 'salt://scripts/get_task_log.sh', task_id)
         retcode = result[task['ip']]['retcode']
         if retcode == 0:
             log_info = result[task['ip']]['stdout']

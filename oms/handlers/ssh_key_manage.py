@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-
 """
     ssh-key manage handlers
 """
@@ -11,9 +8,8 @@
 import tornado.web
 import tornado.escape
 from lib import verify, encrypt, mail
-from db import db_ssh_key_info, db_utils
-import utils
-import uuid
+from db import db_ssh_key_info, db_user
+from lib.salt_api import SaltAPI as sapi
 import json
 import check
 
@@ -80,13 +76,23 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            if db_ssh_key_info.add(ssh_key_data):
-                ok = True
-                info = ''
-                # todo
+            ip = ssh_key_data['ip']
+            ssh_key_string = db_user.get(username=ssh_key_data['username'])
+            encrypt_ssh_key_info = encrypt.base64_encode(ssh_key_data['system_user'] + '@' +
+                                                         ssh_key_string + " " + ssh_key_data['username'])
+            result = sapi.run_script([ip], 'salt://scripts/add_ssh_key.sh', encrypt_ssh_key_info)
+            retcode = result[ip]['retcode']
+
+            if retcode == 0:
+                if db_ssh_key_info.add(ssh_key_data):
+                    ok = True
+                    info = 'Add ssh-key successful'
+                else:
+                    ok = False
+                    info = 'Add ssh-key failed'
             else:
                 ok = False
-                info = 'Add ssh-key info failed'
+                info = 'Add ssh-key failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
@@ -97,18 +103,32 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
                 return
 
-            if db_ssh_key_info.delete(ssh_key_data['username'], ssh_key_data['ip'], ssh_key_data['system_user']):
-                ok = True
-                info = ''
-                # todo
+            fail_count = 0
+            for ssh_key_info in ssh_key_data:
+                ip = ssh_key_info['ip']
+                encrypt_ssh_key_info = encrypt.base64_encode(ssh_key_info['system_user'] + '@' +
+                                                             ssh_key_info['username'])
+                result = sapi.run_script([ip], 'salt://scripts/delete_ssh_key.sh', encrypt_ssh_key_info)
+                retcode = result[ip]['retcode']
+                if retcode == 0:
+                    if db_ssh_key_info.delete(ssh_key_info['username'], ssh_key_info['ip'], ssh_key_info['system_user']):
+                        fail_count += 0
+                    else:
+                        fail_count += 1
+                else:
+                    fail_count += 1
+
+            if fail_count == 0:
+                ok = False
+                info = 'Delete all ssh-key info failed'
             else:
                 ok = False
-                info = 'Delete ssh-key info failed'
+                info = 'Delete some ssh-key info failed, please retry'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
         ok = False
-        info = 'Unsupported task action'
+        info = 'Unsupported ssh-key action'
         self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
 
     def options(self):
