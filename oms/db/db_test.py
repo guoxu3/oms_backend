@@ -168,16 +168,39 @@ def get_permission(is_all=False, start=0, count=10):
 
 
 def add(ssh_key_dict):
-    ssh_key_info = SshKeyInfo()
-    for key in ssh_key_dict:
-        setattr(ssh_key_info, key, ssh_key_dict[key])
     try:
-        ssh_key_info.save()
+        SshKeyInfo.select().where((SshKeyInfo.ip == ssh_key_dict['ip'])
+                                  & (SshKeyInfo.username == ssh_key_dict['username'])
+                                  & (SshKeyInfo.system_user == ssh_key_dict['system_user'])
+                                  ).get()
     except Exception:
-        log.exception('exception')
-        return False
+        ssh_key_info = SshKeyInfo()
+        for key in ssh_key_dict:
+            setattr(ssh_key_info, key, ssh_key_dict[key])
+        try:
+            ssh_key_info.save()
+        except Exception:
+            log.exception('exception')
+            return False
+        else:
+            return True
     else:
-        return True
+        return true
+
+
+def test(ssh_key_dict):
+    try:
+        SshKeyInfo.select().where((SshKeyInfo.ip == ssh_key_dict['ip'])
+                                  & (SshKeyInfo.username == ssh_key_dict['username'])
+                                  & (SshKeyInfo.system_user == ssh_key_dict['system_user'])
+                                  ).get()
+    except Exception as e:
+        print "bbbb"
+        print e
+    else:
+        print "aaa"
+
+test({'ip': '192.168.1.111', 'username': 'guoxu', 'system_user': 'admin'})
 
 
 def get(mode=None, username=None, ip=None):
@@ -188,7 +211,7 @@ def get(mode=None, username=None, ip=None):
             for info in SshKeyInfo.select().where(SshKeyInfo.ip == ip):
                 data = info.__dict__['_data']
                 data_list.append({data['username']: data['system_user']})
-        except Exception, e:
+        except Exception as e:
             print e
             return False
         else:
@@ -198,7 +221,7 @@ def get(mode=None, username=None, ip=None):
             for info in SshKeyInfo.select().where(SshKeyInfo.username == username):
                 data = info.__dict__['_data']
                 data_list.append({data['ip']: data['system_user']})
-        except Exception, e:
+        except Exception as e:
             print e
             return False
         else:
@@ -246,4 +269,4 @@ def get_machine_list():
     else:
         return data_list
 
-print get_machine_list()
+

@@ -6,14 +6,22 @@ from lib.logger import log
 
 
 def add(ssh_key_dict):
-    ssh_key_info = SshKeyInfo()
-    for key in ssh_key_dict:
-        setattr(ssh_key_info, key, ssh_key_dict[key])
     try:
-        ssh_key_info.save()
+        SshKeyInfo.select().where((SshKeyInfo.ip == ssh_key_dict['ip'])
+                                  & (SshKeyInfo.username == ssh_key_dict['username'])
+                                  & (SshKeyInfo.system_user == ssh_key_dict['system_user'])
+                                  ).get()
     except Exception:
-        log.exception('exception')
-        return False
+        ssh_key_info = SshKeyInfo()
+        for key in ssh_key_dict:
+            setattr(ssh_key_info, key, ssh_key_dict[key])
+        try:
+            ssh_key_info.save()
+        except Exception:
+            log.exception('exception')
+            return False
+        else:
+            return True
     else:
         return True
 
