@@ -82,11 +82,11 @@ class UpdateHandler(tornado.web.RequestHandler):
 
         body = json.loads(self.request.body)
         action, data = body['action'], body['data']
-        task = db_task.get(data['task_id'])
-        update_type = task['type']
         excutor = self.get_cookie("username")
 
         if action == 'update':
+            task = db_task.get(data['task_id'])
+            update_type = task['type']
             local_permission_list = [self.handler_permission, self.post_permission]
             if update_type == 'update_file':
                 local_permission_list = [self.handler_permission, self.post_permission, post_update_file_permission]
@@ -119,6 +119,8 @@ class UpdateHandler(tornado.web.RequestHandler):
             return
 
         if action == 'revert':
+            task = db_task.get(data['task_id'])
+            update_type = task['type']
             local_permission_list = [self.handler_permission, self.post_permission]
             if update_type == 'update_file':
                 local_permission_list = [self.handler_permission, self.post_permission, post_update_file_permission]
@@ -142,6 +144,21 @@ class UpdateHandler(tornado.web.RequestHandler):
             tornado.ioloop.IOLoop.instance().add_callback(self.salt_run_revert(task))
             ok = True
             info = 'Execute revert script successful'
+            self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+            return
+
+        if action == 'get_current_version':
+            target = data['target']
+            ip = '127.0.0.1'
+            result = sapi.run_script([ip], 'salt://scripts/get_current_version.sh', target)
+            retcode, cur_version = result[ip]['retcode'], result[ip]['stdout']
+
+            if retcode == 0:
+                ok = True
+                info = cur_version
+            else:
+                ok = False
+                info = u'Get version info failed'
             self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
             return
 
