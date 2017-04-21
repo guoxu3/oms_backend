@@ -78,7 +78,7 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
 
             ip = ssh_key_data['ip']
             ssh_key_string = db_user.get(username=ssh_key_data['username'])['ssh_key']
-            if ssh_key_string == '':
+            if ssh_key_string is None:
                 ok = False
                 info = "User ssh-key does not exist, please add first"
                 self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
