@@ -78,6 +78,12 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
 
             ip = ssh_key_data['ip']
             ssh_key_string = db_user.get(username=ssh_key_data['username'])['ssh_key']
+            if ssh_key_string == '':
+                ok = False
+                info = "User ssh-key does not exist, please add first"
+                self.finish(tornado.escape.json_encode({'ok': ok, 'info': info}))
+                return
+
             encrypt_ssh_key_info = encrypt.base64_encode(ssh_key_data['system_user'] + '@' +
                                                          ssh_key_string + " " + ssh_key_data['username'])
             result = sapi.run_script([ip], 'salt://scripts/add_ssh_key.sh', encrypt_ssh_key_info)
