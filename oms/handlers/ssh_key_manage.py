@@ -125,7 +125,7 @@ class SshKeyManageHandler(tornado.web.RequestHandler):
                     fail_count += 1
 
             if fail_count == 0:
-                ok = False
+                ok = True
                 info = 'Delete all ssh-key info failed'
             else:
                 ok = False
